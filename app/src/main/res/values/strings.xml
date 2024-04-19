@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name" translatable="false">ReFood</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
+    <string name="tape">Tape</string>
+    <string name="main_page">Main Page</string>
+    <string name="profile">Profile</string>
+</resources>
