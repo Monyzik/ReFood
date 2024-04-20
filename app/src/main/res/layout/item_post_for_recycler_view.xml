@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/recycler_view_item_cardView"
+        android:layout_width="match_parent"
+        android:layout_height="118dp"
+        android:layout_margin="@dimen/simple_margin"
+        app:cardCornerRadius="@dimen/simple_margin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/recycler_view_item_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="post_image"
+            android:scaleType="centerCrop"
+            android:src="@drawable/example_of_food_photo"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_gravity="bottom"
+            android:background="@color/three_fourth_invisible_black">
+
+            <TextView
+                android:id="@+id/recycler_view_item_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Some Food"
+                android:gravity="center"
+                android:fontFamily="@font/yeseva_one"
+                android:textSize="25sp"
+                android:textColor="@color/white"
+                android:layout_gravity="center" />
+
+        </FrameLayout>
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/recycler_view_item_author"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Created by Someone"
+        android:fontFamily="@font/yeseva_one"
+        android:layout_marginTop="@dimen/small_margin"
+        android:layout_marginLeft="@dimen/simple_margin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recycler_view_item_cardView" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
