@@ -1,6 +1,5 @@
 package com.example.refood;
 
-import android.app.AlertDialog;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -14,36 +13,35 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link TapeFragment#newInstance} factory method to
+ * Use the {@link add_Product_Fragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class TapeFragment extends Fragment {
+public class add_Product_Fragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
-    public static ArrayList <Post> posts = new ArrayList<>();
-
-    private RecyclerView posts_recyclerView;
-
-    private FloatingActionButton add_button;
-
 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
+    private FloatingActionButton floatingActionButton;
 
-    public TapeFragment() {
+    public add_Product_Fragment() {
+        // Required empty public constructor
     }
 
     /**
@@ -52,11 +50,11 @@ public class TapeFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment TapeFragment.
+     * @return A new instance of fragment add_Product_Fragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static TapeFragment newInstance(String param1, String param2) {
-        TapeFragment fragment = new TapeFragment();
+    public static add_Product_Fragment newInstance(String param1, String param2) {
+        add_Product_Fragment fragment = new add_Product_Fragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -71,37 +69,38 @@ public class TapeFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_tape, container, false);
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_add__product_, container, false);
     }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        posts_recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-    }
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        posts_recyclerView = view.findViewById(R.id.tape_recycler_view);
-        posts_recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        posts_recyclerView.setAdapter(new PostsTapeAdapter(posts));
-
+        floatingActionButton = view.findViewById(R.id.floatingActionButton);
+        ImageView imageView = view.findViewById(R.id.imageView);
+        Spinner category = view.findViewById(R.id.category);
+        EditText label = view.findViewById(R.id.label);
+        EditText info = view.findViewById(R.id.info);
 
         NavController navController = Navigation.findNavController(view);
 
-        add_button = view.findViewById(R.id.add_button);
-        add_button.setOnClickListener(new View.OnClickListener() {
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                navController.navigate(R.id.add_Product_Fragment);
+                if (!(label.getText().toString().equals("") || info.getText().toString().equals(""))){
+                    TapeFragment.posts.add(new Post("Fedia", label.getText().toString(), info.getText().toString(), "image"));
+//                    Toast.makeText(add_Product_Fragment.this.getContext(), "ураааа", Toast.LENGTH_SHORT).show();
+                    getActivity().onBackPressed();
+                }
+                else {
+                    Toast.makeText(add_Product_Fragment.this.getContext(), "Заполните поля", Toast.LENGTH_SHORT).show();
+                }
             }
         });
+
     }
 }
