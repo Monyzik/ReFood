@@ -11,10 +11,12 @@
         <item>category_3</item>
         <item>category_4</item>
     </string-array>
-    <string name="label">Label</string>
+    <string name="title">Title</string>
     <string name="category">Category</string>
     <string name="info">Info</string>
     <string name="cancel">Cancel</string>
     <string name="apply">Apply</string>
+    <string name="fill">fill in all the fields</string>
+    <string name="add_image">Add image</string>
 
 </resources>

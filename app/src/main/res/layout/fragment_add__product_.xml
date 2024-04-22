@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".add_Product_Fragment">
+    tools:context=".add_Product_Fragment"
+    android:background="@drawable/roundstyle">
 
     <!-- TODO: Update blank fragment layout -->
 
@@ -53,7 +54,7 @@
                         android:layout_gravity="center"
                         android:fontFamily="@font/yeseva_one"
                         android:gravity="center"
-                        android:text="Add image"
+                        android:text="@string/add_image"
                         android:textColor="@color/white"
                         android:textSize="20sp" />
 
@@ -103,6 +104,7 @@
                     android:background="@color/white_gray"
                     android:entries="@array/categories_food"
 
+
                     android:paddingStart="20dp"
 
                     android:paddingEnd="20dp" />
@@ -132,7 +134,7 @@
 
                     android:fontFamily="@font/yeseva_one"
                     android:gravity="center"
-                    android:text="@string/label"
+                    android:text="@string/title"
                     android:textColor="@color/white"
 
                     android:textSize="20dp" />
@@ -149,7 +151,7 @@
 
                     android:ems="10"
                     android:fontFamily="@font/yeseva_one"
-                    android:hint="@string/label"
+                    android:hint="@string/title"
                     android:inputType="text"
                     android:textSize="20sp" />
             </androidx.cardview.widget.CardView>
@@ -196,7 +198,7 @@
 
                     android:ems="10"
 
-
+                    android:fontFamily="@font/yeseva_one"
                     android:gravity="top"
                     android:hint="@string/info"
                     android:inputType="textMultiLine"

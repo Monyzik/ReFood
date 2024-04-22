@@ -9,11 +9,7 @@
         android:id="@+id/tapeFragment"
         android:name="com.example.refood.TapeFragment"
         android:label="fragment_tape"
-        tools:layout="@layout/fragment_tape" >
-        <action
-            android:id="@+id/action_tapeFragment_to_add_Product_Fragment3"
-            app:destination="@id/add_Product_Fragment" />
-    </fragment>
+        tools:layout="@layout/fragment_tape" />
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.example.refood.ProfileFragment"
@@ -28,9 +24,5 @@
         android:id="@+id/add_Product_Fragment"
         android:name="com.example.refood.add_Product_Fragment"
         android:label="fragment_add__product_"
-        tools:layout="@layout/fragment_add__product_" >
-        <action
-            android:id="@+id/action_add_Product_Fragment_to_tapeFragment"
-            app:destination="@id/tapeFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_add__product_" />
 </navigation>
