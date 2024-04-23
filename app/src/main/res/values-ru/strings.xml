@@ -11,4 +11,13 @@
     <string name="apply">Подтвердить</string>
     <string name="fill">Заполните поля</string>
     <string name="add_image">Добавить изображение</string>
+    <string name="registration">Регистрация</string>
+    <string name="log_in">Войти</string>
+    <string name="password">Пароль</string>
+    <string name="username">Логин</string>
+    <string name="logout">Выйти</string>
+    <string name="dont_have_accaunt">До сих пор нету аккаунта? Создай его!</string>
+    <string name="login">Вход</string>
+    <string name="dont_have_account">До сих пор нету аккаунта? Создай его!</string>
+    <string name="already_have_account">Уже есть аккаунт? Войди!</string>
 </resources>

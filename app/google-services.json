@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "386006535418",
+    "project_id": "refoodi",
+    "storage_bucket": "refoodi.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:386006535418:android:985a5df3065cdd3d528d43",
+        "android_client_info": {
+          "package_name": "com.example.refood"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "386006535418-p1grrlp6c9p8vrc2af8d87artil17dpl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.refood",
+            "certificate_hash": "dfc9e4c662cf639b6833e83b06e3fc5fef830128"
+          }
+        },
+        {
+          "client_id": "386006535418-8jclrquc65fobdgaone39m8a21dnfhkr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvKwB5da51uQN60SMwCKt2wvYCfe7utQM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "386006535418-8jclrquc65fobdgaone39m8a21dnfhkr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

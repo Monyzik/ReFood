@@ -10,15 +10,21 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.TextView;
 import android.widget.Toolbar;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
+    FirebaseAuth firebaseAuth;
     BottomNavigationView bottomNavigationView;
     NavController navigationController;
     AppBarConfiguration appBarConfiguration;
@@ -27,9 +33,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        if (currentUser == null) {
+            startActivity(new Intent(this, LoginActivity.class));
+        }
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottomNavigationView);
         navigationController = Navigation.findNavController(MainActivity.this, R.id.fragmentContainerView);
         NavigationUI.setupWithNavController(bottomNavigationView, navigationController);
-
     }
 }
