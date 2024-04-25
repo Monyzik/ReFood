@@ -1,9 +1,12 @@
 package com.example.refood;
 
-public class Post {
-    private String author, title, text, image;
+import android.widget.ImageView;
 
-    Post(String author, String title, String text, String image) {
+public class Post {
+    private String author, title, text;
+    private ImageView image;
+
+    Post(String author, String title, String text, ImageView image) {
         this.author = author;
         this.title = title;
         this.text = text;
@@ -22,7 +25,7 @@ public class Post {
         return author;
     }
 
-    public String getImage() {
+    public ImageView getImage() {
         return image;
     }
 

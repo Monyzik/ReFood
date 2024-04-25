@@ -1,27 +1,15 @@
 package com.example.refood;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -40,7 +28,7 @@ public class TapeFragment extends Fragment {
 
     public static ArrayList <Post> posts = new ArrayList<>();
 
-    private RecyclerView posts_recyclerView;
+    public static RecyclerView posts_recyclerView;
 
     private FloatingActionButton add_button;
 
@@ -100,44 +88,20 @@ public class TapeFragment extends Fragment {
         posts_recyclerView.setAdapter(new PostsTapeAdapter(posts));
 
 
-        NavController navController = Navigation.findNavController(view);
-
-
+//        NavController navController = Navigation.findNavController(view);
 
         add_button = view.findViewById(R.id.add_button);
-        add_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(TapeFragment.this.getContext());
-                View layoutView = getLayoutInflater().inflate(R.layout.fragment_add__product_, null);
-                dialogBuilder.setView(layoutView);
-                AlertDialog alertDialog = dialogBuilder.create();
-                alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                alertDialog.getWindow().setGravity(Gravity.BOTTOM);
-                alertDialog.show();
-                FloatingActionButton applyButton = alertDialog.findViewById(R.id.floatingActionButton);
 
-                ImageView imageView = alertDialog.findViewById(R.id.imageView);
-                Spinner spinner = alertDialog.findViewById(R.id.category);
-                EditText title = alertDialog.findViewById(R.id.label);
-                EditText info = alertDialog.findViewById(R.id.info);
-
-                applyButton.setOnClickListener(new View.OnClickListener() {
+        add_button.setOnClickListener(
+                new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
-                        if (!(title.getText().toString().equals("") || info.getText().toString().equals(""))){
-                            posts.add(new Post("Name user", title.getText().toString(), info.getText().toString(), "image"));
-                            posts_recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                            alertDialog.dismiss();
-                        } else {
-                            Toast.makeText(alertDialog.getContext(), R.string.fill, Toast.LENGTH_SHORT).show();
-                        }
-
-
+                        AddProductDialog bottomSheet =
+                                new AddProductDialog();
+                        bottomSheet.show(getParentFragmentManager(),
+                                "ModalBottomSheet");
                     }
                 });
-            }
-        });
     }
+
 }
