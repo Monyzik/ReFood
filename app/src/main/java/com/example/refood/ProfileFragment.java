@@ -14,6 +14,10 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.Objects;
+
+import io.getstream.avatarview.AvatarView;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link ProfileFragment#newInstance} factory method to
@@ -33,6 +37,8 @@ public class ProfileFragment extends Fragment {
     FirebaseAuth firebaseAuth;
 
     TextView singoutTextView;
+
+    AvatarView avatarView;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -72,18 +78,23 @@ public class ProfileFragment extends Fragment {
     }
 
     private void signOut() {
-        firebaseAuth = FirebaseAuth.getInstance();
         if (firebaseAuth.getCurrentUser() != null) {
             firebaseAuth.signOut();
         }
         Intent intent = new Intent(getContext(), LoginActivity.class);
         startActivity(intent);
+        getActivity().finish();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        firebaseAuth = FirebaseAuth.getInstance();
         super.onViewCreated(view, savedInstanceState);
+        avatarView = view.findViewById(R.id.image_view_profile);
         singoutTextView = view.findViewById(R.id.logout);
+
+        avatarView.setImageURI(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getPhotoUrl());
+
         singoutTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

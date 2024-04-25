@@ -109,14 +109,25 @@
                 android:id="@+id/to_registration_activity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="@dimen/small_margin"
                 android:clickable="true"
+                android:focusable="true"
                 android:text="@string/dont_have_account"
                 android:textColor="@color/light_blue"
-                android:layout_margin="@dimen/small_margin"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/registration_btn"
-                android:focusable="true" />
+                app:layout_constraintTop_toBottomOf="@+id/registration_btn" />
+
+            <androidx.constraintlayout.utils.widget.ImageFilterButton
+                android:id="@+id/google_reg_button"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@color/invisible_white"
+                android:layout_margin="@dimen/simple_margin"
+                android:src="@drawable/fui_ic_googleg_color_24dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/to_registration_activity" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

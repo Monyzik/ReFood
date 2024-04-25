@@ -20,9 +20,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.Objects;
+
 public class RegistrationActivity extends AppCompatActivity {
 
-    private EditText emailTextView, passwordTextView;
+    private EditText emailTextView, passwordTextView, confirmPasswordEditText;
     private Button button;
     private ProgressBar progressBar;
     private TextView toSignInActivity;
@@ -40,11 +42,13 @@ public class RegistrationActivity extends AppCompatActivity {
         button = findViewById(R.id.registration_btn);
         progressBar = findViewById(R.id.progress_bar_reg);
         toSignInActivity = findViewById(R.id.to_login_activity);
+        confirmPasswordEditText = findViewById(R.id.confirm_password_edt);
 
         toSignInActivity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(RegistrationActivity.this, LoginActivity.class));
+                finish();
             }
         });
 
@@ -58,12 +62,18 @@ public class RegistrationActivity extends AppCompatActivity {
 
     private void registerNewUser() {
         progressBar.setVisibility(View.VISIBLE);
-        String email = emailTextView.getText().toString(), password = passwordTextView.getText().toString();
+        String email = emailTextView.getText().toString(), password = passwordTextView.getText().toString(), confirm_password = confirmPasswordEditText.getText().toString();
         if (email.isEmpty()) {
             Toast.makeText(this, "You need to write email!", Toast.LENGTH_SHORT).show();
             return;
         } if (password.isEmpty()) {
             Toast.makeText(this, "You need to write password!", Toast.LENGTH_SHORT).show();
+            return;
+        } if (password.length() < 6) {
+            Toast.makeText(this, "Your password must contain more then 6 characters", Toast.LENGTH_SHORT).show();
+            return;
+        } if (!Objects.equals(confirm_password, password)) {
+            Toast.makeText(this, "You uncorrect confirm your password", Toast.LENGTH_SHORT).show();
             return;
         }
         firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
