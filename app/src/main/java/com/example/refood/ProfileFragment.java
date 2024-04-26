@@ -7,12 +7,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.squareup.picasso.Picasso;
 
 import java.util.Objects;
 
@@ -38,7 +41,7 @@ public class ProfileFragment extends Fragment {
 
     TextView singoutTextView;
 
-    AvatarView avatarView;
+    ImageView avatarView;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -79,7 +82,10 @@ public class ProfileFragment extends Fragment {
 
     private void signOut() {
         if (firebaseAuth.getCurrentUser() != null) {
-            firebaseAuth.signOut();
+            Log.e("logoutuser", firebaseAuth.getCurrentUser().toString());
+            FirebaseAuth.getInstance().signOut();
+        } else {
+            Log.e("sing out exception", "can't log out user");
         }
         Intent intent = new Intent(getContext(), LoginActivity.class);
         startActivity(intent);
@@ -93,7 +99,9 @@ public class ProfileFragment extends Fragment {
         avatarView = view.findViewById(R.id.image_view_profile);
         singoutTextView = view.findViewById(R.id.logout);
 
-        avatarView.setImageURI(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getPhotoUrl());
+        Picasso.with(view.getContext()).load(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getPhotoUrl()).into(avatarView);
+
+//        avatarView.setImageURI(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getPhotoUrl());
 
         singoutTextView.setOnClickListener(new View.OnClickListener() {
             @Override

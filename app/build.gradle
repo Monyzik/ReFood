@@ -20,6 +20,7 @@ android {
     buildTypes {
         release {
             minifyEnabled false
+            apply plugin: 'com.google.gms.google-services'
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -31,6 +32,9 @@ android {
 }
 
 dependencies {
+    implementation 'com.squareup.picasso:picasso:2.5.2'
+    implementation("androidx.credentials:credentials:1.3.0-alpha03")
+    implementation("androidx.credentials:credentials-play-services-auth:1.3.0-alpha03")
     implementation 'io.getstream:avatarview-coil:1.0.4'
     implementation "androidx.credentials:credentials:1.2.2"
     implementation "androidx.credentials:credentials-play-services-auth:1.2.2"

@@ -135,19 +135,25 @@ public class LoginActivity extends AppCompatActivity {
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
 
-                AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+                if (account != null) {
+                    AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
 
-                FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                            finish();
-                        } else {
-                            Log.e("Log in exception", "Can not sign in user by google");
+                    FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                                finish();
+                            } else {
+                                Log.e("Log in exception", "Can not sign in user by google");
+                            }
                         }
-                    }
-                });
+                    });
+                } else {
+                    Toast.makeText(this, "Auth is failed, can't find accaount", Toast.LENGTH_SHORT).show();
+                }
+
+
             } catch (ApiException e) {
                 throw new RuntimeException(e);
             }
