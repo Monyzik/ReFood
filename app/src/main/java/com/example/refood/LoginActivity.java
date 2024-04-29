@@ -40,6 +40,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -121,8 +122,18 @@ public class LoginActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful() && task.getResult().getUser() != null) {
                     FirebaseUser firebaseUser = task.getResult().getUser();
-                    User user = new User(firebaseUser.getUid(), firebaseUser.getDisplayName(), null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
-                    db.collection(User.COLLECTION_NAME).document(firebaseUser.getUid()).set(user);
+                    db.collection(User.COLLECTION_NAME).document(firebaseUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (!document.exists()) {
+                                    User user = new User(firebaseUser.getUid(), firebaseUser.getDisplayName(), null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+                                    db.collection(User.COLLECTION_NAME).document(firebaseUser.getUid()).set(user);
+                                }
+                            }
+                        }
+                    });
                     Log.i("new registration", "New user successful register");
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
 
@@ -150,8 +161,18 @@ public class LoginActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful() && task.getResult().getUser() != null) {
                                 FirebaseUser firebaseUser = task.getResult().getUser();
-                                User user = new User(firebaseUser.getUid(), firebaseUser.getDisplayName(), null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
-                                db.collection(User.COLLECTION_NAME).document(firebaseUser.getUid()).set(user);
+                                db.collection(User.COLLECTION_NAME).document(firebaseUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            DocumentSnapshot document = task.getResult();
+                                            if (!document.exists()) {
+                                                User user = new User(firebaseUser.getUid(), firebaseUser.getDisplayName(), null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+                                                db.collection(User.COLLECTION_NAME).document(firebaseUser.getUid()).set(user);
+                                            }
+                                        }
+                                    }
+                                });
                                 startActivity(new Intent(LoginActivity.this, MainActivity.class));
                                 finish();
                             } else {
