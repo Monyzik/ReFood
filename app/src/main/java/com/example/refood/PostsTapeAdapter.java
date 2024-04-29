@@ -56,7 +56,8 @@ public class PostsTapeAdapter extends RecyclerView.Adapter<PostsTapeAdapter.View
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         viewHolder.getTitle().setText(posts.get(position).getTitle());
         viewHolder.getAuthor().setText(posts.get(position).getAuthor());
-        viewHolder.getFoodImage().setImageBitmap(((BitmapDrawable)posts.get(position).getImage().getDrawable()).getBitmap());
+        viewHolder.getFoodImage().setImageResource(R.drawable.example_of_food_photo);
+//        viewHolder.getFoodImage().setImageBitmap(((BitmapDrawable)posts.get(position).getImage().getDrawable()).getBitmap());
     }
 
     @Override

@@ -20,4 +20,5 @@
     <string name="confirm_password">Повторите пароль</string>
     <string name="dont_have_account">До сих пор нету аккаунта? Создай его!</string>
     <string name="already_have_account">Уже есть аккаунт? Войди!</string>
+    <string name="email">"Почта "</string>
 </resources>

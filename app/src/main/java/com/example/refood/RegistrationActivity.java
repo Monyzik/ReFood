@@ -19,16 +19,21 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class RegistrationActivity extends AppCompatActivity {
 
-    private EditText emailTextView, passwordTextView, confirmPasswordEditText;
+    private EditText emailTextView, passwordTextView, confirmPasswordEditText, username;
     private Button button;
     private ProgressBar progressBar;
     private TextView toSignInActivity;
     private FirebaseAuth firebaseAuth;
+
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -36,6 +41,7 @@ public class RegistrationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_registration);
 
         firebaseAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
         emailTextView = findViewById(R.id.username_edt);
         passwordTextView = findViewById(R.id.password_edt);
@@ -43,6 +49,7 @@ public class RegistrationActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progress_bar_reg);
         toSignInActivity = findViewById(R.id.to_login_activity);
         confirmPasswordEditText = findViewById(R.id.confirm_password_edt);
+        username = findViewById(R.id.login_edt);
 
         toSignInActivity.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,7 +86,10 @@ public class RegistrationActivity extends AppCompatActivity {
         firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
+                if (task.isSuccessful() && task.getResult().getUser() != null) {
+                    FirebaseUser firebaseUser = task.getResult().getUser();
+                    User user = new User(firebaseUser.getUid(), username.getText().toString(), null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+                    db.collection(User.COLLECTION_NAME).document(firebaseUser.getUid()).set(user);
                     Log.i("new registration", "New user successful register");
                     startActivity(new Intent(RegistrationActivity.this, MainActivity.class));
 

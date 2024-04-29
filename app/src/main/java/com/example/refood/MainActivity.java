@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     FirebaseAuth firebaseAuth;
     BottomNavigationView bottomNavigationView;
     NavController navigationController;
+
     AppBarConfiguration appBarConfiguration;
 
     @Override

@@ -40,7 +40,9 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -59,6 +61,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private GoogleSignInClient client;
     private FirebaseAuth firebaseAuth;
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -71,6 +74,7 @@ public class LoginActivity extends AppCompatActivity {
 
         google_sign_in = findViewById(R.id.google_reg_button);
         firebaseAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
         emailTextView = findViewById(R.id.username_edt);
         passwordTextView = findViewById(R.id.password_edt);
         button = findViewById(R.id.registration_btn);
@@ -115,7 +119,10 @@ public class LoginActivity extends AppCompatActivity {
         firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
+                if (task.isSuccessful() && task.getResult().getUser() != null) {
+                    FirebaseUser firebaseUser = task.getResult().getUser();
+                    User user = new User(firebaseUser.getUid(), firebaseUser.getDisplayName(), null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+                    db.collection(User.COLLECTION_NAME).document(firebaseUser.getUid()).set(user);
                     Log.i("new registration", "New user successful register");
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
 
@@ -141,7 +148,10 @@ public class LoginActivity extends AppCompatActivity {
                     FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
+                            if (task.isSuccessful() && task.getResult().getUser() != null) {
+                                FirebaseUser firebaseUser = task.getResult().getUser();
+                                User user = new User(firebaseUser.getUid(), firebaseUser.getDisplayName(), null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+                                db.collection(User.COLLECTION_NAME).document(firebaseUser.getUid()).set(user);
                                 startActivity(new Intent(LoginActivity.this, MainActivity.class));
                                 finish();
                             } else {
