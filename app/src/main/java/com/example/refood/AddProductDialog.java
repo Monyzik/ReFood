@@ -1,26 +1,22 @@
 package com.example.refood;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.MediaController;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -33,6 +29,9 @@ public class AddProductDialog extends BottomSheetDialogFragment {
 
     FirebaseAuth firebaseAuth;
 
+    RecyclerView recyclerView;
+
+
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     ImageView imageView;
@@ -42,13 +41,28 @@ public class AddProductDialog extends BottomSheetDialogFragment {
 
         firebaseAuth = FirebaseAuth.getInstance();
 
+        ArrayList <Step> steps = new ArrayList<>();
 
-        FloatingActionButton apply_button = v.findViewById(R.id.apply_button);
+        Button apply_button = v.findViewById(R.id.apply_button);
         imageView = v.findViewById(R.id.imageView);
-        Spinner spinner = v.findViewById(R.id.category);
-        EditText title = v.findViewById(R.id.label);
-        EditText info = v.findViewById(R.id.info);
+        EditText title = v.findViewById(R.id.editText_title);
+        EditText info = v.findViewById(R.id.editText_info);
         View image_group = v.findViewById(R.id.image_group);
+        View add_step_button = v.findViewById(R.id.add_step_button);
+        recyclerView = v.findViewById(R.id.recycler_steps);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        StepsAdapter stepsAdapter = new StepsAdapter(steps);
+        recyclerView.setAdapter(stepsAdapter);
+
+        add_step_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                steps.add(new Step(steps.size()));
+                recyclerView.getAdapter().notifyDataSetChanged();
+
+            }
+        });
 
         apply_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,5 +105,4 @@ public class AddProductDialog extends BottomSheetDialogFragment {
 //
 //        }
 //    }
-
 }

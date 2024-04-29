@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="@dimen/simple_margin"
+        android:layout_marginTop="@dimen/simple_margin"
+        android:layout_marginBottom="@dimen/simple_margin"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+
+        >
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/simple_margin">
+
+
+
+
+            <TextView
+                android:id="@+id/step_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/step"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:textSize="20sp"
+                android:fontFamily="@font/yeseva_one"
+                />
+            <TextView
+                android:id="@+id/step_num_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1"
+                app:layout_constraintStart_toEndOf="@+id/step_text"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginStart="@dimen/small_margin"
+                android:textSize="20sp"
+                android:fontFamily="@font/yeseva_one"/>
+
+            <EditText
+                android:id="@+id/editText_timer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/simple_margin"
+                android:ems="10"
+                android:inputType="time"
+                android:hint="@string/time"
+                android:padding="25dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/step_text" />
+            <TextView
+                android:id="@+id/info_about_step_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/detail_info"
+                android:textSize="20sp"
+                android:fontFamily="@font/yeseva_one"
+                android:layout_margin="@dimen/simple_margin"
+                app:layout_constraintTop_toBottomOf="@id/editText_timer" />
+
+            <EditText
+                android:id="@+id/editText_info_about_step"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textMultiLine"
+                android:padding="25dp"
+                android:hint="@string/detail_info"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/info_about_step_text"
+                android:layout_margin="@dimen/simple_margin"/>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="130dp"
+                android:layout_marginStart="35dp"
+                android:layout_marginEnd="35dp"
+                app:cardCornerRadius="@dimen/simple_margin"
+                app:layout_constraintTop_toBottomOf="@id/editText_info_about_step">
+
+                <ImageView
+                    android:id="@+id/image_food"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    tools:srcCompat="@tools:sample/avatars" />
+            </androidx.cardview.widget.CardView>
+
+            <ImageView
+                android:id="@+id/delete_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toTopOf="@+id/editText_timer"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/baseline_delete_outline_24" />
+
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

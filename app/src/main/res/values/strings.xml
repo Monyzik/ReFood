@@ -29,4 +29,9 @@
     <string name="logout">Logout</string>
     <string name="default_web_client_id">386006535418-8jclrquc65fobdgaone39m8a21dnfhkr.apps.googleusercontent.com</string>
     <string name="email">Email</string>
+    <string name="steps">Steps</string>
+    <string name="detail_info">Detail info</string>
+    <string name="add_steps">+ Add step</string>
+    <string name="time">Time</string>
+    <string name="step">Step</string>
 </resources>

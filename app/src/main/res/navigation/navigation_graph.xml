@@ -23,6 +23,6 @@
     <fragment
         android:id="@+id/add_Product_Fragment"
         android:name="com.example.refood.add_Product_Fragment"
-        android:label="fragment_add__product_"
+        android:label="fragment_add_product"
         tools:layout="@layout/fragment_add_product" />
 </navigation>
