@@ -5,18 +5,20 @@ import android.widget.ImageView;
 public class Step {
     private int time, number;
     private String info;
-    private ImageView imageView;
+    private String imagePath;
 
     public Step(int number) {
         this.number = number;
     }
 
-    public Step(int time, int number, String info, ImageView imageView) {
+    public Step(int time, int number, String info, String imagePath) {
         this.time = time;
         this.number = number;
         this.info = info;
-        this.imageView = imageView;
+        this.imagePath = imagePath;
     }
+
+    public Step() {}
 
     public int getTime() {
         return time;
@@ -28,8 +30,8 @@ public class Step {
     public String getInfo() {
         return info;
     }
-    public ImageView getImageView() {
-        return imageView;
+    public String getImagePath() {
+        return imagePath;
     }
     public void setTime(int time) {
         this.time = time;
@@ -40,8 +42,8 @@ public class Step {
     public void setInfo(String info) {
         this.info = info;
     }
-    public void setImageView(ImageView imageView) {
-        this.imageView = imageView;
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
 }

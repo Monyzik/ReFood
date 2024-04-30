@@ -20,26 +20,33 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class AddProductDialog extends BottomSheetDialogFragment {
 
     private final int GALLERY_REQ_CODE = 1000;
 
     FirebaseAuth firebaseAuth;
+    FirebaseStorage storage;
 
     RecyclerView recyclerView;
 
 
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    FirebaseFirestore db;
 
     ImageView imageView;
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_add_product, container, false);
 
+        storage = FirebaseStorage.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
         ArrayList <Step> steps = new ArrayList<>();
 
@@ -58,7 +65,7 @@ public class AddProductDialog extends BottomSheetDialogFragment {
         add_step_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                steps.add(new Step(steps.size()));
+                steps.add(new Step(steps.size() + 1));
                 recyclerView.getAdapter().notifyDataSetChanged();
 
             }
@@ -68,13 +75,38 @@ public class AddProductDialog extends BottomSheetDialogFragment {
             @Override
             public void onClick(View v) {
                 if (!(title.getText().toString().equals("") || info.getText().toString().equals(""))){
+
+                    final String[] post_id = new String[1];
+
+                    db.collection(Post.COLLECTION_NAME).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                post_id[0] = "post" + task.getResult().size() + 1;
+                            }
+                        }
+                    });
+
+                    StorageReference storageReference = storage.getReference("images/posts_images/");
+                    StorageReference postReference = storageReference.child(post_id[0]);
+
+                    for (int x = recyclerView.getChildCount(), i = 0; i < x; i++) {
+                        StepsAdapter.ViewHolder holder = (StepsAdapter.ViewHolder) recyclerView.getChildViewHolder(recyclerView.getChildAt(i));
+                        Step step = steps.get(i);
+                        step.setInfo(holder.getInfo().getText().toString());
+                        StorageReference stepPhotoReference = postReference.child("Step" + step.getNumber());
+//                        stepPhotoReference.putFile()
+                        step.setImagePath(stepPhotoReference.getPath());
+                    }
+
                     db.collection(User.COLLECTION_NAME).document(firebaseAuth.getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                             if (task.isSuccessful()) {
                                 User user = task.getResult().toObject(User.class);
-                                Post post = new Post(user.name, title.getText().toString(), info.getText().toString(), "Some dirs", 0, 0, new ArrayList<>(), new ArrayList<>());
-                                db.collection(Post.COLLECTION_NAME).document().set(post);
+                                Post post = new Post(post_id[0], user.name, title.getText().toString(), info.getText().toString(), new Date(), "Some dirs", 0, 0,
+                                        steps, new ArrayList<>(), new ArrayList<>());
+                                db.collection(Post.COLLECTION_NAME).document(post_id[0]).set(post);
                                 TapeFragment.updateRecyclerViewUI(v);
                                 dismiss();
                             }
