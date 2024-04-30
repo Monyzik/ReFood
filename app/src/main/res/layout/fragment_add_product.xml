@@ -22,81 +22,77 @@
                 app:layout_constraintTop_toBottomOf="@+id/image_group">
 
 
-                <TextView
-                    android:id="@+id/title_text"
+<!--                <TextView-->
+<!--                    android:id="@+id/title_text"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_margin="10dp"-->
+<!--                    android:fontFamily="@font/yeseva_one"-->
+<!--                    android:gravity="left"-->
+<!--                    android:paddingStart="17dp"-->
+<!--                    android:text="@string/title"-->
+<!--                    android:textSize="15dp"-->
+<!--                    android:textStyle="bold"-->
+<!--                    app:layout_constraintEnd_toEndOf="parent"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toTopOf="parent" />-->
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/title_input_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:fontFamily="@font/yeseva_one"
-                    android:gravity="left"
-                    android:paddingStart="17dp"
-                    android:text="@string/title"
-                    android:textSize="15dp"
-                    android:textStyle="bold"
+                    android:layout_marginTop="@dimen/small_margin"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent">
 
-                <EditText
-                    android:id="@+id/editText_title"
+                    <EditText
+                        android:id="@+id/editText_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:hint="@string/title"
+                        android:inputType="text"/>
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/info_input_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:ems="10"
-                    android:inputType="text"
-                    android:padding="25dp"
-                    android:text="Name"
-
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/title_text" />
+                    android:layout_marginTop="@dimen/small_margin"
+                    app:layout_constraintTop_toBottomOf="@+id/title_input_layout">
 
+                    <EditText
+                        android:id="@+id/editText_info"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/info"
+                        android:inputType="textMultiLine" />
 
-                <TextView
-                    android:id="@+id/info_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:fontFamily="@font/yeseva_one"
-                    android:gravity="left"
-                    android:padding="17dp"
-                    android:text="@string/info"
-                    android:textSize="15dp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/editText_title" />
-
-                <EditText
-                    android:id="@+id/editText_info"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:ems="10"
-                    android:inputType="textMultiLine"
-                    android:padding="25dp"
-                    android:text="Name"
-                    app:layout_constraintBottom_toTopOf="@id/steps_text"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/info_text" />
+                </com.google.android.material.textfield.TextInputLayout>
 
 
                 <TextView
                     android:id="@+id/steps_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
+                    android:layout_marginTop="@dimen/simple_margin"
                     android:fontFamily="@font/yeseva_one"
-                    android:gravity="left"
-                    android:padding="17dp"
+                    android:gravity="start"
                     android:text="@string/steps"
-                    android:textSize="15dp"
+                    android:textSize="20sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/editText_info" />
+                    app:layout_constraintTop_toBottomOf="@+id/info_input_layout" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler_steps"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
+                    android:layout_marginTop="@dimen/small_margin"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/steps_text">
 

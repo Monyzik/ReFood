@@ -13,22 +13,17 @@
         android:layout_marginTop="@dimen/simple_margin"
         android:layout_marginBottom="@dimen/simple_margin"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-
-        >
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="@dimen/simple_margin">
-
-
-
+            android:layout_height="match_parent">
 
             <TextView
                 android:id="@+id/step_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/small_margin"
                 android:text="@string/step"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -40,6 +35,7 @@
                 android:id="@+id/step_num_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/small_margin"
                 android:text="1"
                 app:layout_constraintStart_toEndOf="@+id/step_text"
                 app:layout_constraintTop_toTopOf="parent"
@@ -47,47 +43,55 @@
                 android:textSize="20sp"
                 android:fontFamily="@font/yeseva_one"/>
 
-            <EditText
-                android:id="@+id/editText_timer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/simple_margin"
-                android:ems="10"
-                android:inputType="time"
-                android:hint="@string/time"
-                android:padding="25dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/step_text" />
-            <TextView
-                android:id="@+id/info_about_step_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/detail_info"
-                android:textSize="20sp"
-                android:fontFamily="@font/yeseva_one"
-                android:layout_margin="@dimen/simple_margin"
-                app:layout_constraintTop_toBottomOf="@id/editText_timer" />
 
-            <EditText
-                android:id="@+id/editText_info_about_step"
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/timer_layot"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="textMultiLine"
-                android:padding="25dp"
-                android:hint="@string/detail_info"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_margin="@dimen/simple_margin"
+                app:layout_constraintTop_toBottomOf="@+id/step_text">
+
+
+                <EditText
+                    android:id="@+id/editText_timer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="time"
+                    android:hint="@string/time" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/info_about_step_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/info_about_step_text"
-                android:layout_margin="@dimen/simple_margin"/>
+                app:layout_constraintTop_toBottomOf="@+id/timer_layot"
+                android:layout_margin="@dimen/simple_margin">
+
+                <EditText
+                    android:id="@+id/editText_info_about_step"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textMultiLine"
+                    android:hint="@string/detail_info" />
+
+
+            </com.google.android.material.textfield.TextInputLayout>
+
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="130dp"
-                android:layout_marginStart="35dp"
-                android:layout_marginEnd="35dp"
+                android:layout_margin="@dimen/simple_margin"
                 app:cardCornerRadius="@dimen/simple_margin"
-                app:layout_constraintTop_toBottomOf="@id/editText_info_about_step">
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/info_about_step_layout"
+                tools:layout_editor_absoluteX="15dp">
 
                 <ImageView
                     android:id="@+id/image_food"
@@ -101,7 +105,7 @@
                 android:id="@+id/delete_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toTopOf="@+id/editText_timer"
+                app:layout_constraintBottom_toTopOf="@+id/timer_layot"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/baseline_delete_outline_24" />
