@@ -45,15 +45,11 @@ import io.getstream.avatarview.AvatarView;
  * create an instance of this fragment.
  */
 public class ProfileFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
     private final int GALLERY_REQ_CODE = 1000;
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 

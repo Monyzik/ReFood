@@ -6,14 +6,23 @@ import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 
+import org.json.JSONException;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -53,23 +62,47 @@ public class Post {
         this.likes_from_users = likes_from_users;
         this.dislikes_from_users = dislikes_from_users;
     }
-//    ---------------------------------------------------------------------
-public Post(String id, String title, String text, String image, Date date, long like_count, long dislike_count, ArrayList <Step> steps, ArrayList <String> likes_from_users, ArrayList <String> dislikes_from_users) {
-    this.id = id;
-    this.title = title;
-    this.text = text;
-    this.image = image;
+    public Post(String id, String title, String text, String image, Date date, long like_count, long dislike_count, ArrayList <Step> steps, ArrayList <String> likes_from_users, ArrayList <String> dislikes_from_users) {
+        this.id = id;
+        this.title = title;
+        this.text = text;
+        this.image = image;
 
-    this.like_count = like_count;
-    this.dislike_count = dislike_count;
-    this.steps = steps;
-    this.likes_from_users = likes_from_users;
-    this.dislikes_from_users = dislikes_from_users;
-}
-
-
+        this.like_count = like_count;
+        this.dislike_count = dislike_count;
+        this.steps = steps;
+        this.likes_from_users = likes_from_users;
+        this.dislikes_from_users = dislikes_from_users;
+    }
 
     public Post() {}
+
+    public static Post readSavedRecipe(File file) throws IOException, JSONException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Post post = objectMapper.readValue(file, Post.class);
+        return post;
+    }
+
+    public static boolean saveRecipe(Post post, File post_file) {
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.setPrettyPrinting();
+        Gson gson = gsonBuilder.create();
+        String json = gson.toJson(post);
+        try {
+            PrintWriter writer = new PrintWriter(new FileWriter(post_file));
+            writer.print(json);
+            writer.close();
+        } catch (IOException e) {
+            return false;
+        }
+        try {
+            post_file.createNewFile();
+        } catch (IOException e) {
+            return false;
+        }
+        return true;
+    }
+
 
     public ArrayList<Step> getSteps() {
         return steps;

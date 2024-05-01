@@ -67,7 +67,7 @@ public class TapeFragment extends Fragment {
                     for (QueryDocumentSnapshot post: task.getResult()) {
                         Post post_data = post.toObject(Post.class);
                         posts.add(post_data);
-                        posts_recyclerView.getAdapter().notifyDataSetChanged();
+                        posts_recyclerView.getAdapter().notifyItemInserted(posts.size() - 1);
                     }
                 }
 
