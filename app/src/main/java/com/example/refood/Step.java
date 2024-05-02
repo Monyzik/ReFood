@@ -3,15 +3,15 @@ package com.example.refood;
 import android.widget.ImageView;
 
 public class Step {
-    private int time, number;
-    private String info;
+    private long number;
+    private String info, time;
     private String imagePath;
 
     public Step(int number) {
         this.number = number;
     }
 
-    public Step(int time, int number, String info, String imagePath) {
+    public Step(String time, int number, String info, String imagePath) {
         this.time = time;
         this.number = number;
         this.info = info;
@@ -20,11 +20,11 @@ public class Step {
 
     public Step() {}
 
-    public int getTime() {
+    public String getTime() {
         return time;
     }
 
-    public int getNumber() {
+    public long getNumber() {
         return number;
     }
     public String getInfo() {
@@ -33,7 +33,7 @@ public class Step {
     public String getImagePath() {
         return imagePath;
     }
-    public void setTime(int time) {
+    public void setTime(String time) {
         this.time = time;
     }
     public void setNumber(int number) {

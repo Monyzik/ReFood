@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -90,9 +91,6 @@ public class AddProductDialog extends BottomSheetDialogFragment {
         stepsAdapter = new StepsAdapter(steps, v.getContext(), new StepsAdapter.AdapterCallback() {
             @Override
             public void onMethodCallback(String data, int position) {
-                StepsAdapter.ViewHolder holder = (StepsAdapter.ViewHolder) recyclerView.getChildViewHolder(recyclerView.getChildAt(position));
-                steps.get(position).setInfo(holder.getInfo().getText().toString());
-                steps.get(position).setTime(Integer.parseInt(holder.getTime().getText().toString()));
                 Intent iGallery = new Intent(Intent.ACTION_PICK);
                 iGallery.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 mMyFragmentBundle.putInt("pos", position);
@@ -101,15 +99,9 @@ public class AddProductDialog extends BottomSheetDialogFragment {
         }, new StepsAdapter.AdapterDeleteItemCallback() {
             @Override
             public void deleteAt(int position) {
-//                for (int x = recyclerView.getChildCount(), i = 0; i < x; i++) {
-//                    StepsAdapter.ViewHolder holder = (StepsAdapter.ViewHolder) recyclerView.findViewHolderForAdapterPosition(i);
-//                    steps.get(i).setNumber(i + 1);
-//                    System.out.println(i + 1);
-//                    steps.get(i).setInfo(holder.getInfo().getText().toString());
-//                    steps.get(i).setTime(Integer.parseInt(holder.getTime().getText().toString()));
-//                    stepsAdapter.notifyItemChanged(i, steps.get(i));
-//                }
-//                steps.remove(position);
+                steps.remove(position);
+                stepsAdapter.notifyItemRemoved(position);
+                stepsAdapter.notifyItemRangeChanged(position, steps.size());
             }
         });
         recyclerView.setAdapter(stepsAdapter);
@@ -117,7 +109,7 @@ public class AddProductDialog extends BottomSheetDialogFragment {
         add_step_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                steps.add(new Step(0, steps.size() + 1, "", null));
+                steps.add(new Step("", steps.size() + 1, "", null));
                 stepsAdapter.notifyItemInserted(steps.size() - 1);
             }
         });
@@ -139,7 +131,7 @@ public class AddProductDialog extends BottomSheetDialogFragment {
                                     StepsAdapter.ViewHolder holder = (StepsAdapter.ViewHolder) recyclerView.getChildViewHolder(recyclerView.getChildAt(i));
                                     Step step = steps.get(i);
                                     step.setInfo(holder.getInfo().getText().toString());
-                                    step.setTime(0);
+                                    step.setTime("");
                                     step.setNumber(i + 1);
 //                        StorageReference stepPhotoReference = postReference.child("Step" + step.getNumber());
 //                        stepPhotoReference.putFile()

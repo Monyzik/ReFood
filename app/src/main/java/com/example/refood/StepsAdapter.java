@@ -91,7 +91,7 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
 
-        String path = steps.get(viewHolder.getAdapterPosition()).getImagePath();
+        String path = steps.get(position).getImagePath();
 
         if (path != null) {
             Glide.with(context).load(Uri.parse(path)).into(viewHolder.getFoodImage());
@@ -99,22 +99,60 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.ViewHolder> 
             viewHolder.foodImage.setImageResource(R.drawable.example_of_food_photo);
         }
 
-        steps.get(viewHolder.getAdapterPosition()).setNumber(viewHolder.getAdapterPosition());
-        viewHolder.getNumber().setText(String.valueOf(steps.get(viewHolder.getAdapterPosition()).getNumber()));
-        viewHolder.getTime().setText(String.valueOf(steps.get(viewHolder.getAdapterPosition()).getTime()));
-        viewHolder.getInfo().setText(steps.get(viewHolder.getAdapterPosition()).getInfo());
+        steps.get(position).setNumber(position + 1);
+
+        viewHolder.getNumber().setText(String.valueOf(steps.get(position).getNumber()));
+        viewHolder.getTime().setText(String.valueOf(steps.get(position).getTime()));
+        viewHolder.getInfo().setText(steps.get(position).getInfo());
+
+        viewHolder.getInfo().addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                steps.get(viewHolder.getAdapterPosition()).setInfo(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        viewHolder.getTime().addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                steps.get(viewHolder.getAdapterPosition()).setTime(s.toString());
+                System.out.println(viewHolder.getAdapterPosition());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
 
         viewHolder.getFoodImage().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                callback.onMethodCallback(path, viewHolder.getAdapterPosition());
+                if (viewHolder.getAdapterPosition() != -1) {
+                    callback.onMethodCallback(path, viewHolder.getAdapterPosition());
+                }
             }
         });
         
         viewHolder.getDelete().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deleteItemCallback.deleteAt(viewHolder.getAdapterPosition());
+                if (viewHolder.getAdapterPosition() != -1) {
+                    deleteItemCallback.deleteAt(viewHolder.getAdapterPosition());
+                }
             }
         });
 
