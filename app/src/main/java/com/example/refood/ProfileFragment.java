@@ -120,15 +120,20 @@ public class ProfileFragment extends Fragment {
         singoutTextView = view.findViewById(R.id.logout);
 //        Picasso.with(view.getContext()).load(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getPhotoUrl()).into(avatarView);
 
-        System.out.println(firebaseAuth.getCurrentUser().getUid());
-
         db.collection(User.COLLECTION_NAME).document(Objects.requireNonNull(firebaseAuth.getCurrentUser().getUid())).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                     User user = documentSnapshot.toObject(User.class);
                     if (user.avatar_path != null) {
                         StorageReference profileAvatarReference = storage.getReference(user.avatar_path);
-                        Glide.with(view.getContext()).load(profileAvatarReference).into(avatarView);
+                        profileAvatarReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                String imageURL = uri.toString();
+                                Glide.with(getActivity().getApplicationContext()).load(imageURL).into(avatarView);
+
+                            }
+                        });
                     } else {
                         avatarView.setImageResource(R.drawable.baseline_person);
                     }
@@ -138,7 +143,7 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent iGallery = new Intent(Intent.ACTION_PICK);
-                iGallery.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                iGallery.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
                 startActivityForResult(iGallery, GALLERY_REQ_CODE);
             }
         });
@@ -161,10 +166,10 @@ public class ProfileFragment extends Fragment {
             if (requestCode == GALLERY_REQ_CODE) {
                 StorageReference storageReference = storage.getReference().child("images/users_avatars/");
                 StorageReference storageReferenceUserAvatar = storageReference.child(firebaseAuth.getCurrentUser().getUid());
-                StorageReference avatarReference = storageReferenceUserAvatar.child(firebaseAuth.getCurrentUser().getUid());
+                StorageReference avatarReference = storageReferenceUserAvatar.child(firebaseAuth.getCurrentUser().getUid() + ".jpg");
                 db.collection(User.COLLECTION_NAME).document(firebaseAuth.getCurrentUser().getUid()).update("avatar_path", avatarReference.getPath());
                 avatarReference.putFile(data.getData());
-                avatarView.setImageURI(data.getData());
+                Glide.with(this).load(data.getData()).into(avatarView);
             }
 
         }
