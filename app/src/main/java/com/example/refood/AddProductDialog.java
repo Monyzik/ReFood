@@ -76,6 +76,7 @@ public class AddProductDialog extends BottomSheetDialogFragment {
                 iGallery.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 mMyFragmentBundle.putInt("pos", position);
                 startActivityForResult(iGallery, GALLERY_REQ_CODE);
+
             }
         }, new StepsAdapter.AdapterDeleteItemCallback() {
             @Override
