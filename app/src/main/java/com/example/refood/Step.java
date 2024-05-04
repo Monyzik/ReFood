@@ -1,11 +1,15 @@
 package com.example.refood;
 
-import android.widget.ImageView;
+import com.google.gson.annotations.Expose;
 
 public class Step {
+    @Expose
     private long number;
+    @Expose
     private String info, time;
+    @Expose
     private String imagePath;
+
 
     public Step(int number) {
         this.number = number;
@@ -33,6 +37,8 @@ public class Step {
     public String getImagePath() {
         return imagePath;
     }
+
+
     public void setTime(String time) {
         this.time = time;
     }
@@ -45,5 +51,6 @@ public class Step {
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
     }
+
 
 }

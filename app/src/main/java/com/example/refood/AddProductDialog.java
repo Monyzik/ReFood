@@ -1,11 +1,8 @@
 package com.example.refood;
 
-import android.app.Application;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +16,6 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -28,28 +24,13 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Objects;
 
 public class AddProductDialog extends BottomSheetDialogFragment {
@@ -144,7 +125,7 @@ public class AddProductDialog extends BottomSheetDialogFragment {
                                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                         if (task.isSuccessful()) {
                                             User user = task.getResult().toObject(User.class);
-                                            Post post = new Post(post_id, user.name, title.getText().toString(), info.getText().toString(), "Some dirs", new Date(), 0, 0,
+                                            Post post = new Post(post_id, user.name, title.getText().toString(), info.getText().toString(), null, new Date(), 0, 0,
                                                     steps, new ArrayList<>(), new ArrayList<>());
 
 
@@ -156,22 +137,17 @@ public class AddProductDialog extends BottomSheetDialogFragment {
                                 });
                                 File recipes = new File(getContext().getFilesDir() + "/Recipes");
                                 String post_id_internal = "post_id_" + Objects.requireNonNull(recipes.listFiles()).length;
-                                Post post = new Post(post_id_internal, title.getText().toString(), info.getText().toString(), "ss", new Date(), 0, 0, steps, new ArrayList<>(), new ArrayList<>());
+                                Post post = new Post(post_id_internal, title.getText().toString(), info.getText().toString(), null, new Date(), 0, 0, steps, new ArrayList<>(), new ArrayList<>());
                                 File post_files = new File(getContext().getFilesDir() + "/Recipes/" + post.getId());
                                 File post_file = new File(getContext().getFilesDir() + "/Recipes/" + post.getId() + "/main_file");
                                 post_files.mkdirs();
-                                if (Post.saveRecipe(post, post_file)) {
+                                if (Post.saveRecipe(post, post_files.getAbsolutePath(), getContext().getContentResolver(), getContext())) {
                                     System.out.println("успешно сохранено");
                                 } else {
                                     System.out.println("Ошибка!!!!!!!!!!!");
                                 }
                                 System.out.println(post_file.getPath());
-                                try {
-                                    Post post1 = Post.readSavedRecipe(post_file);
-                                    System.out.println(post1.getId() + "");
-                                } catch (IOException | JSONException e) {
-                                    throw new RuntimeException(e);
-                                }
+
 
 
                             } else {
@@ -214,6 +190,7 @@ public class AddProductDialog extends BottomSheetDialogFragment {
             if (requestCode == GALLERY_REQ_CODE && data != null) {
                 int pos = mMyFragmentBundle.getInt("pos");
                 steps.get(pos).setImagePath(data.getData().toString());
+                System.out.println(data.getData());
                 System.out.println("Image selected");
                 stepsAdapter.notifyItemChanged(pos);
             }

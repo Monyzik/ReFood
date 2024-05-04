@@ -1,18 +1,14 @@
 package com.example.refood;
 
-import android.provider.ContactsContract;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.util.Log;
-import android.widget.ImageView;
-
-import androidx.annotation.NonNull;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
@@ -20,16 +16,13 @@ import com.google.gson.annotations.Expose;
 import org.json.JSONException;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.TreeSet;
+
 
 public class Post {
     @Expose
@@ -77,26 +70,74 @@ public class Post {
 
     public Post() {}
 
-    public static Post readSavedRecipe(File file) throws IOException, JSONException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        Post post = objectMapper.readValue(file, Post.class);
+    public static Post readSavedRecipe(File recipeDir) throws IOException, JSONException {
+        Post post = null;
+        String mainImage = "";
+        for (File file : recipeDir.listFiles()) {
+            if (file.getName().equals("main_file")) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                post = objectMapper.readValue(file, Post.class);
+            } else if (file.getName().equals("main_image.jpg")) {
+                mainImage = file.getAbsolutePath();
+            }
+        }
+        post.setImage(mainImage);
+        for (File file : recipeDir.listFiles()) {
+            String name = file.getName();
+            if (name.substring(0, 1).equals("s")) {
+                post.steps.get(Integer.parseInt(name.substring(5, name.length() - 4))).setImagePath(file.getAbsolutePath());
+            }
+        }
         return post;
     }
 
-    public static boolean saveRecipe(Post post, File post_file) {
+
+    public static boolean saveRecipe(Post post, String path, ContentResolver contentResolver, Context context) {
+        File main = new File(path, "main_file");
+        File main_image = new File(path, "main_image.jpg");
+        try {
+            if (post.image != null) {
+                FileOutputStream outputStream = new FileOutputStream(main_image);
+                Bitmap bitmap_main_image = MediaStore.Images.Media.getBitmap(contentResolver, Uri.parse(post.image));
+                bitmap_main_image.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                main_image.createNewFile();
+                outputStream.flush();
+                outputStream.close();
+            }
+        } catch (Exception e) {
+            Log.e("E", e.getMessage());
+        }
+        try {
+
+            for (int i = 0; i < post.steps.size(); i++) {
+                File step_image = new File(path, "step_" + i + ".jpg");
+                FileOutputStream  outputStream = new FileOutputStream(step_image);
+                if (post.steps.get(i).getImagePath() != null) {
+                    Bitmap bitmap_step_image = MediaStore.Images.Media.getBitmap(contentResolver, Uri.parse(post.steps.get(i).getImagePath()));
+                    bitmap_step_image.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                    step_image.createNewFile();
+                }
+
+                outputStream.flush();
+                outputStream.close();
+            }
+        } catch (Exception e) {
+            Log.e("e", e.getMessage());
+        }
+
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.setPrettyPrinting();
         Gson gson = gsonBuilder.create();
         String json = gson.toJson(post);
         try {
-            PrintWriter writer = new PrintWriter(new FileWriter(post_file));
+            PrintWriter writer = new PrintWriter(new FileWriter(main));
             writer.print(json);
             writer.close();
         } catch (IOException e) {
             return false;
         }
         try {
-            post_file.createNewFile();
+            main.createNewFile();
         } catch (IOException e) {
             return false;
         }

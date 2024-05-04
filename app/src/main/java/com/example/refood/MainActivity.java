@@ -43,7 +43,15 @@ public class MainActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
         File dir = new File(getFilesDir(), "Recipes");
-        if (getFilesDir().listFiles().length == 3) dir.mkdir();
+        boolean flag = false;
+        for (File file: getFilesDir().listFiles()) {
+            if (file.getName().equals("Recipes")) {
+                flag = true;
+            }
+        }
+        if (!flag) {
+            dir.mkdir();
+        }
         if (currentUser == null) {
             startActivity(new Intent(this, LoginActivity.class));
             finish();
