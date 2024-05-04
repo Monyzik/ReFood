@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "386006535418",
+    "firebase_url": "https://refoodi-default-rtdb.europe-west1.firebasedatabase.app",
     "project_id": "refoodi",
     "storage_bucket": "refoodi.appspot.com"
   },
@@ -13,6 +14,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "386006535418-kncmjulfcflje2ombtemm3gfi4ogjgfc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.refood",
+            "certificate_hash": "f0e39623bfa6f1337ac33a9f146e68de22c6809b"
+          }
+        },
         {
           "client_id": "386006535418-p1grrlp6c9p8vrc2af8d87artil17dpl.apps.googleusercontent.com",
           "client_type": 1,
