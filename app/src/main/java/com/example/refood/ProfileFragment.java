@@ -8,6 +8,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.provider.MediaStore;
 import android.util.Log;
@@ -15,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,11 +33,15 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONException;
+
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Objects;
 
 import io.getstream.avatarview.AvatarView;
@@ -58,6 +65,12 @@ public class ProfileFragment extends Fragment {
     FirebaseStorage storage;
 
     TextView usernameTextView;
+
+    ArrayList<Post> posts = new ArrayList<>();
+
+    RecyclerView myRecieptsRecyclerView;
+
+    MyReceiptsAdapter myReceiptsAdapter;
 
     ImageView avatarView, bigAvatarImage, singOut;
 
@@ -120,6 +133,25 @@ public class ProfileFragment extends Fragment {
         bigAvatarImage = view.findViewById(R.id.big_avatar_image);
         singOut = view.findViewById(R.id.logout);
         usernameTextView = view.findViewById(R.id.usernameTextView);
+        myRecieptsRecyclerView = view.findViewById(R.id.myRecieptsRecyclerView);
+
+        File dir = new File(getContext().getFilesDir(), "Recipes");
+        try {
+            for (File file: dir.listFiles()) {
+                 posts.add(Post.readSavedRecipe(file));
+            }
+        } catch (Exception e) {
+            Log.e("e", e.getMessage());
+        }
+
+        myReceiptsAdapter = new MyReceiptsAdapter(posts, getContext());
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        myRecieptsRecyclerView.setLayoutManager(linearLayoutManager);
+        myRecieptsRecyclerView.setAdapter(myReceiptsAdapter);
+        myReceiptsAdapter.notifyDataSetChanged();
+
+
+
 
         db.collection(User.COLLECTION_NAME).document(Objects.requireNonNull(firebaseAuth.getCurrentUser().getUid())).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override

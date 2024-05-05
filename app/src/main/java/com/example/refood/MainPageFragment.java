@@ -78,28 +78,5 @@ public class MainPageFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ArrayList <Post> posts = new ArrayList<>();
-        File dir = new File(getContext().getFilesDir(), "Recipes");
-        try {
-            for (File file : dir.listFiles()) {
-                try {
-                    posts.add(Post.readSavedRecipe(file));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-            try {
-                RecyclerView recyclerView = view.findViewById(R.id.rrrr);
-                recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                PostsTapeAdapter adapter = new PostsTapeAdapter(posts);
-                recyclerView.setAdapter(adapter);
-            } catch (Exception e) {
-                Log.e("e", e.getMessage());
-            }
-        } catch (Exception e) {
-            Log.e("e", e.getMessage());
-        }
     }
 }

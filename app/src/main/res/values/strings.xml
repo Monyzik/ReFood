@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">ReFood</string>
+    <string name="app_name">ReFood</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
     <string name="tape">Tape</string>
@@ -27,7 +27,7 @@
     <string name="login">Login</string>
     <string name="already_have_account">Already have an account? Sign in!</string>
     <string name="logout">Logout</string>
-    <string name="default_web_client_id">386006535418-8jclrquc65fobdgaone39m8a21dnfhkr.apps.googleusercontent.com</string>
+    <string name="default_web_client_id" translatable="false">386006535418-8jclrquc65fobdgaone39m8a21dnfhkr.apps.googleusercontent.com</string>
     <string name="email">Email</string>
     <string name="steps">Steps</string>
     <string name="detail_info">Detail info</string>
@@ -35,4 +35,8 @@
     <string name="time">Time</string>
     <string name="step">Step</string>
     <string name="name">Name</string>
+    <string name="likes">Likes</string>
+    <string name="dislikes">Dislikes</string>
+    <string name="marked">Marks</string>
+    <string name="myreciepts">My receipts</string>
 </resources>
