@@ -71,8 +71,8 @@ public class MyReceiptsAdapter extends RecyclerView.Adapter<MyReceiptsAdapter.Vi
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         viewHolder.getTitle().setText(posts.get(position).getTitle());
         String path = posts.get(position).getImage();
-        System.out.println(posts.get(position).isLocal);
-        boolean isLocal = posts.get(position).isLocal();
+        System.out.println(posts.get(position).getIsLocal());
+        boolean isLocal = posts.get(position).getIsLocal();
         if (isLocal) {
             viewHolder.getIsLocalImage().setImageResource(R.drawable.baseline_cloud_off_24);
         } else {

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/step_text_read"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/step"
+        android:textSize="20sp"/>
+
+    <TextView
+        android:id="@+id/step_num_read"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:layout_toRightOf="@id/step_text_read"
+        android:layout_marginStart="@dimen/small_margin"
+        android:textSize="20sp"
+        android:layout_marginEnd="@dimen/simple_margin"/>
+
+    <TextView
+        android:id="@+id/time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:layout_below="@id/step_num_read"
+        android:layout_marginTop="@dimen/simple_margin"/>
+
+
+    <TextView
+        android:id="@+id/time_num"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:layout_toRightOf="@id/time"
+        android:layout_alignTop="@id/time"/>
+
+    <TextView
+        android:id="@+id/info_read"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textSize="17sp"
+        android:layout_marginTop="@dimen/simple_margin"
+        android:fontFamily="@font/yeseva_one"
+        android:layout_below="@id/time"/>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_view_food_image_read"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_below="@id/info_read"
+        android:layout_marginStart="@dimen/simple_margin"
+        android:layout_marginTop="@dimen/simple_margin"
+        android:layout_marginEnd="@dimen/simple_margin"
+        android:layout_marginBottom="@dimen/simple_margin"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/food_image_read"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/baseline_person" />
+    </androidx.cardview.widget.CardView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:backgroundTint="@color/three_fourth_invisible_black"
+        android:layout_below="@id/card_view_food_image_read">
+
+    </View>
+
+
+</RelativeLayout>

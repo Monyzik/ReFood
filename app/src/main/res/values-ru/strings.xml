@@ -27,4 +27,10 @@
     <string name="time">Время</string>
     <string name="step">Шаг</string>
     <string name="name">Имя</string>
+    <string name="likes">Лайков</string>
+    <string name="dislikes">Дизлайков</string>
+    <string name="marked">Отмеченных</string>
+    <string name="myreciepts">Мои рецепты</string>
+    <string name="author_of_recipe">Автор рецепта</string>
+    <string name="add_to_favorites">Добавить в любимые</string>
 </resources>

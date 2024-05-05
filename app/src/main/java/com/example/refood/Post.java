@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import org.json.JSONException;
 
@@ -23,6 +24,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
 
 
 public class Post {
@@ -30,8 +32,9 @@ public class Post {
     public static final String COLLECTION_NAME = "posts";
     @Expose
     private String author, title, text, id;
+
     @Expose
-    boolean isLocal;
+    Boolean isLocal;
     @Expose
     String date;
     @Expose
@@ -41,16 +44,15 @@ public class Post {
     @Expose
     ArrayList <String> likes_from_users, dislikes_from_users;
     @Expose
-    private String image;
+    String image;
 
-    public Post(String id, String author, String title, String text, String image, Date date, boolean isLocal, long like_count, long dislike_count, ArrayList <Step> steps, ArrayList <String> likes_from_users, ArrayList <String> dislikes_from_users) {
+    public Post(String id, String author, String title, String text, String image, Date date, Boolean isLocal, long like_count, long dislike_count, ArrayList <Step> steps, ArrayList <String> likes_from_users, ArrayList <String> dislikes_from_users) {
         this.id = id;
         this.author = author;
         this.title = title;
         this.text = text;
         this.image = image;
         this.isLocal = isLocal;
-
         this.like_count = like_count;
         this.dislike_count = dislike_count;
         this.steps = steps;
@@ -60,7 +62,7 @@ public class Post {
 
     public Post() {}
 
-    public static Post readSavedRecipe(File recipeDir) throws IOException, JSONException {
+    public static Post readSavedRecipe(File recipeDir) throws IOException {
         Post post = null;
         String mainImage = "";
         for (File file : recipeDir.listFiles()) {
@@ -86,7 +88,7 @@ public class Post {
         File main = new File(path, "main_file");
         File main_image = new File(path, "main_image.jpg");
         try {
-            if (post.image != null) {
+            if (!Objects.equals(post.getImage(), "")) {
                 FileOutputStream outputStream = new FileOutputStream(main_image);
                 Bitmap bitmap_main_image = MediaStore.Images.Media.getBitmap(contentResolver, Uri.parse(post.image));
                 bitmap_main_image.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
@@ -135,7 +137,7 @@ public class Post {
     }
 
 
-    public boolean isLocal() {
+    public boolean getIsLocal() {
         return isLocal;
     }
 
@@ -234,7 +236,7 @@ public class Post {
         this.dislikes_from_users = dislikes_from_users;
     }
 
-    public void setLocal(boolean local) {
-        isLocal = local;
+    public void setIsLocal(boolean local) {
+        this.isLocal = local;
     }
 }
