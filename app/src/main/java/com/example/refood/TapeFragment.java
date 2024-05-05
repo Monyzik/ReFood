@@ -102,7 +102,7 @@ public class TapeFragment extends Fragment {
                     }
                 });
         posts_recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        PostsTapeAdapter adapter = new PostsTapeAdapter(posts, getActivity());
+        PostsTapeAdapter adapter = new PostsTapeAdapter(posts);
         posts_recyclerView.setAdapter(adapter);
         if (posts.isEmpty()) {
             updateRecyclerViewUI(view);

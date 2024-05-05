@@ -1,8 +1,5 @@
 package com.example.refood;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,14 +10,10 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import java.util.ArrayList;
 
 public class PostsTapeAdapter extends RecyclerView.Adapter<PostsTapeAdapter.ViewHolder> {
     private ArrayList <Post> posts;
-    private  Activity activity;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView title;
@@ -47,9 +40,8 @@ public class PostsTapeAdapter extends RecyclerView.Adapter<PostsTapeAdapter.View
         }
     }
 
-    public PostsTapeAdapter(ArrayList <Post> newposts, Activity newactivity) {
+    public PostsTapeAdapter(ArrayList <Post> newposts) {
         posts = newposts;
-        activity = newactivity;
     }
 
     @Override
@@ -65,18 +57,6 @@ public class PostsTapeAdapter extends RecyclerView.Adapter<PostsTapeAdapter.View
         viewHolder.getTitle().setText(posts.get(position).getTitle());
         viewHolder.getAuthor().setText(posts.get(position).getAuthor());
         viewHolder.getFoodImage().setImageResource(R.drawable.example_of_food_photo);
-        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(activity, ReadOtherRecipe.class);
-                GsonBuilder gsonBuilder = new GsonBuilder();
-                gsonBuilder.setPrettyPrinting();
-                Gson gson = gsonBuilder.create();
-                String json = gson.toJson(posts.get(viewHolder.getAdapterPosition()));
-                i.putExtra("post", json);
-                activity.startActivity(i);
-            }
-        });
 //        viewHolder.getFoodImage().setImageBitmap(((BitmapDrawable)posts.get(position).getImage().getDrawable()).getBitmap());
     }
 

@@ -126,7 +126,7 @@ public class AddProductDialog extends BottomSheetDialogFragment {
                                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                         if (task.isSuccessful()) {
                                             User user = task.getResult().toObject(User.class);
-                                            Post post = new Post(post_id, user.name, title.getText().toString(), info.getText().toString(), null, new Date(), 0, 0,
+                                            Post post = new Post(post_id, user.name, title.getText().toString(), info.getText().toString(), null, new Date(), true, 0, 0,
                                                     steps, new ArrayList<>(), new ArrayList<>());
 
 
@@ -138,7 +138,7 @@ public class AddProductDialog extends BottomSheetDialogFragment {
                                 });
                                 File recipes = new File(getContext().getFilesDir() + "/Recipes");
                                 String post_id_internal = "post_id_" + Objects.requireNonNull(recipes.listFiles()).length;
-                                Post post = new Post(post_id_internal, title.getText().toString(), info.getText().toString(), null, new Date(), 0, 0, steps, new ArrayList<>(), new ArrayList<>());
+                                Post post = new Post(post_id_internal,"i'm",  title.getText().toString(), info.getText().toString(), null, new Date(), true, 0, 0, steps, new ArrayList<>(), new ArrayList<>());
                                 File post_files = new File(getContext().getFilesDir() + "/Recipes/" + post.getId());
                                 File post_file = new File(getContext().getFilesDir() + "/Recipes/" + post.getId() + "/main_file");
                                 post_files.mkdirs();

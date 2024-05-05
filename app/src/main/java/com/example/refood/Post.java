@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -27,10 +28,10 @@ import java.util.Date;
 public class Post {
     @Expose
     public static final String COLLECTION_NAME = "posts";
-
-//    Map <String, Object> post = new HashMap<>();
     @Expose
     private String author, title, text, id;
+    @Expose
+    boolean isLocal;
     @Expose
     String date;
     @Expose
@@ -42,24 +43,13 @@ public class Post {
     @Expose
     private String image;
 
-    public Post(String id, String author, String title, String text, String image, Date date, long like_count, long dislike_count, ArrayList <Step> steps, ArrayList <String> likes_from_users, ArrayList <String> dislikes_from_users) {
+    public Post(String id, String author, String title, String text, String image, Date date, boolean isLocal, long like_count, long dislike_count, ArrayList <Step> steps, ArrayList <String> likes_from_users, ArrayList <String> dislikes_from_users) {
         this.id = id;
         this.author = author;
         this.title = title;
         this.text = text;
         this.image = image;
-
-        this.like_count = like_count;
-        this.dislike_count = dislike_count;
-        this.steps = steps;
-        this.likes_from_users = likes_from_users;
-        this.dislikes_from_users = dislikes_from_users;
-    }
-    public Post(String id, String title, String text, String image, Date date, long like_count, long dislike_count, ArrayList <Step> steps, ArrayList <String> likes_from_users, ArrayList <String> dislikes_from_users) {
-        this.id = id;
-        this.title = title;
-        this.text = text;
-        this.image = image;
+        this.isLocal = isLocal;
 
         this.like_count = like_count;
         this.dislike_count = dislike_count;
@@ -144,6 +134,10 @@ public class Post {
         return true;
     }
 
+
+    public boolean isLocal() {
+        return isLocal;
+    }
 
     public ArrayList<Step> getSteps() {
         return steps;
@@ -238,5 +232,9 @@ public class Post {
 
     public void setDislikes_from_users(ArrayList<String> dislikes_from_users) {
         this.dislikes_from_users = dislikes_from_users;
+    }
+
+    public void setLocal(boolean local) {
+        isLocal = local;
     }
 }

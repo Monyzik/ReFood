@@ -27,6 +27,4 @@
     <string name="time">Время</string>
     <string name="step">Шаг</string>
     <string name="name">Имя</string>
-    <string name="author_of_recipe">Автор рецепта</string>
-    <string name="add_to_favorites">Добавить в любимые</string>
 </resources>

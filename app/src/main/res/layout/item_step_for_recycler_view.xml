@@ -13,9 +13,7 @@
         android:layout_marginTop="@dimen/simple_margin"
         android:layout_marginBottom="@dimen/simple_margin"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:backgroundTint="@color/fui_transparent"
-        app:cardElevation="0dp">
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
