@@ -85,9 +85,11 @@
 
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/card_view_image"
                 android:layout_width="match_parent"
                 android:layout_height="130dp"
                 android:layout_margin="@dimen/simple_margin"
+                android:visibility="gone"
                 app:cardCornerRadius="@dimen/simple_margin"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/info_about_step_layout"
@@ -110,6 +112,19 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/baseline_delete_outline_24" />
 
+            <ImageView
+                android:id="@+id/add_photo_icon"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                app:srcCompat="@drawable/baseline_add_photo_blue"
+                app:layout_constraintTop_toBottomOf="@id/info_about_step_layout"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginStart="@dimen/simple_margin"
+                android:layout_marginTop="@dimen/simple_margin"
+                android:layout_marginBottom="@dimen/simple_margin"
+
+                 />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

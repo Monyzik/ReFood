@@ -9,134 +9,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp">
-
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="@dimen/simple_margin"
-                app:layout_constraintTop_toBottomOf="@+id/image_group">
-
-
-<!--                <TextView-->
-<!--                    android:id="@+id/title_text"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_margin="10dp"-->
-<!--                    android:fontFamily="@font/yeseva_one"-->
-<!--                    android:gravity="left"-->
-<!--                    android:paddingStart="17dp"-->
-<!--                    android:text="@string/title"-->
-<!--                    android:textSize="15dp"-->
-<!--                    android:textStyle="bold"-->
-<!--                    app:layout_constraintEnd_toEndOf="parent"-->
-<!--                    app:layout_constraintStart_toStartOf="parent"-->
-<!--                    app:layout_constraintTop_toTopOf="parent" />-->
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/title_input_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/small_margin"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <EditText
-                        android:id="@+id/editText_title"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:hint="@string/title"
-                        android:inputType="text"/>
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/info_input_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintStart_toStartOf="parent"
-                    android:layout_marginTop="@dimen/small_margin"
-                    app:layout_constraintTop_toBottomOf="@+id/title_input_layout">
-
-                    <EditText
-                        android:id="@+id/editText_info"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/info"
-                        android:inputType="textMultiLine" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-
-                <TextView
-                    android:id="@+id/steps_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/simple_margin"
-                    android:fontFamily="@font/yeseva_one"
-                    android:gravity="start"
-                    android:text="@string/steps"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/info_input_layout" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recycler_steps"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/small_margin"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/steps_text">
-
-                </androidx.recyclerview.widget.RecyclerView>
-
-                <TextView
-                    android:id="@+id/add_step_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="35dp"
-                    android:layout_marginTop="10dp"
-                    android:clickable="true"
-
-                    android:text="@string/add_steps"
-                    android:textColor="@color/light_blue"
-                    android:textSize="18sp"
-
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/recycler_steps" />
-
-                <Button
-                    android:id="@+id/apply_button"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="15dp"
-                    android:text="@string/apply"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/add_step_button" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/simple_margin">
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/image_group"
                 android:layout_width="match_parent"
                 android:layout_height="130dp"
 
-                android:layout_margin="10dp"
                 android:clickable="true"
-
-                app:cardCornerRadius="@dimen/simple_margin"
-                app:layout_constraintTop_toTopOf="parent"
-
-                tools:layout_editor_absoluteX="20dp">
+                app:cardCornerRadius="@dimen/simple_margin">
 
                 <ImageView
                     android:id="@+id/imageView"
@@ -170,7 +54,93 @@
                 </FrameLayout>
             </androidx.cardview.widget.CardView>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/title_input_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/image_group"
+                android:layout_marginTop="@dimen/simple_margin">
+
+                <EditText
+                    android:id="@+id/editText_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="@string/title"
+                    android:inputType="text" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/info_input_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/title_input_layout"
+                android:layout_marginTop="@dimen/simple_margin">
+
+                <EditText
+                    android:id="@+id/editText_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/info"
+                    android:inputType="textMultiLine" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/steps_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/yeseva_one"
+                android:gravity="start"
+                android:text="@string/steps"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_below="@id/info_input_layout"
+                android:layout_marginStart="@dimen/simple_margin"
+                android:layout_marginTop="@dimen/simple_margin" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_steps"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:layout_below="@id/steps_text"
+
+                android:layout_marginStart="@dimen/small_margin"
+                android:layout_marginTop="@dimen/small_margin"
+                android:layout_marginEnd="@dimen/small_margin"
+                android:nestedScrollingEnabled="false"
+                app:layout_constrainedHeight="true">
+
+            </androidx.recyclerview.widget.RecyclerView>
+
+            <TextView
+                android:id="@+id/add_step_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+
+                android:layout_marginTop="@dimen/simple_margin"
+                android:layout_marginBottom="@dimen/simple_margin"
+                android:layout_below="@id/recycler_steps"
+                android:layout_marginStart="35dp"
+                android:text="@string/add_steps"
+                android:textColor="@color/light_blue"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/apply_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:layout_below="@id/add_step_button"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:text="@string/apply"
+                android:layout_marginTop="@dimen/small_margin" />
+
+        </RelativeLayout>
     </androidx.core.widget.NestedScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

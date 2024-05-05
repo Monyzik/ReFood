@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 
 public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.ViewHolder> {
     Context context;
+
 
     AdapterCallback callback;
 
@@ -32,6 +34,8 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.ViewHolder> 
         private final ImageView foodImage;
         private final View delete;
         private final TextView number;
+        private final ImageView icon_add_image;
+        private final View card_view_image;
 
 
         public ViewHolder (View view) {
@@ -39,8 +43,10 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.ViewHolder> 
             time = view.findViewById(R.id.editText_timer);
             info = view.findViewById(R.id.editText_info_about_step);
             foodImage = view.findViewById(R.id.image_food);
+            icon_add_image = view.findViewById(R.id.add_photo_icon);
             delete = view.findViewById(R.id.delete_button);
             number = view.findViewById(R.id.step_num_text);
+            card_view_image = view.findViewById(R.id.card_view_image);
 
 
         }
@@ -89,9 +95,13 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.ViewHolder> 
         String path = steps.get(position).getImagePath();
 
         if (path != null) {
+            viewHolder.icon_add_image.setVisibility(View.GONE);
+            viewHolder.card_view_image.setVisibility(View.VISIBLE);
             Glide.with(context).load(Uri.parse(path)).into(viewHolder.getFoodImage());
         } else {
-            viewHolder.foodImage.setImageResource(R.drawable.example_of_food_photo);
+//            viewHolder.foodImage.setImageResource(R.drawable.example_of_food_photo);
+            viewHolder.icon_add_image.setVisibility(View.VISIBLE);
+            viewHolder.card_view_image.setVisibility(View.GONE);
         }
 
         steps.get(position).setNumber(position + 1);
@@ -139,6 +149,16 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.ViewHolder> 
                 if (viewHolder.getAdapterPosition() != -1) {
                     callback.onMethodCallback(path, viewHolder.getAdapterPosition());
                 }
+
+            }
+        });
+        viewHolder.icon_add_image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (viewHolder.getAdapterPosition() != -1) {
+                    callback.onMethodCallback(path, viewHolder.getAdapterPosition());
+                }
+
             }
         });
         
