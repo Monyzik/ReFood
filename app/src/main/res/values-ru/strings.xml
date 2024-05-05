@@ -31,4 +31,6 @@
     <string name="dislikes">Дизлайков</string>
     <string name="marked">Отмеченных</string>
     <string name="myreciepts">Мои рецепты</string>
+    <string name="author_of_recipe">Автор рецепта</string>
+    <string name="add_to_favorites">Добавить в любимые</string>
 </resources>

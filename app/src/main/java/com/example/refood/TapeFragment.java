@@ -93,16 +93,16 @@ public class TapeFragment extends Fragment {
         add_button = view.findViewById(R.id.add_button);
 
         add_button.setOnClickListener( new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        AddProductDialog bottomSheet =
-                                new AddProductDialog();
-                        bottomSheet.show(getParentFragmentManager(),
-                                "ModalBottomSheet");
-                    }
-                });
+            @Override
+            public void onClick(View v) {
+                AddProductDialog bottomSheet =
+                        new AddProductDialog();
+                bottomSheet.show(getParentFragmentManager(),
+                        "ModalBottomSheet");
+            }
+        });
         posts_recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        PostsTapeAdapter adapter = new PostsTapeAdapter(posts);
+        PostsTapeAdapter adapter = new PostsTapeAdapter(posts, getActivity());
         posts_recyclerView.setAdapter(adapter);
         if (posts.isEmpty()) {
             updateRecyclerViewUI(view);
