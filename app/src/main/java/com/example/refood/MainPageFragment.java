@@ -1,5 +1,6 @@
 package com.example.refood;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,7 +13,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TableRow;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import org.json.JSONException;
 
@@ -93,7 +98,7 @@ public class MainPageFragment extends Fragment {
             try {
                 RecyclerView recyclerView = view.findViewById(R.id.rrrr);
                 recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                PostsTapeAdapter adapter = new PostsTapeAdapter(posts);
+                PostsTapeAdapter adapter = new PostsTapeAdapter(posts, getActivity());
                 recyclerView.setAdapter(adapter);
             } catch (Exception e) {
                 Log.e("e", e.getMessage());
