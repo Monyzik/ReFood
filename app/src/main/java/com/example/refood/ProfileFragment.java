@@ -57,9 +57,9 @@ public class ProfileFragment extends Fragment {
     FirebaseFirestore db;
     FirebaseStorage storage;
 
-    TextView singoutTextView;
+    TextView usernameTextView;
 
-    ImageView avatarView;
+    ImageView avatarView, bigAvatarImage, singOut;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -117,13 +117,15 @@ public class ProfileFragment extends Fragment {
         storage = FirebaseStorage.getInstance();
         super.onViewCreated(view, savedInstanceState);
         avatarView = view.findViewById(R.id.image_view_profile);
-        singoutTextView = view.findViewById(R.id.logout);
-//        Picasso.with(view.getContext()).load(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getPhotoUrl()).into(avatarView);
+        bigAvatarImage = view.findViewById(R.id.big_avatar_image);
+        singOut = view.findViewById(R.id.logout);
+        usernameTextView = view.findViewById(R.id.usernameTextView);
 
         db.collection(User.COLLECTION_NAME).document(Objects.requireNonNull(firebaseAuth.getCurrentUser().getUid())).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                     User user = documentSnapshot.toObject(User.class);
+                    usernameTextView.setText(user.getName().toString());
                     if (user.avatar_path != null) {
                         StorageReference profileAvatarReference = storage.getReference(user.avatar_path);
                         profileAvatarReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -131,6 +133,7 @@ public class ProfileFragment extends Fragment {
                             public void onSuccess(Uri uri) {
                                 String imageURL = uri.toString();
                                 Glide.with(getActivity().getApplicationContext()).load(imageURL).into(avatarView);
+                                Glide.with(getActivity().getApplicationContext()).load(imageURL).into(bigAvatarImage);
 
                             }
                         });
@@ -150,7 +153,7 @@ public class ProfileFragment extends Fragment {
 
 //        avatarView.setImageURI(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getPhotoUrl());
 
-        singoutTextView.setOnClickListener(new View.OnClickListener() {
+        singOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 signOut();
@@ -170,6 +173,7 @@ public class ProfileFragment extends Fragment {
                 db.collection(User.COLLECTION_NAME).document(firebaseAuth.getCurrentUser().getUid()).update("avatar_path", avatarReference.getPath());
                 avatarReference.putFile(data.getData());
                 Glide.with(this).load(data.getData()).into(avatarView);
+                Glide.with(this).load(data.getData()).into(bigAvatarImage);
             }
 
         }
