@@ -158,7 +158,7 @@ public class ProfileFragment extends Fragment {
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                     User user = documentSnapshot.toObject(User.class);
                     usernameTextView.setText(user.getName().toString());
-                    if (user.avatar_path != "") {
+                    if (!Objects.equals(user.avatar_path, "")) {
                         StorageReference profileAvatarReference = storage.getReference(user.avatar_path);
                         profileAvatarReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
