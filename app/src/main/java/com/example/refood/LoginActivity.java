@@ -128,7 +128,7 @@ public class LoginActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 DocumentSnapshot document = task.getResult();
                                 if (!document.exists()) {
-                                    User user = new User(firebaseUser.getUid(), firebaseUser.getDisplayName(), null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+                                    User user = new User(firebaseUser.getUid(), firebaseUser.getDisplayName(), null, 0L, 0L, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
                                     db.collection(User.COLLECTION_NAME).document(firebaseUser.getUid()).set(user);
                                 }
                             }
@@ -167,7 +167,7 @@ public class LoginActivity extends AppCompatActivity {
                                         if (task.isSuccessful()) {
                                             DocumentSnapshot document = task.getResult();
                                             if (!document.exists()) {
-                                                User user = new User(firebaseUser.getUid(), firebaseUser.getDisplayName(), null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+                                                User user = new User(firebaseUser.getUid(), firebaseUser.getDisplayName(), null, 0L, 0L, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
                                                 db.collection(User.COLLECTION_NAME).document(firebaseUser.getUid()).set(user);
                                             }
                                         }

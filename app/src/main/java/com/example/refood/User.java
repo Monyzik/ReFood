@@ -24,17 +24,24 @@ public class User {
 
     String name, avatar_path, id;
 
+    Long likes_on_user_posts, dislikes_on_user_post;
+
     ArrayList <String> mark_posts = new ArrayList<>();
     ArrayList <String> like_posts = new ArrayList<>();
     ArrayList <String> dislike_posts = new ArrayList<>();
 
-    public User(String id, String name, String avatar_path, ArrayList <String> mark_posts, ArrayList <String> like_posts, ArrayList <String> dislike_posts) {
+    ArrayList <String> id_user_posts = new ArrayList<>();
+
+    public User(String id, String name, String avatar_path, Long likes_on_user_posts, Long dislikes_on_user_post, ArrayList <String> mark_posts, ArrayList <String> like_posts, ArrayList <String> dislike_posts, ArrayList <String> id_user_posts) {
         this.name = name;
         this.avatar_path = avatar_path;
         this.id = id;
+        this.likes_on_user_posts = likes_on_user_posts;
+        this.dislikes_on_user_post = dislikes_on_user_post;
         this.mark_posts = mark_posts;
         this.like_posts = like_posts;
         this.dislike_posts = dislike_posts;
+        this.id_user_posts = id_user_posts;
     }
 
     public User() {}

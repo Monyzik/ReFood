@@ -56,37 +56,22 @@ public class ProfileFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     private final int GALLERY_REQ_CODE = 1000;
-
     private String mParam1;
     private String mParam2;
-
     FirebaseAuth firebaseAuth;
     FirebaseFirestore db;
     FirebaseStorage storage;
-
-    TextView usernameTextView;
-
+    TextView usernameTextView, myReceiptsTextView;
     ArrayList<Post> posts = new ArrayList<>();
-
     RecyclerView myRecieptsRecyclerView;
-
     MyReceiptsAdapter myReceiptsAdapter;
-
     ImageView avatarView, bigAvatarImage, singOut;
 
     public ProfileFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ProfileFragment.
-     */
-    // TODO: Rename and change types and number of parameters
+
     public static ProfileFragment newInstance(String param1, String param2) {
         ProfileFragment fragment = new ProfileFragment();
         Bundle args = new Bundle();
@@ -134,21 +119,23 @@ public class ProfileFragment extends Fragment {
         singOut = view.findViewById(R.id.logout);
         usernameTextView = view.findViewById(R.id.usernameTextView);
         myRecieptsRecyclerView = view.findViewById(R.id.myRecieptsRecyclerView);
+        myReceiptsTextView = view.findViewById(R.id.my_receipts_TextView);
 
-        File dir = new File(getContext().getFilesDir(), "Recipes");
+        File dir = new File(requireContext().getFilesDir(), "Recipes");
         try {
-            for (File file: dir.listFiles()) {
+            long count_of_posts = 5;
+            for (File file: Objects.requireNonNull(dir.listFiles())) {
                  posts.add(Post.readSavedRecipe(file));
+                 if (--count_of_posts == 0) break;
             }
         } catch (Exception e) {
             Log.e("e", e.getMessage());
         }
 
-        myReceiptsAdapter = new MyReceiptsAdapter(posts, getContext());
+        myReceiptsAdapter = new MyReceiptsAdapter(posts, getContext(), getActivity());
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         myRecieptsRecyclerView.setLayoutManager(linearLayoutManager);
         myRecieptsRecyclerView.setAdapter(myReceiptsAdapter);
-        myReceiptsAdapter.notifyDataSetChanged();
 
 
 
@@ -157,16 +144,17 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                     User user = documentSnapshot.toObject(User.class);
-                    usernameTextView.setText(user.getName().toString());
+                    usernameTextView.setText(user.getName());
                     if (user.avatar_path != null) {
                         StorageReference profileAvatarReference = storage.getReference(user.avatar_path);
                         profileAvatarReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
                             public void onSuccess(Uri uri) {
-                                String imageURL = uri.toString();
-                                Glide.with(getActivity().getApplicationContext()).load(imageURL).into(avatarView);
-                                Glide.with(getActivity().getApplicationContext()).load(imageURL).into(bigAvatarImage);
-
+                                if (isAdded()) {
+                                    String imageURL = uri.toString();
+                                    Glide.with(requireContext()).load(imageURL).into(avatarView);
+                                    Glide.with(requireContext()).load(imageURL).into(bigAvatarImage);
+                                }
                             }
                         });
                     } else {
@@ -174,6 +162,15 @@ public class ProfileFragment extends Fragment {
                     }
             }
         });
+
+        myReceiptsTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myAllReceiptsActivity = new Intent(getActivity(), MyAllReceiptsActivity.class);
+                getActivity().startActivity(myAllReceiptsActivity);
+            }
+        });
+
         avatarView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -182,9 +179,6 @@ public class ProfileFragment extends Fragment {
                 startActivityForResult(iGallery, GALLERY_REQ_CODE);
             }
         });
-
-//        avatarView.setImageURI(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getPhotoUrl());
-
         singOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

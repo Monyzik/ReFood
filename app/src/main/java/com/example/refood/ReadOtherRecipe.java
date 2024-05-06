@@ -20,6 +20,8 @@ import java.util.ArrayList;
 
 public class ReadOtherRecipe extends AppCompatActivity {
 
+    ImageView backImageView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +29,7 @@ public class ReadOtherRecipe extends AppCompatActivity {
         setContentView(R.layout.read_recipe);
         String json = getIntent().getStringExtra("post");
         ObjectMapper objectMapper = new ObjectMapper();
-        Post post = null;
+        Post post;
         try {
             post = objectMapper.readValue(json, Post.class);
         } catch (JsonProcessingException e) {
@@ -42,7 +44,15 @@ public class ReadOtherRecipe extends AppCompatActivity {
         TextView likes = findViewById(R.id.like_count);
         TextView dislikes = findViewById(R.id.dislike_count);
         Button add_to_favorite = findViewById(R.id.add_to_favorites);
+        backImageView = findViewById(R.id.back_from_read_receipt);
         RecyclerView recyclerView = findViewById(R.id.recycler_view_read_steps);
+
+        backImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         title.setText(post.getTitle());
         info.setText(post.getText());
@@ -51,17 +61,15 @@ public class ReadOtherRecipe extends AppCompatActivity {
             food_image.setImageURI(Uri.parse(post.getImage()));
         }
         else {
-            food_image.setImageDrawable(getDrawable(R.drawable.example_of_food_photo));
+            food_image.setImageResource(R.drawable.example_of_food_photo);
         }
         author.setText(post.getAuthor());
-        likes.setText(post.getLike_count() + "");
-        dislikes.setText(post.getDislike_count() + "");
+        likes.setText(String.valueOf(post.getLike_count()));
+        dislikes.setText(String.valueOf(post.getDislike_count()));
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         ReadStepAdapter adapter = new ReadStepAdapter(post.steps);
         recyclerView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
-
 
     }
 }

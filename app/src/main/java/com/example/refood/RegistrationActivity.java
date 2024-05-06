@@ -88,7 +88,7 @@ public class RegistrationActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful() && task.getResult().getUser() != null) {
                     FirebaseUser firebaseUser = task.getResult().getUser();
-                    User user = new User(firebaseUser.getUid(), username.getText().toString(), null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+                    User user = new User(firebaseUser.getUid(), username.getText().toString(), null, 0L, 0L, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
                     db.collection(User.COLLECTION_NAME).document(firebaseUser.getUid()).set(user);
                     Log.i("new registration", "New user successful register");
                     startActivity(new Intent(RegistrationActivity.this, MainActivity.class));

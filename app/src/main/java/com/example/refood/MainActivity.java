@@ -32,9 +32,6 @@ public class MainActivity extends AppCompatActivity {
 
     AppBarConfiguration appBarConfiguration;
 
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

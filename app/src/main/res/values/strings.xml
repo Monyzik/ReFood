@@ -38,7 +38,9 @@
     <string name="likes">Likes</string>
     <string name="dislikes">Dislikes</string>
     <string name="marked">Marks</string>
-    <string name="myreciepts">My receipts</string>
+    <string name="myreciepts">My receipts ></string>
+    <string name="myallreciepts">My receipts</string>
     <string name="author_of_recipe">Author of recipe</string>
     <string name="add_to_favorites">Add to favorites</string>
+
 </resources>

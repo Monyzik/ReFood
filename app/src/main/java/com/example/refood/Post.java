@@ -25,6 +25,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
+import java.util.UUID;
 
 
 public class Post {
@@ -46,8 +47,8 @@ public class Post {
     @Expose
     String image;
 
-    public Post(String id, String author, String title, String text, String image, Date date, Boolean isLocal, long like_count, long dislike_count, ArrayList <Step> steps, ArrayList <String> likes_from_users, ArrayList <String> dislikes_from_users) {
-        this.id = id;
+    public Post(String author, String title, String text, String image, Date date, Boolean isLocal, long like_count, long dislike_count, ArrayList <Step> steps, ArrayList <String> likes_from_users, ArrayList <String> dislikes_from_users) {
+        this.id = UUID.randomUUID().toString();
         this.author = author;
         this.title = title;
         this.text = text;
@@ -65,7 +66,7 @@ public class Post {
     public static Post readSavedRecipe(File recipeDir) throws IOException {
         Post post = null;
         String mainImage = "";
-        for (File file : recipeDir.listFiles()) {
+        for (File file : Objects.requireNonNull(recipeDir.listFiles())) {
             if (file.getName().equals("main_file")) {
                 ObjectMapper objectMapper = new ObjectMapper();
                 post = objectMapper.readValue(file, Post.class);
@@ -74,14 +75,16 @@ public class Post {
             }
         }
         post.setImage(mainImage);
-        for (File file : recipeDir.listFiles()) {
+        for (File file : Objects.requireNonNull(recipeDir.listFiles())) {
             String name = file.getName();
-            if (name.substring(0, 1).equals("s")) {
+            if (name.charAt(0) == 's') {
                 post.steps.get(Integer.parseInt(name.substring(5, name.length() - 4))).setImagePath(file.getAbsolutePath());
             }
         }
         return post;
     }
+
+
 
 
     public static boolean saveRecipe(Post post, String path, ContentResolver contentResolver, Context context) {
@@ -136,6 +139,10 @@ public class Post {
         return true;
     }
 
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 
     public boolean getIsLocal() {
         return isLocal;

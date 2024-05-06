@@ -222,25 +222,29 @@
 
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/my_receipts_TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_marginStart="30dp"
         android:fontFamily="@font/yeseva_one"
+        android:clickable="true"
         android:text="@string/myreciepts"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/count_of_dislikes" />
+        app:layout_constraintTop_toBottomOf="@+id/count_of_dislikes"
+        android:focusable="true" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/myRecieptsRecyclerView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/simple_margin"
+        android:layout_marginStart="@dimen/simple_margin"
+        android:layout_marginTop="@dimen/small_margin"
         android:scrollbars="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:clickable="true"
+        android:focusable="true"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+        app:layout_constraintTop_toBottomOf="@+id/my_receipts_TextView" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,8 @@
 package com.example.refood;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.view.LayoutInflater;
@@ -17,6 +19,8 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import org.checkerframework.checker.units.qual.C;
 
@@ -27,7 +31,7 @@ public class MyReceiptsAdapter extends RecyclerView.Adapter<MyReceiptsAdapter.Vi
     private ArrayList <Post> posts;
 
     private FirebaseStorage storage;
-
+    private Activity activity;
     private Context context;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -55,9 +59,11 @@ public class MyReceiptsAdapter extends RecyclerView.Adapter<MyReceiptsAdapter.Vi
 
     }
 
-    public MyReceiptsAdapter(ArrayList <Post> newposts, Context context) {
+    public MyReceiptsAdapter(ArrayList <Post> newposts, Context context, Activity newactivity) {
         this.posts = newposts;
         this.context = context;
+        activity = newactivity;
+
     }
 
     @NonNull
@@ -96,6 +102,19 @@ public class MyReceiptsAdapter extends RecyclerView.Adapter<MyReceiptsAdapter.Vi
         } else {
             viewHolder.getFoodImage().setImageResource(R.drawable.example_of_food_photo);
         }
+
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(activity, ReadOtherRecipe.class);
+                GsonBuilder gsonBuilder = new GsonBuilder();
+                gsonBuilder.setPrettyPrinting();
+                Gson gson = gsonBuilder.create();
+                String json = gson.toJson(posts.get(viewHolder.getAdapterPosition()));
+                i.putExtra("post", json);
+                activity.startActivity(i);
+            }
+        });
     }
 
     @Override

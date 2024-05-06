@@ -5,16 +5,15 @@
         <!-- Customize your light theme here. -->
     </style>
 
-    <style name="Theme.ReFood" parent="Base.Theme.ReFood">
-    </style>
-    
+    <style name="Theme.ReFood" parent="Base.Theme.ReFood"></style>
+
 
     <style name="dialogstyle">
         <item name="colorPrimary">@color/white</item>
         <item name="android:windowAnimationStyle">@style/animations</item>
         <item name="android:backgroundDimEnabled">@style/animations</item>
     </style>
-    
+
     <style name="animations">
         <item name="android:windowEnterAnimation">@anim/slide_up</item>
         <item name="android:windowExitAnimation">@anim/slide_bottom</item>

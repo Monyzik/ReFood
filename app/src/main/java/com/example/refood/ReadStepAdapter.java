@@ -35,8 +35,7 @@ public class ReadStepAdapter extends RecyclerView.Adapter<ReadStepAdapter.ViewHo
             holder.cardView.setVisibility(View.VISIBLE);
             holder.foodImage.setImageURI(Uri.parse(steps.get(holder.getAdapterPosition()).getImagePath()));
         }
-        holder.time.setText(steps.get(holder.getAdapterPosition()).getTime() + "");
-        System.out.println("zzzzzzzzzzzzzzzz");
+        holder.time.setText(steps.get(holder.getAdapterPosition()).getTime());
 
     }
 
