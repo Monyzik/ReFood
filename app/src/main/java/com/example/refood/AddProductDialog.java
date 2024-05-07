@@ -36,20 +36,19 @@ import java.util.Objects;
 public class AddProductDialog extends BottomSheetDialogFragment {
 
     private final int GALLERY_REQ_CODE = 1000;
+    private final int GALLERY_REQ_CODE_MAIN_IMAGE = 1001;
 
     public static Bundle mMyFragmentBundle = new Bundle();
 
-
     FirebaseAuth firebaseAuth;
     FirebaseStorage storage;
-
+    String image_path;
     RecyclerView recyclerView;
-
     StepsAdapter stepsAdapter;
     ArrayList <Step> steps;
     FirebaseFirestore db;
-
     ImageView imageView;
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_add_product, container, false);
@@ -64,7 +63,7 @@ public class AddProductDialog extends BottomSheetDialogFragment {
         imageView = v.findViewById(R.id.imageView);
         EditText title = v.findViewById(R.id.editText_title);
         EditText info = v.findViewById(R.id.editText_info);
-        View image_group = v.findViewById(R.id.image_group);
+        ImageView imageView = v.findViewById(R.id.imageView);
         View add_step_button = v.findViewById(R.id.add_step_button);
         recyclerView = v.findViewById(R.id.recycler_steps);
 
@@ -126,7 +125,7 @@ public class AddProductDialog extends BottomSheetDialogFragment {
                                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                         if (task.isSuccessful()) {
                                             User user = task.getResult().toObject(User.class);
-                                            Post post = new Post(user.name, title.getText().toString(), info.getText().toString(), null, new Date(), true, 0, 0,
+                                            Post post = new Post(user.name, title.getText().toString(), info.getText().toString(), image_path, new Date(), true, 0, 0,
                                                     steps, new ArrayList<>(), new ArrayList<>());
 
 
@@ -138,7 +137,7 @@ public class AddProductDialog extends BottomSheetDialogFragment {
                                 });
                                 File recipes = new File(getContext().getFilesDir() + "/Recipes");
                                 String post_id_internal = "post_id_" + Objects.requireNonNull(recipes.listFiles()).length;
-                                Post post = new Post("i'm",  title.getText().toString(), info.getText().toString(), "", new Date(), true, 0, 0, steps, new ArrayList<>(), new ArrayList<>());
+                                Post post = new Post("i'm",  title.getText().toString(), info.getText().toString(), image_path, new Date(), true, 0, 0, steps, new ArrayList<>(), new ArrayList<>());
                                 File post_files = new File(getContext().getFilesDir() + "/Recipes/" + post.getId());
                                 File post_file = new File(getContext().getFilesDir() + "/Recipes/" + post.getId() + "/main_file");
                                 post_files.mkdirs();
@@ -148,9 +147,6 @@ public class AddProductDialog extends BottomSheetDialogFragment {
                                     System.out.println("Ошибка!!!!!!!!!!!");
                                 }
                                 System.out.println(post_file.getPath());
-
-
-
                             } else {
                                 Toast.makeText(v.getContext(), R.string.fill, Toast.LENGTH_SHORT).show();
                             }
@@ -161,29 +157,19 @@ public class AddProductDialog extends BottomSheetDialogFragment {
 
             }
         });
-//        image_group.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent iGallery = new Intent(Intent.ACTION_PICK);
-//                iGallery.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//                startActivityForResult(iGallery, GALLERY_REQ_CODE);
-//            }
-//        });
+
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent iGallery = new Intent(Intent.ACTION_PICK);
+                iGallery.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(iGallery, GALLERY_REQ_CODE_MAIN_IMAGE);
+            }
+        });
 
 
         return v;
     }
-
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if (resultCode == -1) {
-//            if (requestCode == GALLERY_REQ_CODE) {
-//                imageView.setImageURI(data.getData());
-//            }
-//
-//        }
-//    }
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -191,9 +177,10 @@ public class AddProductDialog extends BottomSheetDialogFragment {
             if (requestCode == GALLERY_REQ_CODE && data != null) {
                 int pos = mMyFragmentBundle.getInt("pos");
                 steps.get(pos).setImagePath(data.getData().toString());
-                System.out.println(data.getData());
-                System.out.println("Image selected");
                 stepsAdapter.notifyItemChanged(pos);
+            } else if (requestCode == GALLERY_REQ_CODE_MAIN_IMAGE && data != null) {
+                image_path = data.getData().toString();
+                imageView.setImageURI(data.getData());
             }
 
         }

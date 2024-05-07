@@ -238,11 +238,11 @@
         android:id="@+id/myRecieptsRecyclerView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/simple_margin"
         android:layout_marginTop="@dimen/small_margin"
-        android:scrollbars="horizontal"
         android:clickable="true"
         android:focusable="true"
+        android:scrollbars="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/my_receipts_TextView" />
 

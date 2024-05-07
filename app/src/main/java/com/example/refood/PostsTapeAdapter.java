@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class PostsTapeAdapter extends RecyclerView.Adapter<PostsTapeAdapter.ViewHolder> {
     private ArrayList <Post> posts;
@@ -64,7 +66,12 @@ public class PostsTapeAdapter extends RecyclerView.Adapter<PostsTapeAdapter.View
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         viewHolder.getTitle().setText(posts.get(position).getTitle());
         viewHolder.getAuthor().setText(posts.get(position).getAuthor());
-        viewHolder.getFoodImage().setImageResource(R.drawable.example_of_food_photo);
+        String image_path = posts.get(position).getImage();
+        if (image_path != null && !Objects.equals(image_path, "")) {
+            viewHolder.getFoodImage().setImageURI(Uri.parse(image_path));
+        } else {
+            viewHolder.getFoodImage().setImageResource(R.drawable.example_of_food_photo);
+        }
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
