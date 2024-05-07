@@ -6,11 +6,19 @@
     <string name="main_page">Main Page</string>
     <string name="profile">Profile</string>
     <string-array name="categories_food">
-        <item>category_1</item>
-        <item>category_2</item>
-        <item>category_3</item>
-        <item>category_4</item>
+        <item>Soups</item>
+        <item>Main dishes</item>
+        <item>Hot appetizers</item>
+        <item>Cold platter</item>
+        <item>Salads</item>
+        <item>Desserts</item>
     </string-array>
+    <string name="soups">Soups</string>
+    <string name="main_dishes">Main dishes</string>
+    <string name="hot_appetizers">Hot appetizers</string>
+    <string name="cold_platter">Cold platter</string>
+    <string name="salads">Salads</string>
+    <string name="desserts">Desserts</string>
     <string name="title">Title</string>
     <string name="category">Category</string>
     <string name="info">Info</string>
@@ -42,5 +50,8 @@
     <string name="myallreciepts">My receipts</string>
     <string name="author_of_recipe">Author of recipe</string>
     <string name="add_to_favorites">Add to favorites</string>
+    <string name="popular_recipes">Popular recipes</string>
+    <string name="recipe_of_the_day">Recipe of the day</string>
+    <string name="categories">Categories</string>
 
 </resources>

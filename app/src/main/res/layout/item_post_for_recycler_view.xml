@@ -8,7 +8,7 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/recycler_view_item_cardView"
         android:layout_width="match_parent"
-        android:layout_height="118dp"
+        android:layout_height="150dp"
         android:layout_margin="@dimen/simple_margin"
         app:cardCornerRadius="@dimen/simple_margin"
         app:layout_constraintStart_toStartOf="parent"
