@@ -4,6 +4,20 @@
     <string name="tape">Список</string>
     <string name="main_page">Главная</string>
     <string name="profile">Профиль</string>
+    <string-array name="categories_food">
+        <item>Супы</item>
+        <item>Основные блюда</item>
+        <item>Горячие закуски</item>
+        <item>Холодные закуски</item>
+        <item>Салаты</item>
+        <item>Десерты</item>
+    </string-array>
+    <string name="soups">Супы</string>
+    <string name="main_dishes">Основные блюда</string>
+    <string name="hot_appetizers">Горячие закуски</string>
+    <string name="cold_platter">Холодные закуски</string>
+    <string name="salads">Салаты</string>
+    <string name="desserts">Десерты</string>
     <string name="title">Название</string>
     <string name="category">Категория</string>
     <string name="info">Информация</string>
@@ -34,4 +48,7 @@
     <string name="myallreciepts">Мои рецепты</string>
     <string name="author_of_recipe">Автор рецепта</string>
     <string name="add_to_favorites">Добавить в любимые</string>
+    <string name="popular_recipes">Популярные рецепты</string>
+    <string name="recipe_of_the_day">Рецепт дня</string>
+    <string name="categories">Категории</string>
 </resources>
