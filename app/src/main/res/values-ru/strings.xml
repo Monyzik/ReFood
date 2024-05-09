@@ -23,7 +23,7 @@
     <string name="info">Информация</string>
     <string name="cancel">Отмена</string>
     <string name="apply">Подтвердить</string>
-    <string name="fill">Заполните поля</string>
+    <string name="fill">Заполните поля и добавьте фото!</string>
     <string name="add_image">Добавить изображение</string>
     <string name="registration">Регистрация</string>
     <string name="log_in">Войти</string>
@@ -51,4 +51,6 @@
     <string name="popular_recipes">Популярные рецепты</string>
     <string name="recipe_of_the_day">Рецепт дня</string>
     <string name="categories">Категории</string>
+    <string name="ok">Да</string>
+    <string name="dialog_load_message">Вы уверены?</string>
 </resources>

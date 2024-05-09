@@ -98,7 +98,7 @@ public class AddProductDialog extends BottomSheetDialogFragment {
         apply_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!(title.getText().toString().equals("") || info.getText().toString().equals(""))) {
+                if (!(title.getText().toString().equals("") || info.getText().toString().equals("")) || image_path.equals("")) {
                     db.collection(Post.COLLECTION_NAME).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -137,7 +137,8 @@ public class AddProductDialog extends BottomSheetDialogFragment {
 //                                });
                                 File recipes = new File(getContext().getFilesDir() + "/Recipes");
                                 String post_id_internal = "post_id_" + Objects.requireNonNull(recipes.listFiles()).length;
-                                Post post = new Post("i'm",  title.getText().toString(), info.getText().toString(), image_path, new Date(), true, 0, 0, steps, new ArrayList<>(), new ArrayList<>());
+                                System.out.println(image_path);
+                                Post post = new Post("user_id", "me", title.getText().toString(), info.getText().toString(), image_path, new Date(), true, 0, 0, steps, new ArrayList<>(), new ArrayList<>());
                                 File post_files = new File(getContext().getFilesDir() + "/Recipes/" + post.getId());
                                 File post_file = new File(getContext().getFilesDir() + "/Recipes/" + post.getId() + "/main_file");
                                 post_files.mkdirs();
@@ -180,7 +181,7 @@ public class AddProductDialog extends BottomSheetDialogFragment {
                 steps.get(pos).setImagePath(data.getData().toString());
                 stepsAdapter.notifyItemChanged(pos);
             } else if (requestCode == GALLERY_REQ_CODE_MAIN_IMAGE && data != null) {
-                image_path = data.getData().toString();
+                image_path = String.valueOf(data.getData());
                 imageView.setImageURI(data.getData());
             }
 

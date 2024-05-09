@@ -1,5 +1,7 @@
 package com.example.refood;
 
+import android.app.Activity;
+import android.content.Context;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,13 +12,25 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
 import java.util.ArrayList;
 
 public class ReadStepAdapter extends RecyclerView.Adapter<ReadStepAdapter.ViewHolder> {
     ArrayList<Step> steps;
+    private FirebaseStorage storage;
 
-    public ReadStepAdapter(ArrayList<Step> steps) {
+    Context context;
+
+    private final boolean isLocal;
+
+    public ReadStepAdapter(ArrayList<Step> steps, boolean isLocal, Context context) {
         this.steps = steps;
+        this.isLocal = isLocal;
+        this.context = context;
     }
 
     @NonNull
@@ -31,9 +45,21 @@ public class ReadStepAdapter extends RecyclerView.Adapter<ReadStepAdapter.ViewHo
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.num.setText(position + 1 + "");
         holder.info.setText(steps.get(holder.getAdapterPosition()).getInfo());
-        if (steps.get(holder.getAdapterPosition()).getImagePath() != null){
+        if (steps.get(holder.getAdapterPosition()).getImagePath() != null) {
             holder.cardView.setVisibility(View.VISIBLE);
-            holder.foodImage.setImageURI(Uri.parse(steps.get(holder.getAdapterPosition()).getImagePath()));
+            if (isLocal) {
+                holder.foodImage.setImageURI(Uri.parse(steps.get(holder.getAdapterPosition()).getImagePath()));
+            } else {
+                storage = FirebaseStorage.getInstance();
+                StorageReference stepImageReference = storage.getReference(steps.get(holder.getAdapterPosition()).getImagePath());
+                stepImageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        String imageURL = String.valueOf(uri);
+                        Glide.with(context).load(imageURL).into(holder.getFoodImage());
+                    }
+                });
+            }
         }
         holder.time.setText(steps.get(holder.getAdapterPosition()).getTime());
 
@@ -59,5 +85,26 @@ public class ReadStepAdapter extends RecyclerView.Adapter<ReadStepAdapter.ViewHo
             cardView = view.findViewById(R.id.card_view_food_image_read);
             time = view.findViewById(R.id.time_num);
         }
+
+        public ImageView getFoodImage() {
+            return foodImage;
+        }
+
+        public TextView getInfo() {
+            return info;
+        }
+
+        public TextView getNum() {
+            return num;
+        }
+
+        public TextView getTime() {
+            return time;
+        }
+
+        public View getCardView() {
+            return cardView;
+        }
+
     }
 }

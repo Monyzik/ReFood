@@ -14,6 +14,7 @@
         <item>Desserts</item>
     </string-array>
     <string name="soups">Soups</string>
+    <string name="ok">Yes</string>
     <string name="main_dishes">Main dishes</string>
     <string name="hot_appetizers">Hot appetizers</string>
     <string name="cold_platter">Cold platter</string>
@@ -24,7 +25,7 @@
     <string name="info">Info</string>
     <string name="cancel">Cancel</string>
     <string name="apply">Apply</string>
-    <string name="fill">fill in all the fields</string>
+    <string name="fill">fill in all the fields and add photo!</string>
     <string name="add_image">Add image</string>
     <string name="registration">Registration</string>
     <string name="username">Username</string>
@@ -53,5 +54,6 @@
     <string name="popular_recipes">Popular recipes</string>
     <string name="recipe_of_the_day">Recipe of the day</string>
     <string name="categories">Categories</string>
+    <string name="dialog_load_message">Are you sure?</string>
 
 </resources>

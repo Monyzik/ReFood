@@ -22,17 +22,14 @@ import java.util.ArrayList;
 import java.util.Map;
 public class TapeFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    public static ArrayList <Post> posts = new ArrayList<>();
+    public ArrayList <Post> posts = new ArrayList<>();
 
-    public static RecyclerView posts_recyclerView;
-
+    public RecyclerView posts_recyclerView;
     private FloatingActionButton add_button;
-
-
+    FirebaseFirestore db;
     private String mParam1;
     private String mParam2;
 
@@ -57,24 +54,6 @@ public class TapeFragment extends Fragment {
         }
     }
 
-    public static void updateRecyclerViewUI(View view) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        posts.clear();
-        db.collection(Post.COLLECTION_NAME).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot post: task.getResult()) {
-                        Post post_data = post.toObject(Post.class);
-                        posts.add(post_data);
-                        posts_recyclerView.getAdapter().notifyItemInserted(posts.size() - 1);
-                    }
-                }
-
-            }
-        });
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -89,24 +68,30 @@ public class TapeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        db = FirebaseFirestore.getInstance();
         posts_recyclerView = view.findViewById(R.id.tape_recycler_view);
         add_button = view.findViewById(R.id.add_button);
 
-        add_button.setOnClickListener( new View.OnClickListener() {
+        db.collection(Post.COLLECTION_NAME).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onClick(View v) {
-                AddProductDialog bottomSheet =
-                        new AddProductDialog();
-                bottomSheet.show(getParentFragmentManager(),
-                        "ModalBottomSheet");
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                for (QueryDocumentSnapshot document: task.getResult()) {
+                    Post post = document.toObject(Post.class);
+                    posts.add(post);
+                    posts_recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                    PostsTapeAdapter adapter = new PostsTapeAdapter(posts, getActivity());
+                    posts_recyclerView.setAdapter(adapter);
+                }
             }
         });
-        posts_recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        PostsTapeAdapter adapter = new PostsTapeAdapter(posts, getActivity());
-        posts_recyclerView.setAdapter(adapter);
-        if (posts.isEmpty()) {
-            updateRecyclerViewUI(view);
-        }
+
+        add_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AddProductDialog bottomSheet = new AddProductDialog();
+                bottomSheet.show(getParentFragmentManager(), "ModalBottomSheet");
+            }
+        });
     }
 
 }

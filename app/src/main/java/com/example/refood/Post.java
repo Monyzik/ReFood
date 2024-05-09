@@ -8,6 +8,8 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
@@ -24,6 +26,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -31,8 +34,9 @@ import java.util.UUID;
 public class Post {
     @Expose
     public static final String COLLECTION_NAME = "posts";
+    public static final String USER_NAME = "author";
     @Expose
-    private String author, title, text, id;
+    private String author, author_name, title, text, id;
 
     @Expose
     Boolean isLocal;
@@ -47,9 +51,10 @@ public class Post {
     @Expose
     String image;
 
-    public Post(String author, String title, String text, String image, Date date, Boolean isLocal, long like_count, long dislike_count, ArrayList <Step> steps, ArrayList <String> likes_from_users, ArrayList <String> dislikes_from_users) {
+    public Post(String author, String author_name, String title, String text, String image, Date date, Boolean isLocal, long like_count, long dislike_count, ArrayList <Step> steps, ArrayList <String> likes_from_users, ArrayList <String> dislikes_from_users) {
         this.id = UUID.randomUUID().toString();
         this.author = author;
+        this.author_name = author_name;
         this.title = title;
         this.text = text;
         this.image = image;
@@ -59,6 +64,21 @@ public class Post {
         this.steps = steps;
         this.likes_from_users = likes_from_users;
         this.dislikes_from_users = dislikes_from_users;
+    }
+
+    public Post(Post otherPost) {
+        this.id = otherPost.getId();
+        this.author = otherPost.getAuthor();
+        this.author_name = otherPost.getAuthor_name();
+        this.title = otherPost.getTitle();
+        this.text = otherPost.getText();
+        this.image = otherPost.getImage();
+        this.isLocal = otherPost.getIsLocal();
+        this.like_count = otherPost.getLike_count();
+        this.dislike_count = otherPost.getDislike_count();
+        this.steps = new ArrayList<>(otherPost.getSteps());
+        this.likes_from_users = new ArrayList<>(otherPost.getLikes_from_users());
+        this.dislikes_from_users = new ArrayList<>(otherPost.getDislikes_from_users());
     }
 
     public Post() {}
@@ -93,7 +113,7 @@ public class Post {
         try {
             if (!Objects.equals(post.getImage(), "")) {
                 FileOutputStream outputStream = new FileOutputStream(main_image);
-                Bitmap bitmap_main_image = MediaStore.Images.Media.getBitmap(contentResolver, Uri.parse(post.image));
+                Bitmap bitmap_main_image = MediaStore.Images.Media.getBitmap(contentResolver, Uri.parse(post.getImage()));
                 bitmap_main_image.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
                 main_image.createNewFile();
                 outputStream.flush();
@@ -105,16 +125,16 @@ public class Post {
         try {
 
             for (int i = 0; i < post.steps.size(); i++) {
-                File step_image = new File(path, "step_" + i + ".jpg");
-                FileOutputStream  outputStream = new FileOutputStream(step_image);
                 if (post.steps.get(i).getImagePath() != null) {
+                    File step_image = new File(path, "step_" + i + ".jpg");
+                    FileOutputStream  outputStream = new FileOutputStream(step_image);
                     Bitmap bitmap_step_image = MediaStore.Images.Media.getBitmap(contentResolver, Uri.parse(post.steps.get(i).getImagePath()));
                     bitmap_step_image.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
                     step_image.createNewFile();
+                    outputStream.flush();
+                    outputStream.close();
                 }
 
-                outputStream.flush();
-                outputStream.close();
             }
         } catch (Exception e) {
             Log.e("e", e.getMessage());
@@ -141,7 +161,23 @@ public class Post {
 
     @Override
     public int hashCode() {
-        return id.hashCode();
+        return this.id.hashCode();
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        return obj.hashCode() == this.hashCode();
+    }
+
+    public String getAuthor_name() {
+        return author_name;
+    }
+
+    public void setAuthor_name(String author_name) {
+        this.author_name = author_name;
     }
 
     public boolean getIsLocal() {

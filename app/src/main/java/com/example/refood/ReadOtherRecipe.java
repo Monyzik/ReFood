@@ -13,14 +13,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 public class ReadOtherRecipe extends AppCompatActivity {
 
     ImageView backImageView;
+
+    FirebaseStorage storage;
 
 
     @Override
@@ -36,7 +43,6 @@ public class ReadOtherRecipe extends AppCompatActivity {
             throw new RuntimeException(e);
         }
 
-
         TextView title = findViewById(R.id.title);
         TextView info = findViewById(R.id.info_text);
         ImageView food_image = findViewById(R.id.food_image);
@@ -46,6 +52,35 @@ public class ReadOtherRecipe extends AppCompatActivity {
         Button add_to_favorite = findViewById(R.id.add_to_favorites);
         backImageView = findViewById(R.id.back_from_read_receipt);
         RecyclerView recyclerView = findViewById(R.id.recycler_view_read_steps);
+        storage = FirebaseStorage.getInstance();
+
+        title.setText(post.getTitle());
+        info.setText(post.getText());
+
+        if (post.getImage() != null && !post.getImage().equals("")) {
+            if (post.getIsLocal()) {
+                food_image.setImageURI(Uri.parse(post.getImage()));
+            } else {
+                StorageReference mainImageReference = storage.getReference(post.getImage());
+                mainImageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        String imageURL = String.valueOf(uri);
+                        Glide.with(ReadOtherRecipe.this).load(imageURL).into(food_image);
+                    }
+                });
+            }
+        }
+        else {
+            food_image.setImageResource(R.drawable.example_of_food_photo);
+        }
+        author.setText(post.getAuthor_name());
+        likes.setText(String.valueOf(post.getLike_count()));
+        dislikes.setText(String.valueOf(post.getDislike_count()));
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        ReadStepAdapter adapter = new ReadStepAdapter(post.steps, post.getIsLocal(), ReadOtherRecipe.this);
+        recyclerView.setAdapter(adapter);
 
         backImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,23 +88,6 @@ public class ReadOtherRecipe extends AppCompatActivity {
                 finish();
             }
         });
-
-        title.setText(post.getTitle());
-        info.setText(post.getText());
-        if (post.getImage() != null && !post.getImage().equals("")) {
-            System.out.println(post.getImage() + "");
-            food_image.setImageURI(Uri.parse(post.getImage()));
-        }
-        else {
-            food_image.setImageResource(R.drawable.example_of_food_photo);
-        }
-        author.setText(post.getAuthor());
-        likes.setText(String.valueOf(post.getLike_count()));
-        dislikes.setText(String.valueOf(post.getDislike_count()));
-
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        ReadStepAdapter adapter = new ReadStepAdapter(post.steps);
-        recyclerView.setAdapter(adapter);
 
     }
 }

@@ -28,6 +28,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -113,6 +115,7 @@ public class ProfileFragment extends Fragment {
         firebaseAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
+
         super.onViewCreated(view, savedInstanceState);
         avatarView = view.findViewById(R.id.image_view_profile);
         bigAvatarImage = view.findViewById(R.id.big_avatar_image);
@@ -121,45 +124,53 @@ public class ProfileFragment extends Fragment {
         myRecieptsRecyclerView = view.findViewById(R.id.myRecieptsRecyclerView);
         myReceiptsTextView = view.findViewById(R.id.my_receipts_TextView);
 
-        File dir = new File(requireContext().getFilesDir(), "Recipes");
-        try {
-            long count_of_posts = 5;
-            for (File file: Objects.requireNonNull(dir.listFiles())) {
-                 posts.add(Post.readSavedRecipe(file));
-                 if (--count_of_posts == 0) break;
-            }
-        } catch (Exception e) {
-            Log.e("e", e.getMessage());
-        }
-
-        myReceiptsAdapter = new MyReceiptsAdapter(posts, getContext(), getActivity());
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        myRecieptsRecyclerView.setLayoutManager(linearLayoutManager);
-        myRecieptsRecyclerView.setAdapter(myReceiptsAdapter);
-
-
-
 
         db.collection(User.COLLECTION_NAME).document(Objects.requireNonNull(firebaseAuth.getCurrentUser().getUid())).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    User user = documentSnapshot.toObject(User.class);
-                    usernameTextView.setText(user.getName());
-                    if (user.avatar_path != null) {
-                        StorageReference profileAvatarReference = storage.getReference(user.avatar_path);
-                        profileAvatarReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(Uri uri) {
-                                if (isAdded()) {
-                                    String imageURL = uri.toString();
-                                    Glide.with(requireContext()).load(imageURL).into(avatarView);
-                                    Glide.with(requireContext()).load(imageURL).into(bigAvatarImage);
-                                }
+                User user = documentSnapshot.toObject(User.class);
+                usernameTextView.setText(user.getName());
+                if (user.avatar_path != null) {
+                    StorageReference profileAvatarReference = storage.getReference(user.avatar_path);
+                    profileAvatarReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            if (isAdded()) {
+                                String imageURL = uri.toString();
+                                Glide.with(requireContext()).load(imageURL).into(avatarView);
+                                Glide.with(requireContext()).load(imageURL).into(bigAvatarImage);
                             }
-                        });
-                    } else {
-                        avatarView.setImageResource(R.drawable.baseline_person);
+                        }
+                    });
+                } else {
+                    avatarView.setImageResource(R.drawable.baseline_person);
+                }
+            }
+        });
+
+        db.collection(Post.COLLECTION_NAME).whereEqualTo(Post.USER_NAME, firebaseAuth.getCurrentUser().getUid()).limit(5).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        posts.add(document.toObject(Post.class));
                     }
+                    File dir = new File(getContext().getFilesDir(), "Recipes");
+                    try {
+                        for (File file : Objects.requireNonNull(dir.listFiles())) {
+                            Post readPost = Post.readSavedRecipe(file);
+                            if (!posts.contains(readPost)) {
+                                posts.add(readPost);
+                            }
+                        }
+                    } catch (Exception e) {
+                        Log.e("e", e.getMessage());
+                    }
+                    myReceiptsAdapter = new MyReceiptsAdapter(posts, getContext(), getActivity());
+                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+                    myRecieptsRecyclerView.setLayoutManager(linearLayoutManager);
+                    myRecieptsRecyclerView.setAdapter(myReceiptsAdapter);
+                }
             }
         });
 
@@ -185,8 +196,9 @@ public class ProfileFragment extends Fragment {
                 signOut();
             }
         });
-
     }
+
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

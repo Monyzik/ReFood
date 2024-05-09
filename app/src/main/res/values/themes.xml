@@ -5,7 +5,19 @@
         <!-- Customize your light theme here. -->
     </style>
 
-    <style name="Theme.ReFood" parent="Base.Theme.ReFood"></style>
+    <style name="Theme.ReFood" parent="Base.Theme.ReFood">
+
+    </style>
+
+    <style name="MyThemeOverlay.MaterialComponents.MaterialAlertDialog" parent="@style/ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.MyApp.Dialog.Rounded</item>
+        <item name="backgroundTint">?android:attr/fillColor</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.MyApp.Dialog.Rounded" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8dp</item>
+    </style>
 
 
     <style name="dialogstyle">

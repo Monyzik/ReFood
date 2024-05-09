@@ -1,7 +1,9 @@
 package com.example.refood;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
@@ -10,20 +12,35 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import org.checkerframework.checker.units.qual.C;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -31,8 +48,10 @@ public class MyReceiptsAdapter extends RecyclerView.Adapter<MyReceiptsAdapter.Vi
     private ArrayList <Post> posts;
 
     private FirebaseStorage storage;
-    private Activity activity;
-    private Context context;
+    private FirebaseAuth auth;
+    private FirebaseFirestore db;
+    private final Activity activity;
+    private final Context context;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView title;
@@ -76,22 +95,24 @@ public class MyReceiptsAdapter extends RecyclerView.Adapter<MyReceiptsAdapter.Vi
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
+        storage = FirebaseStorage.getInstance();
+        db = FirebaseFirestore.getInstance();
+        auth = FirebaseAuth.getInstance();
+
         viewHolder.getTitle().setText(posts.get(position).getTitle());
         String path = posts.get(position).getImage();
-        System.out.println(posts.get(position).getIsLocal());
         boolean isLocal = posts.get(position).getIsLocal();
         if (isLocal) {
             viewHolder.getIsLocalImage().setImageResource(R.drawable.baseline_cloud_off_24);
         } else {
             viewHolder.getIsLocalImage().setImageResource(R.drawable.baseline_cloud_queue);
         }
-        if (!Objects.equals(path, "")) {
+        if (!Objects.equals(path, "") && path != null) {
             if (isLocal) {
                 viewHolder.getFoodImage().setImageURI(Uri.parse(path));
             } else {
-                storage = FirebaseStorage.getInstance();
-                StorageReference profileAvatarReference = storage.getReference(path);
-                profileAvatarReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                StorageReference postImagePhoto = storage.getReference(path);
+                postImagePhoto.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
                         String imageURL = uri.toString();
@@ -102,6 +123,93 @@ public class MyReceiptsAdapter extends RecyclerView.Adapter<MyReceiptsAdapter.Vi
         } else {
             viewHolder.getFoodImage().setImageResource(R.drawable.example_of_food_photo);
         }
+
+        viewHolder.getIsLocalImage().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(activity, R.style.MyThemeOverlay_MaterialComponents_MaterialAlertDialog);
+                builder.setTitle(R.string.dialog_load_message);
+                builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Post post = new Post(posts.get(viewHolder.getAdapterPosition()));
+                        boolean isLocal = post.getIsLocal();
+                        if (isLocal) {
+                            post.setIsLocal(false);
+                            post.setAuthor(auth.getCurrentUser().getUid());
+                            db.collection(User.COLLECTION_NAME).document(auth.getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        User user = task.getResult().toObject(User.class);
+                                        post.setAuthor_name(user.getName());
+                                        StorageReference storageReference = storage.getReference().child("images").child("posts_images");
+                                        StorageReference postStorage = storageReference.child(post.getId());
+                                        StorageReference mainImageStorage = postStorage.child("main_image.jpeg");
+                                        InputStream stream;
+                                        try {
+                                            stream = new FileInputStream(post.getImage());
+                                        } catch (FileNotFoundException e) {
+                                            throw new RuntimeException(e);
+                                        }
+                                        UploadTask uploadTask = mainImageStorage.putStream(stream);
+                                        post.setImage(mainImageStorage.getPath());
+                                        for (Step step: post.getSteps()) {
+                                            if (!Objects.equals(step.getImagePath(), " ") && step.getImagePath() != null) {
+                                                StorageReference stepStorage = postStorage.child("step" + step.getNumber() + ".jpeg");
+                                                try {
+                                                    stream = new FileInputStream(step.getImagePath());
+                                                } catch (FileNotFoundException e) {
+                                                    throw new RuntimeException(e);
+                                                }
+                                                uploadTask = stepStorage.putStream(stream);
+                                                step.setImagePath(stepStorage.getPath());
+                                            }
+                                        }
+                                        uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                                                notifyItemChanged(viewHolder.getAdapterPosition());
+                                            }
+                                        });
+                                        db.collection(Post.COLLECTION_NAME).document(post.getId()).set(post);
+                                        posts.set(viewHolder.getAdapterPosition(), post);
+                                    }
+                                }
+                            });
+                        } else {
+                            db.collection(Post.COLLECTION_NAME).document(post.getId()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+                                    StorageReference mainImageReference = storage.getReference(post.getImage());
+                                    mainImageReference.delete();
+                                    for (Step step: post.getSteps()) {
+                                        if (step.getImagePath() != null && !Objects.equals(step.getImagePath(), "")) {
+                                            StorageReference stepImageReference = storage.getReference(step.getImagePath());
+                                            stepImageReference.delete();
+                                        }
+                                    }
+                                    try {
+                                        posts.set(viewHolder.getAdapterPosition(), Post.readSavedRecipe(new File(context.getFilesDir(), "Recipes/" + post.getId())));
+                                    } catch (IOException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                    notifyItemChanged(viewHolder.getAdapterPosition());
+                                    Toast.makeText(context, "Общий доступ успешно отзван", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
+            }
+        });
 
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

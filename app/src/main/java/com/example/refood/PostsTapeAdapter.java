@@ -11,9 +11,16 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -22,7 +29,10 @@ import java.util.Objects;
 
 public class PostsTapeAdapter extends RecyclerView.Adapter<PostsTapeAdapter.ViewHolder> {
     private ArrayList <Post> posts;
-    private  Activity activity;
+
+    FirebaseStorage storage;
+
+    private Activity activity;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView title;
@@ -54,6 +64,7 @@ public class PostsTapeAdapter extends RecyclerView.Adapter<PostsTapeAdapter.View
         activity = newactivity;
     }
 
+    @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         View view = LayoutInflater.from(viewGroup.getContext())
@@ -65,10 +76,23 @@ public class PostsTapeAdapter extends RecyclerView.Adapter<PostsTapeAdapter.View
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         viewHolder.getTitle().setText(posts.get(position).getTitle());
-        viewHolder.getAuthor().setText(posts.get(position).getAuthor());
-        String image_path = posts.get(position).getImage();
+        viewHolder.getAuthor().setText(posts.get(position).getAuthor_name());
+        Post post = posts.get(position);
+        String image_path = post.getImage();
         if (image_path != null && !Objects.equals(image_path, "")) {
-            viewHolder.getFoodImage().setImageURI(Uri.parse(image_path));
+            if (post.getIsLocal()) {
+                viewHolder.getFoodImage().setImageURI(Uri.parse(image_path));
+            } else {
+                storage = FirebaseStorage.getInstance();
+                StorageReference mainImageReference = storage.getReference(post.getImage());
+                mainImageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        String imageURL = String.valueOf(uri);
+                        Glide.with(activity.getApplicationContext()).load(imageURL).into(viewHolder.getFoodImage());
+                    }
+                });
+            }
         } else {
             viewHolder.getFoodImage().setImageResource(R.drawable.example_of_food_photo);
         }
@@ -84,7 +108,6 @@ public class PostsTapeAdapter extends RecyclerView.Adapter<PostsTapeAdapter.View
                 activity.startActivity(i);
             }
         });
-//        viewHolder.getFoodImage().setImageBitmap(((BitmapDrawable)posts.get(position).getImage().getDrawable()).getBitmap());
     }
 
     @Override
