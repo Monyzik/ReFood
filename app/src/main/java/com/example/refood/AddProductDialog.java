@@ -120,21 +120,21 @@ public class AddProductDialog extends BottomSheetDialogFragment {
                                 }
 
 
-                                db.collection(User.COLLECTION_NAME).document(firebaseAuth.getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                        if (task.isSuccessful()) {
-                                            User user = task.getResult().toObject(User.class);
-                                            Post post = new Post(user.name, title.getText().toString(), info.getText().toString(), image_path, new Date(), true, 0, 0,
-                                                    steps, new ArrayList<>(), new ArrayList<>());
-
-
-//                                db.collection(Post.COLLECTION_NAME).document(post_id[0]).set(post);
-//                                TapeFragment.updateRecyclerViewUI(v);
-                                            dismiss();
-                                        }
-                                    }
-                                });
+//                                db.collection(User.COLLECTION_NAME).document(firebaseAuth.getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//                                    @Override
+//                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                                        if (task.isSuccessful()) {
+//                                            User user = task.getResult().toObject(User.class);
+//                                            Post post = new Post(user.name, title.getText().toString(), info.getText().toString(), image_path, new Date(), true, 0, 0,
+//                                                    steps, new ArrayList<>(), new ArrayList<>());
+//
+//
+////                                db.collection(Post.COLLECTION_NAME).document(post_id[0]).set(post);
+////                                TapeFragment.updateRecyclerViewUI(v);
+//                                        }
+//                                        dismiss();
+//                                    }
+//                                });
                                 File recipes = new File(getContext().getFilesDir() + "/Recipes");
                                 String post_id_internal = "post_id_" + Objects.requireNonNull(recipes.listFiles()).length;
                                 Post post = new Post("i'm",  title.getText().toString(), info.getText().toString(), image_path, new Date(), true, 0, 0, steps, new ArrayList<>(), new ArrayList<>());
@@ -147,6 +147,7 @@ public class AddProductDialog extends BottomSheetDialogFragment {
                                     System.out.println("Ошибка!!!!!!!!!!!");
                                 }
                                 System.out.println(post_file.getPath());
+                                dismiss();
                             } else {
                                 Toast.makeText(v.getContext(), R.string.fill, Toast.LENGTH_SHORT).show();
                             }

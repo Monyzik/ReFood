@@ -77,7 +77,7 @@
                     android:id="@+id/imageView8"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    app:srcCompat="@drawable/baseline_favorite_border_24" />
+                    app:srcCompat="@drawable/baseline_like" />
 
                 <TextView
                     android:id="@+id/like_count"
@@ -104,7 +104,7 @@
                     android:id="@+id/imageView9"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    app:srcCompat="@drawable/baseline_heart_broken_24" />
+                    app:srcCompat="@drawable/baseline_dislike" />
 
                 <TextView
                     android:id="@+id/dislike_count"
@@ -138,7 +138,7 @@
                 app:layout_constraintBottom_toBottomOf="@+id/add_to_favorites"
                 app:layout_constraintEnd_toStartOf="@id/dislike"
                 app:layout_constraintTop_toTopOf="@+id/add_to_favorites"
-                app:srcCompat="@drawable/baseline_favorite_border_24" />
+                app:srcCompat="@drawable/baseline_like" />
 
             <ImageView
                 android:id="@+id/dislike"
@@ -148,7 +148,7 @@
                 app:layout_constraintBottom_toBottomOf="@+id/add_to_favorites"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/add_to_favorites"
-                app:srcCompat="@drawable/baseline_heart_broken_24" />
+                app:srcCompat="@drawable/baseline_dislike" />
 
             <TextView
                 android:id="@+id/info_text"
