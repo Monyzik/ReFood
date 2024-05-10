@@ -6,9 +6,11 @@ import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -59,6 +61,10 @@ public class AddProductDialog extends BottomSheetDialogFragment {
 
         steps = new ArrayList<>();
 
+        Spinner spinner = v.findViewById(R.id.spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(), R.array.categories_food, R.layout.item_for_category_spinner);
+        spinner.setAdapter(adapter);
+
         Button apply_button = v.findViewById(R.id.apply_button);
         imageView = v.findViewById(R.id.imageView);
         EditText title = v.findViewById(R.id.editText_title);
@@ -98,7 +104,7 @@ public class AddProductDialog extends BottomSheetDialogFragment {
         apply_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!(title.getText().toString().equals("") || info.getText().toString().equals("")) || image_path.equals("")) {
+                if (!(title.getText().toString().equals("") || info.getText().toString().equals(""))) {
                     db.collection(Post.COLLECTION_NAME).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -137,8 +143,7 @@ public class AddProductDialog extends BottomSheetDialogFragment {
 //                                });
                                 File recipes = new File(getContext().getFilesDir() + "/Recipes");
                                 String post_id_internal = "post_id_" + Objects.requireNonNull(recipes.listFiles()).length;
-                                System.out.println(image_path);
-                                Post post = new Post("user_id", "me", title.getText().toString(), info.getText().toString(), image_path, new Date(), true, 0, 0, steps, new ArrayList<>(), new ArrayList<>());
+                                Post post = new Post("i'm", "me",title.getText().toString(), info.getText().toString(), image_path, new Date(), true, 0, 0, steps, new ArrayList<>(), new ArrayList<>(), spinner.getSelectedItem() + "");
                                 File post_files = new File(getContext().getFilesDir() + "/Recipes/" + post.getId());
                                 File post_file = new File(getContext().getFilesDir() + "/Recipes/" + post.getId() + "/main_file");
                                 post_files.mkdirs();
@@ -181,7 +186,7 @@ public class AddProductDialog extends BottomSheetDialogFragment {
                 steps.get(pos).setImagePath(data.getData().toString());
                 stepsAdapter.notifyItemChanged(pos);
             } else if (requestCode == GALLERY_REQ_CODE_MAIN_IMAGE && data != null) {
-                image_path = String.valueOf(data.getData());
+                image_path = data.getData().toString();
                 imageView.setImageURI(data.getData());
             }
 

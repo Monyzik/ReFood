@@ -3,6 +3,7 @@ package com.example.refood;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -51,7 +52,10 @@ public class Post {
     @Expose
     String image;
 
-    public Post(String author, String author_name, String title, String text, String image, Date date, Boolean isLocal, long like_count, long dislike_count, ArrayList <Step> steps, ArrayList <String> likes_from_users, ArrayList <String> dislikes_from_users) {
+    @Expose
+    String category;
+
+    public Post(String author, String author_name, String title, String text, String image, Date date, Boolean isLocal, long like_count, long dislike_count, ArrayList <Step> steps, ArrayList <String> likes_from_users, ArrayList <String> dislikes_from_users, String category) {
         this.id = UUID.randomUUID().toString();
         this.author = author;
         this.author_name = author_name;
@@ -64,21 +68,7 @@ public class Post {
         this.steps = steps;
         this.likes_from_users = likes_from_users;
         this.dislikes_from_users = dislikes_from_users;
-    }
-
-    public Post(Post otherPost) {
-        this.id = otherPost.getId();
-        this.author = otherPost.getAuthor();
-        this.author_name = otherPost.getAuthor_name();
-        this.title = otherPost.getTitle();
-        this.text = otherPost.getText();
-        this.image = otherPost.getImage();
-        this.isLocal = otherPost.getIsLocal();
-        this.like_count = otherPost.getLike_count();
-        this.dislike_count = otherPost.getDislike_count();
-        this.steps = new ArrayList<>(otherPost.getSteps());
-        this.likes_from_users = new ArrayList<>(otherPost.getLikes_from_users());
-        this.dislikes_from_users = new ArrayList<>(otherPost.getDislikes_from_users());
+        this.category = category;
     }
 
     public Post() {}
@@ -111,9 +101,16 @@ public class Post {
         File main = new File(path, "main_file");
         File main_image = new File(path, "main_image.jpg");
         try {
-            if (!Objects.equals(post.getImage(), "")) {
+            if (!Objects.equals(post.getImage(), "") && post.getImage() != null) {
                 FileOutputStream outputStream = new FileOutputStream(main_image);
                 Bitmap bitmap_main_image = MediaStore.Images.Media.getBitmap(contentResolver, Uri.parse(post.getImage()));
+                bitmap_main_image.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                main_image.createNewFile();
+                outputStream.flush();
+                outputStream.close();
+            } else {
+                FileOutputStream outputStream = new FileOutputStream(main_image);
+                Bitmap bitmap_main_image = BitmapFactory.decodeResource(context.getResources(), R.drawable.main_dishes);
                 bitmap_main_image.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
                 main_image.createNewFile();
                 outputStream.flush();
@@ -227,6 +224,13 @@ public class Post {
 
     public String getTitle() {
         return title;
+    }
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
 //    -------------------------------------------------------

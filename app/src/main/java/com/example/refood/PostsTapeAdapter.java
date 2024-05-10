@@ -38,12 +38,16 @@ public class PostsTapeAdapter extends RecyclerView.Adapter<PostsTapeAdapter.View
         private final TextView title;
         private final TextView author;
         private final ImageView foodImage;
+        private final TextView like_count;
+        private final TextView dislike_count;
 
         public ViewHolder(View view) {
             super(view);
             title = view.findViewById(R.id.recycler_view_item_title);
             author = view.findViewById(R.id.recycler_view_item_author);
             foodImage = view.findViewById(R.id.recycler_view_item_image);
+            like_count = view.findViewById(R.id.like_count);
+            dislike_count = view.findViewById(R.id.dislike_count);
         }
 
         public TextView getTitle() {
@@ -78,8 +82,10 @@ public class PostsTapeAdapter extends RecyclerView.Adapter<PostsTapeAdapter.View
         viewHolder.getTitle().setText(posts.get(position).getTitle());
         viewHolder.getAuthor().setText(posts.get(position).getAuthor_name());
         Post post = posts.get(position);
+        viewHolder.like_count.setText(post.getLike_count() + "");
+        viewHolder.dislike_count.setText(post.getDislike_count() + "");
         String image_path = post.getImage();
-        if (image_path != null && !Objects.equals(image_path, "")) {
+        if (!Objects.equals(image_path, "")) {
             if (post.getIsLocal()) {
                 viewHolder.getFoodImage().setImageURI(Uri.parse(image_path));
             } else {

@@ -151,14 +151,49 @@
                 app:srcCompat="@drawable/baseline_dislike" />
 
             <TextView
+                android:id="@+id/categories_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/category"
+                android:textSize="20sp"
+                android:fontFamily="@font/yeseva_one"
+                app:layout_constraintTop_toBottomOf="@+id/add_to_favorites"
+                android:layout_marginTop="@dimen/simple_margin"/>
+
+            <TextView
+                android:id="@+id/category_text_read_recipe"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/yeseva_one"
+                android:text="TextView"
+                android:textSize="17sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/categories_title"
+                android:layout_marginTop="@dimen/small_margin"
+                android:layout_marginStart="@dimen/small_margin"/>
+
+            <TextView
+                android:id="@+id/info_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/info"
+                android:textSize="20sp"
+                android:fontFamily="@font/yeseva_one"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/category_text_read_recipe"
+                android:layout_marginTop="@dimen/small_margin"/>
+
+            <TextView
                 android:id="@+id/info_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/yeseva_one"
                 android:text="TextView"
-                android:textSize="20sp"
-                app:layout_constraintTop_toBottomOf="@+id/add_to_favorites"
-                android:layout_marginTop="20dp"/>
+                android:textSize="17sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/info_title"
+                android:layout_marginStart="@dimen/small_margin"
+                android:layout_marginTop="@dimen/small_margin"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_view_read_steps"

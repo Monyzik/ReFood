@@ -43,6 +43,7 @@ public class ReadOtherRecipe extends AppCompatActivity {
             throw new RuntimeException(e);
         }
 
+
         TextView title = findViewById(R.id.title);
         TextView info = findViewById(R.id.info_text);
         ImageView food_image = findViewById(R.id.food_image);
@@ -53,6 +54,14 @@ public class ReadOtherRecipe extends AppCompatActivity {
         backImageView = findViewById(R.id.back_from_read_receipt);
         RecyclerView recyclerView = findViewById(R.id.recycler_view_read_steps);
         storage = FirebaseStorage.getInstance();
+        TextView category = findViewById(R.id.category_text_read_recipe);
+
+        backImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         title.setText(post.getTitle());
         info.setText(post.getText());
@@ -77,6 +86,8 @@ public class ReadOtherRecipe extends AppCompatActivity {
         author.setText(post.getAuthor_name());
         likes.setText(String.valueOf(post.getLike_count()));
         dislikes.setText(String.valueOf(post.getDislike_count()));
+
+        category.setText(post.category);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         ReadStepAdapter adapter = new ReadStepAdapter(post.steps, post.getIsLocal(), ReadOtherRecipe.this);

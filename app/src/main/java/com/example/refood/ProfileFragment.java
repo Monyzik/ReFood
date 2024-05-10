@@ -213,7 +213,6 @@ public class ProfileFragment extends Fragment {
                 Glide.with(this).load(data.getData()).into(avatarView);
                 Glide.with(this).load(data.getData()).into(bigAvatarImage);
             }
-
         }
     }
 }

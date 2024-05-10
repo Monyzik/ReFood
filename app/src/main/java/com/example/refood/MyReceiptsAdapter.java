@@ -132,7 +132,7 @@ public class MyReceiptsAdapter extends RecyclerView.Adapter<MyReceiptsAdapter.Vi
                 builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Post post = new Post(posts.get(viewHolder.getAdapterPosition()));
+                        Post post = posts.get(viewHolder.getAdapterPosition());
                         boolean isLocal = post.getIsLocal();
                         if (isLocal) {
                             post.setIsLocal(false);

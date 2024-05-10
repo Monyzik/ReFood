@@ -3,58 +3,215 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/simple_margin">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/recycler_view_item_cardView"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/recipe_of_the_day"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:layout_margin="@dimen/simple_margin"
-        app:cardCornerRadius="@dimen/simple_margin"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="match_parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
-        <ImageView
-            android:id="@+id/recycler_view_item_image"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:contentDescription="post_image"
-            android:scaleType="centerCrop"
-            android:src="@drawable/example_of_food_photo"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardView4"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:cardCornerRadius="@dimen/simple_margin"
+            app:layout_constraintDimensionRatio="w,9:16"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.5725">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/recycler_view_item_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/main_dishes"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+
+        <TextView
+            android:id="@+id/recycler_view_item_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/simple_margin"
+            android:autoSizeTextType="uniform"
+            android:fontFamily="@font/yeseva_one"
+            android:text="Some Title"
+            android:textSize="@dimen/_15ssp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.51"
+            app:layout_constraintStart_toEndOf="@+id/cardView4"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_gravity="bottom"
-            android:background="@color/three_fourth_invisible_black">
+        <TextView
+            android:id="@+id/time_recipe_of_the_day_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/simple_margin"
+            android:fontFamily="@font/yeseva_one"
+            android:text="@string/time"
+            android:textSize="18sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/recycler_view_item_author"
+            app:layout_constraintStart_toEndOf="@+id/cardView4"
+            app:layout_constraintTop_toBottomOf="@+id/title_recipe_of_the_day" />
+
+<!--        <TextView-->
+<!--            android:id="@+id/time_recipe_of_the_day"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="@dimen/simple_margin"-->
+<!--            android:fontFamily="@font/yeseva_one"-->
+<!--            android:text="TextView"-->
+<!--            android:textSize="15sp"-->
+<!--            android:visibility="gone"-->
+<!--            app:layout_constraintBottom_toBottomOf="@+id/time_recipe_of_the_day_title"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/time_recipe_of_the_day_title" />-->
+
+        <TextView
+
+            android:id="@+id/recycler_view_item_author"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:autoSizeTextType="uniform"
+            android:fontFamily="@font/yeseva_one"
+            android:text="Author name"
+            android:textSize="@dimen/_10ssp"
+            app:layout_constraintEnd_toEndOf="@+id/title_recipe_of_the_day"
+            app:layout_constraintStart_toStartOf="@+id/title_recipe_of_the_day"
+            app:layout_constraintTop_toBottomOf="@+id/title_recipe_of_the_day" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/likes_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            app:layout_constraintBottom_toBottomOf="@+id/cardView4"
+            app:layout_constraintEnd_toStartOf="@+id/dislikes_group"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/cardView4">
+
+            <ImageView
+                android:id="@+id/like_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/baseline_like"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/recycler_view_item_title"
+                android:id="@+id/like_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Some Food"
-                android:gravity="center"
+                android:autoSizeTextType="uniform"
                 android:fontFamily="@font/yeseva_one"
-                android:textSize="25sp"
-                android:textColor="@color/white"
-                android:layout_gravity="center" />
+                android:gravity="center"
+                android:text="323"
+                android:textSize="@dimen/_12ssp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/like_image"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </FrameLayout>
-    </androidx.cardview.widget.CardView>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/dislikes_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/likes_group"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/likes_group">
 
-    <TextView
-        android:id="@+id/recycler_view_item_author"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="16dp"
-        android:fontFamily="@font/yeseva_one"
-        android:text="Created by Someone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recycler_view_item_cardView" />
+            <ImageView
+                android:id="@+id/dislike_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/baseline_dislike"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/dislike_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="321"
+                android:textSize="@dimen/_12ssp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/dislike_image"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+<!--    <androidx.cardview.widget.CardView-->
+<!--        android:id="@+id/recycler_view_item_cardView"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="150dp"-->
+<!--        android:layout_margin="@dimen/simple_margin"-->
+<!--        android:visibility="gone"-->
+<!--        app:cardCornerRadius="@dimen/simple_margin"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent">-->
+
+<!--        <ImageView-->
+<!--            android:id="@+id/recycler_view_item_image"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:contentDescription="post_image"-->
+<!--            android:scaleType="centerCrop"-->
+<!--            android:src="@drawable/example_of_food_photo"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent" />-->
+
+<!--        <FrameLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="40dp"-->
+<!--            android:layout_gravity="bottom"-->
+<!--            android:background="@color/three_fourth_invisible_black">-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/recycler_view_item_title"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_gravity="center"-->
+<!--                android:fontFamily="@font/yeseva_one"-->
+<!--                android:gravity="center"-->
+<!--                android:text="Some Food"-->
+<!--                android:textColor="@color/white"-->
+<!--                android:textSize="25sp" />-->
+
+<!--        </FrameLayout>-->
+<!--    </androidx.cardview.widget.CardView>-->
+
+<!--    <TextView-->
+<!--        android:id="@+id/recycler_view_item_author"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="12dp"-->
+<!--        android:layout_marginTop="16dp"-->
+<!--        android:fontFamily="@font/yeseva_one"-->
+<!--        android:text="Created by Someone"-->
+<!--        android:visibility="gone"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/recycler_view_item_cardView" />-->
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
