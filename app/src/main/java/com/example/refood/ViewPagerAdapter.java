@@ -71,7 +71,7 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<com.example.refood.Vi
 
     @Override
     public void onBindViewHolder(ViewPagerViewHolder viewHolder, final int position) {
-        viewHolder.author.setText(posts.get(viewHolder.getAdapterPosition()).getAuthor());
+        viewHolder.author.setText(posts.get(viewHolder.getAdapterPosition()).getAuthor_name());
         viewHolder.num_likes.setText(posts.get(viewHolder.getAdapterPosition()).getLike_count() + "");
         viewHolder.title.setText(posts.get(viewHolder.getAdapterPosition()).getTitle());
 

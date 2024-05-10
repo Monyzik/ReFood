@@ -46,6 +46,21 @@ public class User {
 
     public User() {}
 
+    public Long getLikes_on_user_posts() {
+        return likes_on_user_posts;
+    }
+
+    public void setLikes_on_user_posts(Long likes_on_user_posts) {
+        this.likes_on_user_posts = likes_on_user_posts;
+    }
+
+    public Long getDislikes_on_user_post() {
+        return dislikes_on_user_post;
+    }
+
+    public void setDislikes_on_user_post(Long dislikes_on_user_post) {
+        this.dislikes_on_user_post = dislikes_on_user_post;
+    }
 
     public ArrayList<String> getDislike_posts() {
         return dislike_posts;

@@ -15,13 +15,13 @@
         android:layout_height="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.65"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/big_avatar_image"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:contentDescription="TODO"
             android:scaleType="centerCrop"
             android:src="@drawable/baseline_person"
             app:layout_constraintEnd_toEndOf="parent"
@@ -260,7 +260,9 @@
                     android:fontFamily="@font/yeseva_one"
                     android:text="@string/marked"
                     android:textSize="15sp"
-                    app:layout_constraintStart_toEndOf="@+id/imageView16" />
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/imageView16"
+                    app:layout_constraintTop_toTopOf="parent" />
 
 
                 <ImageView

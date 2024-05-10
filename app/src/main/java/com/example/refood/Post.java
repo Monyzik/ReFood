@@ -25,9 +25,12 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -42,7 +45,7 @@ public class Post {
     @Expose
     Boolean isLocal;
     @Expose
-    String date;
+    Long date;
     @Expose
     long like_count = 0, dislike_count = 0;
     @Expose
@@ -51,12 +54,13 @@ public class Post {
     ArrayList <String> likes_from_users, dislikes_from_users;
     @Expose
     String image;
-
     @Expose
     String category;
 
     public Post(String author, String author_name, String title, String text, String image, Date date, Boolean isLocal, long like_count, long dislike_count, ArrayList <Step> steps, ArrayList <String> likes_from_users, ArrayList <String> dislikes_from_users, String category) {
         this.id = UUID.randomUUID().toString();
+        Date now = new Date();
+        this.date = now.getTime();
         this.author = author;
         this.author_name = author_name;
         this.title = title;
@@ -72,6 +76,13 @@ public class Post {
     }
 
     public Post() {}
+
+    public static final Comparator<Post> COUNT_OF_LIKES_COMPARATOR = new Comparator<Post>() {
+        @Override
+        public int compare(Post o1, Post o2) {
+            return (int) (o1.getLike_count() - o2.getLike_count());
+        }
+    };
 
     public static Post readSavedRecipe(File recipeDir) throws IOException {
         Post post = null;
@@ -169,6 +180,10 @@ public class Post {
         return obj.hashCode() == this.hashCode();
     }
 
+    public Long getDate() {
+        return date;
+    }
+
     public String getAuthor_name() {
         return author_name;
     }
@@ -263,7 +278,7 @@ public class Post {
         this.author = author;
     }
 
-    public void setDate(String  date) {
+    public void setDate(Long date) {
         this.date = date;
     }
 

@@ -104,43 +104,19 @@ public class AddProductDialog extends BottomSheetDialogFragment {
         apply_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!(title.getText().toString().equals("") || info.getText().toString().equals(""))) {
+                if (!(title.getText().toString().equals("") || info.getText().toString().equals("")) || image_path.equals("")) {
                     db.collection(Post.COLLECTION_NAME).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             if (task.isSuccessful()) {
                                 String post_id = "id" + (task.getResult().size() + 1);
-
-//                    StorageReference storageReference = storage.getReference("images/posts_images/");
-//                    StorageReference postReference = storageReference.child(post_id[0]);
-
                                 for (int x = recyclerView.getChildCount(), i = 0; i < x; i++) {
                                     StepsAdapter.ViewHolder holder = (StepsAdapter.ViewHolder) recyclerView.getChildViewHolder(recyclerView.getChildAt(i));
                                     Step step = steps.get(i);
                                     step.setInfo(holder.getInfo().getText().toString());
                                     step.setTime("");
                                     step.setNumber(i + 1);
-//                        StorageReference stepPhotoReference = postReference.child("Step" + step.getNumber());
-//                        stepPhotoReference.putFile()
-//                        step.setImagePath(stepPhotoReference.getPath());
                                 }
-
-
-//                                db.collection(User.COLLECTION_NAME).document(firebaseAuth.getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//                                    @Override
-//                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                                        if (task.isSuccessful()) {
-//                                            User user = task.getResult().toObject(User.class);
-//                                            Post post = new Post(user.name, title.getText().toString(), info.getText().toString(), image_path, new Date(), true, 0, 0,
-//                                                    steps, new ArrayList<>(), new ArrayList<>());
-//
-//
-////                                db.collection(Post.COLLECTION_NAME).document(post_id[0]).set(post);
-////                                TapeFragment.updateRecyclerViewUI(v);
-//                                        }
-//                                        dismiss();
-//                                    }
-//                                });
                                 File recipes = new File(getContext().getFilesDir() + "/Recipes");
                                 String post_id_internal = "post_id_" + Objects.requireNonNull(recipes.listFiles()).length;
                                 Post post = new Post("i'm", "me",title.getText().toString(), info.getText().toString(), image_path, new Date(), true, 0, 0, steps, new ArrayList<>(), new ArrayList<>(), spinner.getSelectedItem() + "");

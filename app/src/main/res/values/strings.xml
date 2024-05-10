@@ -55,5 +55,6 @@
     <string name="recipe_of_the_day">Recipe of the day</string>
     <string name="categories">Categories</string>
     <string name="dialog_load_message">Are you sure?</string>
+    <string name="title_activity_splash_screen">SplashScreen</string>
 
 </resources>

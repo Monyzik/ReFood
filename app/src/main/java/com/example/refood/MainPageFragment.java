@@ -24,7 +24,9 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
@@ -32,42 +34,31 @@ import com.google.firebase.storage.StorageReference;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import org.checkerframework.checker.units.qual.A;
 import org.json.JSONException;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
 import java.util.Objects;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link MainPageFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class MainPageFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
+    ImageView like_of_the_day_image;
+    FirebaseAuth auth;
+
     public MainPageFragment() {
-        // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment MainPageFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static MainPageFragment newInstance(String param1, String param2) {
         MainPageFragment fragment = new MainPageFragment();
         Bundle args = new Bundle();
@@ -89,7 +80,6 @@ public class MainPageFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_main_page, container, false);
 
     }
@@ -98,12 +88,14 @@ public class MainPageFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         ArrayList<Post> posts = new ArrayList<>();
 
+        auth = FirebaseAuth.getInstance();
 
         ImageView imageView_recipe_of_the_day = view.findViewById(R.id.food_image_recipe_of_the_day);
         TextView title_recipe_of_the_day = view.findViewById(R.id.title_recipe_of_the_day);
         TextView author_recipe_of_the_day = view.findViewById(R.id.author_name_recipe_of_the_day);
         TextView likes_recipe_of_the_day = view.findViewById(R.id.likes_recipe_of_the_day);
         View recipe_of_the_day = view.findViewById(R.id.recipe_of_the_day);
+        like_of_the_day_image = view.findViewById(R.id.like_recipe_of_the_day_image);
 
 
 //        for (File file: new File(getContext().getFilesDir() + "/Recipes").listFiles()) {
@@ -115,20 +107,40 @@ public class MainPageFragment extends Fragment {
 //                throw new RuntimeException(e);
 //            }
 //        }
+
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.collection(Post.COLLECTION_NAME).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        Date now = new Date();
+        db.collection(Post.COLLECTION_NAME).whereGreaterThanOrEqualTo("date", now.getTime() - 86400000).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                int count = 0;
-                for (QueryDocumentSnapshot document: task.getResult()) {
-                    Post post = document.toObject(Post.class);
-                    posts.add(post);
-                    ViewPager2 viewPager2 = view.findViewById(R.id.popular_recipes_recycler_view);
-                    ViewPagerAdapter adapter = new ViewPagerAdapter(posts, getActivity());
-                    viewPager2.setAdapter(adapter);
-                    count++;
-                    if (count == 1) {
+                if (task.isSuccessful()) {
+                    ArrayList<Post> posts_to_sort = new ArrayList<>();
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        posts_to_sort.add(document.toObject(Post.class));
+                    }
+                    if (posts_to_sort.size() >= 1) {
+                        Collections.sort(posts_to_sort, Post.COUNT_OF_LIKES_COMPARATOR);
+                        Collections.reverse(posts_to_sort);
+                        Post post = posts_to_sort.get(0);
+                        recipe_of_the_day.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent i = new Intent(getActivity(), ReadOtherRecipe.class);
+                                GsonBuilder gsonBuilder = new GsonBuilder();
+                                gsonBuilder.setPrettyPrinting();
+                                Gson gson = gsonBuilder.create();
+                                String json = gson.toJson(post);
+                                i.putExtra("post", json);
+                                getActivity().startActivity(i);
+                            }
+                        });
+                        title_recipe_of_the_day.setText(post.getTitle());
+                        author_recipe_of_the_day.setText(post.getAuthor_name());
+                        likes_recipe_of_the_day.setText(String.valueOf(post.getLike_count()));
+                        if (post.getLikes_from_users().contains(auth.getCurrentUser().getUid())) {
+                            like_of_the_day_image.setImageResource(R.drawable.baseline_thumb_up_filled);
+                        }
                         String image_path = post.getImage();
                         if (!Objects.equals(image_path, "")) {
                             if (post.getIsLocal()) {
@@ -147,33 +159,25 @@ public class MainPageFragment extends Fragment {
                         } else {
                             imageView_recipe_of_the_day.setImageResource(R.drawable.example_of_food_photo);
                         }
-                        title_recipe_of_the_day.setText(post.getTitle());
-                        author_recipe_of_the_day.setText(post.getAuthor());
-                        likes_recipe_of_the_day.setText(post.getLike_count() + "");
                     }
                 }
             }
         });
 
-
-
-
-
-        recipe_of_the_day.setOnClickListener(new View.OnClickListener() {
+        db.collection(Post.COLLECTION_NAME).orderBy("like_count", Query.Direction.DESCENDING).limit(5).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onClick(View v) {
-                Intent i = new Intent(getActivity(), ReadOtherRecipe.class);
-                GsonBuilder gsonBuilder = new GsonBuilder();
-                gsonBuilder.setPrettyPrinting();
-                Gson gson = gsonBuilder.create();
-                String json = gson.toJson(posts.get(0));
-                i.putExtra("post", json);
-                getActivity().startActivity(i);
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document: task.getResult()) {
+                        Post post = document.toObject(Post.class);
+                        posts.add(post);
+                    }
+                    ViewPager2 viewPager2 = view.findViewById(R.id.popular_recipes_recycler_view);
+                    ViewPagerAdapter adapter = new ViewPagerAdapter(posts, getActivity());
+                    viewPager2.setAdapter(adapter);
+                }
             }
         });
-
-
-
         super.onViewCreated(view, savedInstanceState);
     }
 }

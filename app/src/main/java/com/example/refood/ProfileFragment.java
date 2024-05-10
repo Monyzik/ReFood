@@ -68,9 +68,9 @@ public class ProfileFragment extends Fragment {
     RecyclerView myRecieptsRecyclerView;
     MyReceiptsAdapter myReceiptsAdapter;
     ImageView avatarView, bigAvatarImage, singOut;
+    TextView count_of_likes, count_of_dislikes, count_of_marks;
 
     public ProfileFragment() {
-        // Required empty public constructor
     }
 
 
@@ -123,6 +123,27 @@ public class ProfileFragment extends Fragment {
         usernameTextView = view.findViewById(R.id.usernameTextView);
         myRecieptsRecyclerView = view.findViewById(R.id.myRecieptsRecyclerView);
         myReceiptsTextView = view.findViewById(R.id.my_receipts_TextView);
+        count_of_likes = view.findViewById(R.id.count_of_likes);
+        count_of_dislikes = view.findViewById(R.id.count_of_dislikes);
+        count_of_marks = view.findViewById(R.id.count_of_marks);
+
+        db.collection(Post.COLLECTION_NAME).whereEqualTo(Post.USER_NAME, firebaseAuth.getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    long likes_on_posts_count = 0, dislikes_on_posts_count = 0;
+                    for (QueryDocumentSnapshot document: task.getResult()) {
+                        Post post = document.toObject(Post.class);
+                        likes_on_posts_count += post.like_count;
+                        dislikes_on_posts_count += post.dislike_count;
+                    }
+                    count_of_likes.setText(String.valueOf(likes_on_posts_count));
+                    count_of_dislikes.setText(String.valueOf(dislikes_on_posts_count));
+                    db.collection(User.COLLECTION_NAME).document(firebaseAuth.getCurrentUser().getUid()).update("likes_on_user_posts", likes_on_posts_count,
+                            "dislikes_on_user_post", dislikes_on_posts_count);
+                }
+            }
+        });
 
 
         db.collection(User.COLLECTION_NAME).document(Objects.requireNonNull(firebaseAuth.getCurrentUser().getUid())).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -130,6 +151,7 @@ public class ProfileFragment extends Fragment {
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 User user = documentSnapshot.toObject(User.class);
                 usernameTextView.setText(user.getName());
+                count_of_marks.setText(String.valueOf(user.getMark_posts().size()));
                 if (user.avatar_path != null) {
                     StorageReference profileAvatarReference = storage.getReference(user.avatar_path);
                     profileAvatarReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {

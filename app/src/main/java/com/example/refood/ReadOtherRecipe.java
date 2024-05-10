@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,6 +18,9 @@ import com.bumptech.glide.Glide;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -25,9 +29,12 @@ import java.util.ArrayList;
 
 public class ReadOtherRecipe extends AppCompatActivity {
 
-    ImageView backImageView;
-
+    ImageView backImageView, mark_post, likeImage, dislikeImage;
+    CardView likePostCardView, dislikePostCardView;
+    TextView likeCount, dislikeCount;
     FirebaseStorage storage;
+    FirebaseAuth auth;
+    FirebaseFirestore db;
 
 
     @Override
@@ -48,20 +55,20 @@ public class ReadOtherRecipe extends AppCompatActivity {
         TextView info = findViewById(R.id.info_text);
         ImageView food_image = findViewById(R.id.food_image);
         TextView author = findViewById(R.id.author_name);
-        TextView likes = findViewById(R.id.like_count);
-        TextView dislikes = findViewById(R.id.dislike_count);
-        Button add_to_favorite = findViewById(R.id.add_to_favorites);
         backImageView = findViewById(R.id.back_from_read_receipt);
+        likePostCardView = findViewById(R.id.likeCardView);
+        dislikePostCardView = findViewById(R.id.dislikeCardView);
+        likeCount = findViewById(R.id.like_count);
+        dislikeCount = findViewById(R.id.dislike_count);
+        likeImage = findViewById(R.id.likeImage);
+        dislikeImage = findViewById(R.id.dislikeImage);
         RecyclerView recyclerView = findViewById(R.id.recycler_view_read_steps);
-        storage = FirebaseStorage.getInstance();
-        TextView category = findViewById(R.id.category_text_read_recipe);
 
-        backImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        storage = FirebaseStorage.getInstance();
+        db = FirebaseFirestore.getInstance();
+        auth = FirebaseAuth.getInstance();
+
+        TextView category = findViewById(R.id.category_text_read_recipe);
 
         title.setText(post.getTitle());
         info.setText(post.getText());
@@ -79,20 +86,96 @@ public class ReadOtherRecipe extends AppCompatActivity {
                     }
                 });
             }
-        }
-        else {
+        } else {
             food_image.setImageResource(R.drawable.example_of_food_photo);
         }
+        if (post.getLikes_from_users().contains(auth.getCurrentUser().getUid())) {
+            likeImage.setImageResource(R.drawable.baseline_thumb_up_filled);
+        } else if (post.getDislikes_from_users().contains(auth.getCurrentUser().getUid())) {
+            dislikeImage.setImageResource(R.drawable.baseline_thumb_down_filled);
+        }
         author.setText(post.getAuthor_name());
-        likes.setText(String.valueOf(post.getLike_count()));
-        dislikes.setText(String.valueOf(post.getDislike_count()));
+        likeCount.setText(String.valueOf(post.getLike_count()));
+        dislikeCount.setText(String.valueOf(post.getDislike_count()));
+
+        likePostCardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                db.collection(User.COLLECTION_NAME).document(auth.getCurrentUser().getUid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        User user = documentSnapshot.toObject(User.class);
+                        ArrayList<String> likedPosts = user.getLike_posts(), dislikedPosts = user.getDislike_posts();
+                        ArrayList<String> likes_from_users = post.getLikes_from_users(), dislikes_from_users = post.getDislikes_from_users();
+                        boolean isLiked = likedPosts.contains(post.getId()), isDisliked = dislikedPosts.contains(post.getId());
+                        if (isDisliked) {
+                            likedPosts.add(post.getId());
+                            dislikedPosts.remove(post.getId());
+                            likes_from_users.add(auth.getCurrentUser().getUid());
+                            dislikes_from_users.remove(auth.getCurrentUser().getUid());
+                            dislikeImage.setImageResource(R.drawable.baseline_dislike);
+                            likeImage.setImageResource(R.drawable.baseline_thumb_up_filled);
+                        } else if (isLiked) {
+                            likedPosts.remove(post.getId());
+                            likes_from_users.remove(auth.getCurrentUser().getUid());
+                            likeImage.setImageResource(R.drawable.baseline_like);
+                        } else {
+                            likedPosts.add(post.getId());
+                            likes_from_users.add(auth.getCurrentUser().getUid());
+                            likeImage.setImageResource(R.drawable.baseline_thumb_up_filled);
+                        }
+                        db.collection(Post.COLLECTION_NAME).document(post.getId()).update("dislikes_from_users", dislikedPosts, "likes_from_users", likes_from_users,
+                                "like_count", likes_from_users.size(), "dislike_count", dislikes_from_users.size());
+                        db.collection(User.COLLECTION_NAME).document(auth.getCurrentUser().getUid()).update("dislike_posts", dislikedPosts, "like_posts", likedPosts);
+                        likeCount.setText(String.valueOf(likes_from_users.size()));
+                        dislikeCount.setText(String.valueOf(dislikes_from_users.size()));
+                    }
+                });
+            }
+        });
+
+        dislikePostCardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                db.collection(User.COLLECTION_NAME).document(auth.getCurrentUser().getUid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        User user = documentSnapshot.toObject(User.class);
+                        ArrayList<String> likedPosts = user.getLike_posts(), dislikedPosts = user.getDislike_posts();
+                        ArrayList<String> likes_from_users = post.getLikes_from_users(), dislikes_from_users = post.getDislikes_from_users();
+                        boolean isLiked = likedPosts.contains(post.getId()), isDisliked = dislikedPosts.contains(post.getId());
+                        if (isLiked) {
+                            likedPosts.remove(post.getId());
+                            dislikedPosts.add(post.getId());
+                            likes_from_users.remove(auth.getCurrentUser().getUid());
+                            dislikes_from_users.add(auth.getCurrentUser().getUid());
+                            dislikeImage.setImageResource(R.drawable.baseline_thumb_down_filled);
+                            likeImage.setImageResource(R.drawable.baseline_like);
+                        } else if (isDisliked) {
+                            dislikedPosts.remove(post.getId());
+                            dislikes_from_users.remove(auth.getCurrentUser().getUid());
+                            dislikeImage.setImageResource(R.drawable.baseline_dislike);
+                        } else {
+                            dislikedPosts.add(post.getId());
+                            dislikes_from_users.add(auth.getCurrentUser().getUid());
+                            dislikeImage.setImageResource(R.drawable.baseline_thumb_down_filled);
+                        }
+                        db.collection(Post.COLLECTION_NAME).document(post.getId()).update("dislikes_from_users", dislikedPosts, "likes_from_users", likes_from_users,
+                                "like_count", likes_from_users.size(), "dislike_count", dislikes_from_users.size());
+                        db.collection(User.COLLECTION_NAME).document(auth.getCurrentUser().getUid()).update("dislike_posts", dislikedPosts, "like_posts", likedPosts);
+                        likeCount.setText(String.valueOf(likes_from_users.size()));
+                        dislikeCount.setText(String.valueOf(dislikes_from_users.size()));
+                    }
+                });
+            }
+        });
+
 
         category.setText(post.category);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         ReadStepAdapter adapter = new ReadStepAdapter(post.steps, post.getIsLocal(), ReadOtherRecipe.this);
         recyclerView.setAdapter(adapter);
-
         backImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
