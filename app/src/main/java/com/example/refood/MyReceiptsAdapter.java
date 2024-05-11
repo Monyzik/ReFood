@@ -119,7 +119,7 @@ public class MyReceiptsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
-        if (position < posts.size()){
+        if (position < posts.size()) {
             ViewHolderItem viewHolder = (ViewHolderItem) holder;
             storage = FirebaseStorage.getInstance();
             db = FirebaseFirestore.getInstance();

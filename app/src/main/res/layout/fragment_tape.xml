@@ -6,6 +6,49 @@
     android:layout_height="match_parent"
     tools:context=".TapeFragment">
 
+<!--    <com.facebook.shimmer.ShimmerFrameLayout-->
+<!--        android:id="@+id/shimmerFrameLayout"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:layout_gravity="center"-->
+<!--        android:orientation="vertical">-->
+
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="vertical">-->
+
+<!--            <include layout="@layout/item_post_for_recycler_view" />-->
+
+<!--            <include layout="@layout/item_post_for_recycler_view" />-->
+
+<!--            <include layout="@layout/item_post_for_recycler_view" />-->
+
+<!--            <include layout="@layout/item_post_for_recycler_view" />-->
+
+<!--            <include layout="@layout/item_post_for_recycler_view" />-->
+
+<!--            <include layout="@layout/item_post_for_recycler_view" />-->
+
+<!--            <include layout="@layout/item_post_for_recycler_view" />-->
+
+<!--            <include layout="@layout/item_post_for_recycler_view" />-->
+
+<!--            <include layout="@layout/item_post_for_recycler_view" />-->
+
+<!--            <include layout="@layout/item_post_for_recycler_view" />-->
+
+<!--            <include layout="@layout/item_post_for_recycler_view" />-->
+
+<!--            <include layout="@layout/item_post_for_recycler_view" />-->
+
+<!--            <include layout="@layout/item_post_for_recycler_view" />-->
+
+<!--            <include layout="@layout/item_post_for_recycler_view" />-->
+
+<!--            <include layout="@layout/item_post_for_recycler_view" />-->
+<!--        </LinearLayout>-->
+<!--    </com.facebook.shimmer.ShimmerFrameLayout>-->
 
     <TextView
         android:id="@+id/no_connection2"
@@ -21,15 +64,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/tape_recycler_view"
+
+    <com.yalantis.pulltomakesoup.PullToRefreshView
+        android:id="@+id/tape_refresh_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="@dimen/simple_margin"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_margin="@dimen/simple_margin">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/tape_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+    </com.yalantis.pulltomakesoup.PullToRefreshView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

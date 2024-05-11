@@ -124,7 +124,17 @@ public class Post {
             if (!Objects.equals(post.getImage(), "") && post.getImage() != null) {
                 System.out.println(post.getImage());
                 FileOutputStream outputStream = new FileOutputStream(main_image);
-                Bitmap bitmap_main_image = MediaStore.Images.Media.getBitmap(contentResolver, Uri.fromFile(new File(post.getImage())));
+                Bitmap bitmap_main_image = null;
+                try {
+                    bitmap_main_image = MediaStore.Images.Media.getBitmap(contentResolver, Uri.fromFile(new File(post.getImage())));
+                } catch (Exception e) {
+                    Log.e("сохранение изображения", e.getMessage());
+                }
+                try {
+                    bitmap_main_image = MediaStore.Images.Media.getBitmap(contentResolver, Uri.parse(post.image));
+                } catch (Exception e) {
+                    Log.e("сохранение изображения", e.getMessage());
+                }
                 bitmap_main_image.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
                 main_image.createNewFile();
                 outputStream.flush();
@@ -146,7 +156,17 @@ public class Post {
                 if (post.steps.get(i).getImagePath() != null) {
                     File step_image = new File(path, "step_" + i + ".jpg");
                     FileOutputStream  outputStream = new FileOutputStream(step_image);
-                    Bitmap bitmap_step_image = MediaStore.Images.Media.getBitmap(contentResolver, Uri.parse(post.steps.get(i).getImagePath()));
+                    Bitmap bitmap_step_image = null;
+                    try {
+                        bitmap_step_image = MediaStore.Images.Media.getBitmap(contentResolver, Uri.fromFile(new File(post.steps.get(i).getImagePath())));
+                    } catch (Exception e) {
+                        Log.e("сохранение изображения", e.getMessage());
+                    }
+                    try {
+                        bitmap_step_image = MediaStore.Images.Media.getBitmap(contentResolver, Uri.parse(post.steps.get(i).getImagePath()));
+                    } catch (Exception e) {
+                        Log.e("сохранение изображения", e.getMessage());
+                    }
                     bitmap_step_image.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
                     step_image.createNewFile();
                     outputStream.flush();

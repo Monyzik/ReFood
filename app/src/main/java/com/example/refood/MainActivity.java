@@ -66,7 +66,6 @@ public class MainActivity extends AppCompatActivity {
         if (currentUser == null) {
             startActivity(new Intent(this, LoginActivity.class));
             finish();
-
         }
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottomNavigationView);
         navigationController = Navigation.findNavController(MainActivity.this, R.id.fragmentContainerView);

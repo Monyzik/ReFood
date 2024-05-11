@@ -109,7 +109,6 @@ public class AddProductDialog extends BottomSheetDialogFragment {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             if (task.isSuccessful()) {
-                                String post_id = "id" + (task.getResult().size() + 1);
                                 for (int x = recyclerView.getChildCount(), i = 0; i < x; i++) {
                                     StepsAdapter.ViewHolder holder = (StepsAdapter.ViewHolder) recyclerView.getChildViewHolder(recyclerView.getChildAt(i));
                                     Step step = steps.get(i);
@@ -117,7 +116,7 @@ public class AddProductDialog extends BottomSheetDialogFragment {
                                     step.setTime("");
                                     step.setNumber(i + 1);
                                 }
-                                Post post = new Post("i'm", "me",title.getText().toString(), info.getText().toString(), image_path, new Date(), true, 0, 0, steps, new ArrayList<>(), new ArrayList<>(), spinner.getSelectedItem() + "");
+                                Post post = new Post("i'm", "me", title.getText().toString(), info.getText().toString(), image_path, new Date(), true, 0, 0, steps, new ArrayList<>(), new ArrayList<>(), spinner.getSelectedItem() + "");
                                 if (Post.saveRecipe(post, getContext().getFilesDir() + "/Recipes", getContext().getContentResolver(), getContext())) {
                                     System.out.println("успешно сохранено");
                                 } else {

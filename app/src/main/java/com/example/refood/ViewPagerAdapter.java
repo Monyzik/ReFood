@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.gson.Gson;
@@ -26,12 +27,16 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<com.example.refood.Vi
     private ArrayList <Post> posts;
     private Activity activity;
 
+    FirebaseAuth auth;
+
 
     public static class ViewPagerViewHolder extends RecyclerView.ViewHolder {
         private final TextView title;
         private final TextView author;
         private final ImageView foodImage;
         private final TextView num_likes;
+
+        private final ImageView like_image;
 
 
         public ViewPagerViewHolder(View view) {
@@ -40,6 +45,7 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<com.example.refood.Vi
             author = view.findViewById(R.id.author_name_popular_recipe);
             foodImage = view.findViewById(R.id.image_food_popular_recipe);
             num_likes = view.findViewById(R.id.likes_num_popular_recipe);
+            like_image = view.findViewById(R.id.like_image_view_pager);
 
         }
 
@@ -53,6 +59,10 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<com.example.refood.Vi
 
         public TextView getAuthor() {
             return author;
+        }
+
+        public ImageView getLike_image() {
+            return like_image;
         }
     }
 
@@ -71,9 +81,15 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<com.example.refood.Vi
 
     @Override
     public void onBindViewHolder(ViewPagerViewHolder viewHolder, final int position) {
+        Post post = posts.get(position);
+        auth = FirebaseAuth.getInstance();
         viewHolder.author.setText(posts.get(viewHolder.getAdapterPosition()).getAuthor_name());
         viewHolder.num_likes.setText(posts.get(viewHolder.getAdapterPosition()).getLike_count() + "");
         viewHolder.title.setText(posts.get(viewHolder.getAdapterPosition()).getTitle());
+
+        if (post.getLikes_from_users().contains(auth.getCurrentUser().getUid())) {
+            viewHolder.getLike_image().setImageResource(R.drawable.baseline_thumb_up_filled);
+        }
 
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

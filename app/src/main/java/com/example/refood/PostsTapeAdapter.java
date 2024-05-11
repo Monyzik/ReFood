@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -163,77 +164,77 @@ public class PostsTapeAdapter extends RecyclerView.Adapter<PostsTapeAdapter.View
         });
 
 
-        viewHolder.getLikes_group().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                db.collection(User.COLLECTION_NAME).document(auth.getCurrentUser().getUid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        User user = documentSnapshot.toObject(User.class);
-                        ArrayList<String> likedPosts = user.getLike_posts(), dislikedPosts = user.getDislike_posts();
-                        ArrayList<String> likes_from_users = post.getLikes_from_users(), dislikes_from_users = post.getDislikes_from_users();
-                        boolean isLiked = likedPosts.contains(post.getId()), isDisliked = dislikedPosts.contains(post.getId());
-                        if (isDisliked) {
-                            likedPosts.add(post.getId());
-                            dislikedPosts.remove(post.getId());
-                            likes_from_users.add(auth.getCurrentUser().getUid());
-                            dislikes_from_users.remove(auth.getCurrentUser().getUid());
-                            viewHolder.getDislike_image().setImageResource(R.drawable.baseline_dislike);
-                            viewHolder.getLike_image().setImageResource(R.drawable.baseline_thumb_up_filled);
-                        } else if (isLiked) {
-                            likedPosts.remove(post.getId());
-                            likes_from_users.remove(auth.getCurrentUser().getUid());
-                            viewHolder.getLike_image().setImageResource(R.drawable.baseline_like);
-                        } else {
-                            likedPosts.add(post.getId());
-                            likes_from_users.add(auth.getCurrentUser().getUid());
-                            viewHolder.getLike_image().setImageResource(R.drawable.baseline_thumb_up_filled);
-                        }
-                        db.collection(Post.COLLECTION_NAME).document(post.getId()).update("dislikes_from_users", dislikedPosts, "likes_from_users", likes_from_users,
-                                "like_count", likes_from_users.size(), "dislike_count", dislikes_from_users.size());
-                        db.collection(User.COLLECTION_NAME).document(auth.getCurrentUser().getUid()).update("dislike_posts", dislikedPosts, "like_posts", likedPosts);
-                        viewHolder.getLike_count().setText(String.valueOf(likes_from_users.size()));
-                        viewHolder.getDislike_count().setText(String.valueOf(dislikes_from_users.size()));
-                    }
-                });
-            }
-        });
-
-        viewHolder.getDislikes_group().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                db.collection(User.COLLECTION_NAME).document(auth.getCurrentUser().getUid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        User user = documentSnapshot.toObject(User.class);
-                        ArrayList<String> likedPosts = user.getLike_posts(), dislikedPosts = user.getDislike_posts();
-                        ArrayList<String> likes_from_users = post.getLikes_from_users(), dislikes_from_users = post.getDislikes_from_users();
-                        boolean isLiked = likedPosts.contains(post.getId()), isDisliked = dislikedPosts.contains(post.getId());
-                        if (isLiked) {
-                            likedPosts.remove(post.getId());
-                            dislikedPosts.add(post.getId());
-                            likes_from_users.remove(auth.getCurrentUser().getUid());
-                            dislikes_from_users.add(auth.getCurrentUser().getUid());
-                            viewHolder.getDislike_image().setImageResource(R.drawable.baseline_thumb_down_filled);
-                            viewHolder.getLike_image().setImageResource(R.drawable.baseline_like);
-                        } else if (isDisliked) {
-                            dislikedPosts.remove(post.getId());
-                            dislikes_from_users.remove(auth.getCurrentUser().getUid());
-                            viewHolder.getDislike_image().setImageResource(R.drawable.baseline_dislike);
-                        } else {
-                            dislikedPosts.add(post.getId());
-                            dislikes_from_users.add(auth.getCurrentUser().getUid());
-                            viewHolder.getDislike_image().setImageResource(R.drawable.baseline_thumb_down_filled);
-                        }
-                        db.collection(Post.COLLECTION_NAME).document(post.getId()).update("dislikes_from_users", dislikedPosts, "likes_from_users", likes_from_users,
-                                "like_count", likes_from_users.size(), "dislike_count", dislikes_from_users.size());
-                        db.collection(User.COLLECTION_NAME).document(auth.getCurrentUser().getUid()).update("dislike_posts", dislikedPosts, "like_posts", likedPosts);
-                        viewHolder.getLike_count().setText(String.valueOf(likes_from_users.size()));
-                        viewHolder.getDislike_count().setText(String.valueOf(dislikes_from_users.size()));
-                    }
-                });
-            }
-        });
+//        viewHolder.getLikes_group().setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                db.collection(User.COLLECTION_NAME).document(auth.getCurrentUser().getUid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+//                    @Override
+//                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+//                        User user = documentSnapshot.toObject(User.class);
+//                        ArrayList<String> likedPosts = user.getLike_posts(), dislikedPosts = user.getDislike_posts();
+//                        ArrayList<String> likes_from_users = post.getLikes_from_users(), dislikes_from_users = post.getDislikes_from_users();
+//                        boolean isLiked = likedPosts.contains(post.getId()), isDisliked = dislikedPosts.contains(post.getId());
+//                        if (isDisliked) {
+//                            likedPosts.add(post.getId());
+//                            dislikedPosts.remove(post.getId());
+//                            likes_from_users.add(auth.getCurrentUser().getUid());
+//                            dislikes_from_users.remove(auth.getCurrentUser().getUid());
+//                            viewHolder.getDislike_image().setImageResource(R.drawable.baseline_dislike);
+//                            viewHolder.getLike_image().setImageResource(R.drawable.baseline_thumb_up_filled);
+//                        } else if (isLiked) {
+//                            likedPosts.remove(post.getId());
+//                            likes_from_users.remove(auth.getCurrentUser().getUid());
+//                            viewHolder.getLike_image().setImageResource(R.drawable.baseline_like);
+//                        } else {
+//                            likedPosts.add(post.getId());
+//                            likes_from_users.add(auth.getCurrentUser().getUid());
+//                            viewHolder.getLike_image().setImageResource(R.drawable.baseline_thumb_up_filled);
+//                        }
+//                        db.collection(Post.COLLECTION_NAME).document(post.getId()).update("dislikes_from_users", dislikedPosts, "likes_from_users", likes_from_users,
+//                                "like_count", likes_from_users.size(), "dislike_count", dislikes_from_users.size());
+//                        db.collection(User.COLLECTION_NAME).document(auth.getCurrentUser().getUid()).update("dislike_posts", dislikedPosts, "like_posts", likedPosts);
+//                        viewHolder.getLike_count().setText(String.valueOf(likes_from_users.size()));
+//                        viewHolder.getDislike_count().setText(String.valueOf(dislikes_from_users.size()));
+//                    }
+//                });
+//            }
+//        });
+//
+//        viewHolder.getDislikes_group().setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                db.collection(User.COLLECTION_NAME).document(auth.getCurrentUser().getUid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+//                    @Override
+//                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+//                        User user = documentSnapshot.toObject(User.class);
+//                        ArrayList<String> likedPosts = user.getLike_posts(), dislikedPosts = user.getDislike_posts();
+//                        ArrayList<String> likes_from_users = post.getLikes_from_users(), dislikes_from_users = post.getDislikes_from_users();
+//                        boolean isLiked = likedPosts.contains(post.getId()), isDisliked = dislikedPosts.contains(post.getId());
+//                        if (isLiked) {
+//                            likedPosts.remove(post.getId());
+//                            dislikedPosts.add(post.getId());
+//                            likes_from_users.remove(auth.getCurrentUser().getUid());
+//                            dislikes_from_users.add(auth.getCurrentUser().getUid());
+//                            viewHolder.getDislike_image().setImageResource(R.drawable.baseline_thumb_down_filled);
+//                            viewHolder.getLike_image().setImageResource(R.drawable.baseline_like);
+//                        } else if (isDisliked) {
+//                            dislikedPosts.remove(post.getId());
+//                            dislikes_from_users.remove(auth.getCurrentUser().getUid());
+//                            viewHolder.getDislike_image().setImageResource(R.drawable.baseline_dislike);
+//                        } else {
+//                            dislikedPosts.add(post.getId());
+//                            dislikes_from_users.add(auth.getCurrentUser().getUid());
+//                            viewHolder.getDislike_image().setImageResource(R.drawable.baseline_thumb_down_filled);
+//                        }
+//                        db.collection(Post.COLLECTION_NAME).document(post.getId()).update("dislikes_from_users", dislikedPosts, "likes_from_users", likes_from_users,
+//                                "like_count", likes_from_users.size(), "dislike_count", dislikes_from_users.size());
+//                        db.collection(User.COLLECTION_NAME).document(auth.getCurrentUser().getUid()).update("dislike_posts", dislikedPosts, "like_posts", likedPosts);
+//                        viewHolder.getLike_count().setText(String.valueOf(likes_from_users.size()));
+//                        viewHolder.getDislike_count().setText(String.valueOf(dislikes_from_users.size()));
+//                    }
+//                });
+//            }
+//        });
     }
 
     @Override
