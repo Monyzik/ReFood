@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -28,7 +29,8 @@ public class TapeFragment extends Fragment {
     public ArrayList <Post> posts = new ArrayList<>();
 
     public RecyclerView posts_recyclerView;
-    private FloatingActionButton add_button;
+    public TextView no_connection;
+
     FirebaseFirestore db;
     private String mParam1;
     private String mParam2;
@@ -68,30 +70,30 @@ public class TapeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        db = FirebaseFirestore.getInstance();
-        posts_recyclerView = view.findViewById(R.id.tape_recycler_view);
-        add_button = view.findViewById(R.id.add_button);
 
-        db.collection(Post.COLLECTION_NAME).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                for (QueryDocumentSnapshot document: task.getResult()) {
-                    Post post = document.toObject(Post.class);
-                    posts.add(post);
-                    posts_recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                    PostsTapeAdapter adapter = new PostsTapeAdapter(posts, getActivity());
-                    posts_recyclerView.setAdapter(adapter);
+        if (NetworkUtils.isNetworkConnected(getContext())) {
+            no_connection = view.findViewById(R.id.no_connection2);
+            posts_recyclerView = view.findViewById(R.id.tape_recycler_view);
+            db = FirebaseFirestore.getInstance();
+
+            no_connection.setVisibility(View.GONE);
+            posts_recyclerView.setVisibility(View.VISIBLE);
+
+            db.collection(Post.COLLECTION_NAME).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Post post = document.toObject(Post.class);
+                        posts.add(post);
+                        posts_recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                        PostsTapeAdapter adapter = new PostsTapeAdapter(posts, getActivity());
+                        posts_recyclerView.setAdapter(adapter);
+                    }
                 }
-            }
-        });
+            });
+        }
 
-        add_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AddProductDialog bottomSheet = new AddProductDialog();
-                bottomSheet.show(getParentFragmentManager(), "ModalBottomSheet");
-            }
-        });
+
     }
 
 }

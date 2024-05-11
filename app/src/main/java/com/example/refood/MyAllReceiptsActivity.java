@@ -2,6 +2,7 @@ package com.example.refood;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -57,25 +58,24 @@ public class MyAllReceiptsActivity extends AppCompatActivity {
                     for (QueryDocumentSnapshot document: task.getResult()) {
                         posts.add(document.toObject(Post.class));
                     }
-                    File dir = new File(getFilesDir(), "Recipes");
-                    try {
-                        for (File file: Objects.requireNonNull(dir.listFiles())) {
-                            Post readPost = Post.readSavedRecipe(file);
-                            if (!posts.contains(readPost)) {
-                                posts.add(readPost);
-                            }
-                        }
-                    } catch (Exception e) {
-                        Log.e("e", e.getMessage());
-                    }
-                    myReceiptsAdapter = new MyReceiptsAdapter(new ArrayList<>(posts), getApplicationContext(), MyAllReceiptsActivity.this);
-                    GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
-                    myAllReceiptsRecyclerView.setLayoutManager(gridLayoutManager);
-                    myAllReceiptsRecyclerView.setAdapter(myReceiptsAdapter);
                 }
             }
         });
-
+        File dir = new File(getFilesDir(), "Recipes");
+        try {
+            for (File file: Objects.requireNonNull(dir.listFiles())) {
+                Post readPost = Post.readSavedRecipe(file);
+                if (!posts.contains(readPost)) {
+                    posts.add(readPost);
+                }
+            }
+        } catch (Exception e) {
+            Log.e("e", e.getMessage());
+        }
+        myReceiptsAdapter = new MyReceiptsAdapter(new ArrayList<>(posts), getApplicationContext(), MyAllReceiptsActivity.this,  getSupportFragmentManager(), false);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
+        myAllReceiptsRecyclerView.setLayoutManager(gridLayoutManager);
+        myAllReceiptsRecyclerView.setAdapter(myReceiptsAdapter);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

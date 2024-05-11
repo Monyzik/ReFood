@@ -18,10 +18,11 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:cardCornerRadius="@dimen/simple_margin"
-            app:layout_constraintDimensionRatio="w,9:16"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="w,"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_percent="0.5725">
+            app:layout_constraintWidth_percent="0.5">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -43,13 +44,15 @@
 
         <TextView
             android:id="@+id/recycler_view_item_title"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/simple_margin"
             android:autoSizeTextType="uniform"
             android:fontFamily="@font/yeseva_one"
+            android:gravity="center"
             android:text="Some Title"
-            android:textSize="20sp"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toTopOf="@+id/recycler_view_item_author"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.51"
             app:layout_constraintStart_toEndOf="@+id/cardView4"
@@ -84,14 +87,14 @@
             android:id="@+id/recycler_view_item_author"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/small_margin"
             android:autoSizeTextType="uniform"
             android:fontFamily="@font/yeseva_one"
             android:text="Author name"
             android:textSize="10sp"
-            android:layout_marginBottom="@dimen/small_margin"
-            android:layout_marginStart="@dimen/small_margin"
             app:layout_constraintBottom_toTopOf="@+id/likes_group"
-            app:layout_constraintStart_toEndOf="@+id/cardView4" />
+            app:layout_constraintEnd_toEndOf="@+id/recycler_view_item_title"
+            app:layout_constraintStart_toStartOf="@+id/recycler_view_item_title" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/likes_group"

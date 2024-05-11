@@ -1,11 +1,13 @@
 package com.example.refood;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
 import android.util.Log;
 
@@ -18,6 +20,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import org.apache.commons.io.FileUtils;
 import org.json.JSONException;
 
 import java.io.File;
@@ -25,6 +28,8 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -33,6 +38,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
+
 
 
 public class Post {
@@ -108,13 +114,17 @@ public class Post {
 
 
 
-    public static boolean saveRecipe(Post post, String path, ContentResolver contentResolver, Context context) {
+    public static boolean saveRecipe(Post post, String dir_path, ContentResolver contentResolver, Context context) {
+        File post_files = new File(dir_path, post.getId());
+        String path = post_files.getAbsolutePath();
+        post_files.mkdirs();
         File main = new File(path, "main_file");
         File main_image = new File(path, "main_image.jpg");
         try {
             if (!Objects.equals(post.getImage(), "") && post.getImage() != null) {
+                System.out.println(post.getImage());
                 FileOutputStream outputStream = new FileOutputStream(main_image);
-                Bitmap bitmap_main_image = MediaStore.Images.Media.getBitmap(contentResolver, Uri.parse(post.getImage()));
+                Bitmap bitmap_main_image = MediaStore.Images.Media.getBitmap(contentResolver, Uri.fromFile(new File(post.getImage())));
                 bitmap_main_image.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
                 main_image.createNewFile();
                 outputStream.flush();
@@ -165,6 +175,18 @@ public class Post {
             return false;
         }
         return true;
+    }
+
+
+    public static void deletePost(Post post, String dir_path) throws IOException {
+        File dir = new File(dir_path);
+        for (File file: dir.listFiles()) {
+            if (file.getName().equals(post.id)) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    FileUtils.deleteDirectory(file);
+                }
+            }
+        }
     }
 
     @Override

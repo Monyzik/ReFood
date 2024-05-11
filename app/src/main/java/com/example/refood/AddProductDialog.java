@@ -117,18 +117,12 @@ public class AddProductDialog extends BottomSheetDialogFragment {
                                     step.setTime("");
                                     step.setNumber(i + 1);
                                 }
-                                File recipes = new File(getContext().getFilesDir() + "/Recipes");
-                                String post_id_internal = "post_id_" + Objects.requireNonNull(recipes.listFiles()).length;
                                 Post post = new Post("i'm", "me",title.getText().toString(), info.getText().toString(), image_path, new Date(), true, 0, 0, steps, new ArrayList<>(), new ArrayList<>(), spinner.getSelectedItem() + "");
-                                File post_files = new File(getContext().getFilesDir() + "/Recipes/" + post.getId());
-                                File post_file = new File(getContext().getFilesDir() + "/Recipes/" + post.getId() + "/main_file");
-                                post_files.mkdirs();
-                                if (Post.saveRecipe(post, post_files.getAbsolutePath(), getContext().getContentResolver(), getContext())) {
+                                if (Post.saveRecipe(post, getContext().getFilesDir() + "/Recipes", getContext().getContentResolver(), getContext())) {
                                     System.out.println("успешно сохранено");
                                 } else {
                                     System.out.println("Ошибка!!!!!!!!!!!");
                                 }
-                                System.out.println(post_file.getPath());
                                 dismiss();
                             } else {
                                 Toast.makeText(v.getContext(), R.string.fill, Toast.LENGTH_SHORT).show();

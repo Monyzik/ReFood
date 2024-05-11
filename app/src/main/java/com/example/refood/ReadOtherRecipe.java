@@ -1,5 +1,6 @@
 package com.example.refood;
 
+import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -7,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +26,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
@@ -35,12 +38,15 @@ public class ReadOtherRecipe extends AppCompatActivity {
     FirebaseStorage storage;
     FirebaseAuth auth;
     FirebaseFirestore db;
+    Activity activity;
+    boolean clicked_mark;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.read_recipe);
+        activity = this;
         String json = getIntent().getStringExtra("post");
         ObjectMapper objectMapper = new ObjectMapper();
         Post post;
@@ -176,6 +182,32 @@ public class ReadOtherRecipe extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         ReadStepAdapter adapter = new ReadStepAdapter(post.steps, post.getIsLocal(), ReadOtherRecipe.this);
         recyclerView.setAdapter(adapter);
+
+
+        mark_post = findViewById(R.id.mark_post);
+        mark_post.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!clicked_mark) {
+                    if (Post.saveRecipe(post, getFilesDir() + "/OtherRecipes", activity.getContentResolver(), activity)) {
+                        Toast.makeText(activity, "Сохранено", Toast.LENGTH_SHORT).show();
+                    }
+                    //Загрузка в бд
+                    clicked_mark = true;
+                    mark_post.setImageResource(R.drawable.baseline_filled_star);
+                } else {
+                    try {
+                        Post.deletePost(post, activity.getFilesDir() + "/OtherRecipes");
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    //Удаление из бд
+                    mark_post.setImageResource(R.drawable.baseline_star_border_24);
+                }
+            }
+        });
+
+
         backImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

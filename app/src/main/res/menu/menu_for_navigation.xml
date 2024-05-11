@@ -10,6 +10,10 @@
         android:icon="@drawable/baseline_home"
         android:title="@string/main_page" />
     <item
+        android:id="@+id/markedRecipesFragment"
+        android:icon="@drawable/baseline_filled_star"
+        android:title="@string/marked_recipes"/>
+    <item
         android:id="@+id/profileFragment"
         android:icon="@drawable/baseline_person"
         android:title="@string/profile" />

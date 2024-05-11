@@ -53,4 +53,7 @@
     <string name="categories">Категории</string>
     <string name="ok">Да</string>
     <string name="dialog_load_message">Вы уверены?</string>
+    <string name="marked_recipes">Отмеченные</string>
+    <string name="there_is_no_internet_connection">Нет подключения\n к интернету</string>
+    <string name="add_a_recipe">Добавить \nрецепт</string>
 </resources>

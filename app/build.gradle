@@ -102,4 +102,5 @@ dependencies {
     implementation 'com.intuit.ssp:ssp-android:1.1.1'
     debugImplementation 'androidx.compose.ui:ui-tooling'
     debugImplementation 'androidx.compose.ui:ui-test-manifest'
+    implementation group: 'commons-io', name: 'commons-io', version: '2.6'
 }

@@ -5,16 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ProfileFragment"
-    android:layout_marginBottom="@dimen/simple_margin">
+    tools:context=".ProfileFragment">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_1"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.65"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -314,14 +312,16 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/small_margin"
-        app:layout_constraintHeight_percent="0.35"
         android:clickable="true"
         android:focusable="true"
         android:scrollbars="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layout_1"/>
+        app:layout_constraintTop_toBottomOf="@id/layout_1"
+        android:layout_marginStart="@dimen/simple_margin"
+        android:layout_marginEnd="@dimen/simple_margin"
+        />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

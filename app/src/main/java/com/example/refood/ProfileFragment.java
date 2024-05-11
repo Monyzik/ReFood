@@ -25,6 +25,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -44,7 +45,9 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import io.getstream.avatarview.AvatarView;
 
@@ -64,11 +67,12 @@ public class ProfileFragment extends Fragment {
     FirebaseFirestore db;
     FirebaseStorage storage;
     TextView usernameTextView, myReceiptsTextView;
-    ArrayList<Post> posts = new ArrayList<>();
+    Set<Post> posts = new HashSet<>();
     RecyclerView myRecieptsRecyclerView;
     MyReceiptsAdapter myReceiptsAdapter;
     ImageView avatarView, bigAvatarImage, singOut;
     TextView count_of_likes, count_of_dislikes, count_of_marks;
+
 
     public ProfileFragment() {
     }
@@ -177,24 +181,24 @@ public class ProfileFragment extends Fragment {
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         posts.add(document.toObject(Post.class));
                     }
-                    File dir = new File(getContext().getFilesDir(), "Recipes");
-                    try {
-                        for (File file : Objects.requireNonNull(dir.listFiles())) {
-                            Post readPost = Post.readSavedRecipe(file);
-                            if (!posts.contains(readPost)) {
-                                posts.add(readPost);
-                            }
-                        }
-                    } catch (Exception e) {
-                        Log.e("e", e.getMessage());
-                    }
-                    myReceiptsAdapter = new MyReceiptsAdapter(posts, getContext(), getActivity());
-                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-                    myRecieptsRecyclerView.setLayoutManager(linearLayoutManager);
-                    myRecieptsRecyclerView.setAdapter(myReceiptsAdapter);
                 }
             }
         });
+        try {
+            File dir = new File(getContext().getFilesDir(), "Recipes");
+            for (File file : Objects.requireNonNull(dir.listFiles())) {
+                Post readPost = Post.readSavedRecipe(file);
+                if (!posts.contains(readPost)) {
+                    posts.add(readPost);
+                }
+            }
+        } catch (Exception e) {
+            Log.e("e", e.getMessage());
+        }
+        myReceiptsAdapter = new MyReceiptsAdapter(new ArrayList<>(posts), getContext(), getActivity(), getParentFragmentManager(), true);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        myRecieptsRecyclerView.setLayoutManager(linearLayoutManager);
+        myRecieptsRecyclerView.setAdapter(myReceiptsAdapter);
 
         myReceiptsTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -218,6 +222,8 @@ public class ProfileFragment extends Fragment {
                 signOut();
             }
         });
+
+
     }
 
 

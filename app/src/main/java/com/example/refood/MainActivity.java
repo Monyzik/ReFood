@@ -45,15 +45,23 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-        File dir = new File(getFilesDir(), "Recipes");
-        boolean flag = false;
+        File dir_my_recipes = new File(getFilesDir(), "Recipes");
+        File dir_other_recipes = new File(getFilesDir(), "OtherRecipes");
+        boolean flag_my_recipe = false;
+        boolean flag_other_recipes = false;
         for (File file: getFilesDir().listFiles()) {
             if (file.getName().equals("Recipes")) {
-                flag = true;
+                flag_my_recipe = true;
+            }
+            if (file.getName().equals("OtherRecipes")) {
+                flag_other_recipes = true;
             }
         }
-        if (!flag) {
-            dir.mkdir();
+        if (!flag_my_recipe) {
+            dir_my_recipes.mkdir();
+        }
+        if (!flag_other_recipes) {
+            dir_other_recipes.mkdir();
         }
         if (currentUser == null) {
             startActivity(new Intent(this, LoginActivity.class));
@@ -64,4 +72,6 @@ public class MainActivity extends AppCompatActivity {
         navigationController = Navigation.findNavController(MainActivity.this, R.id.fragmentContainerView);
         NavigationUI.setupWithNavController(bottomNavigationView, navigationController);
     }
+
+
 }
