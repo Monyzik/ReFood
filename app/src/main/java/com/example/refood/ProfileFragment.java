@@ -22,6 +22,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.facebook.shimmer.Shimmer;
+import com.facebook.shimmer.ShimmerDrawable;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -131,6 +133,14 @@ public class ProfileFragment extends Fragment {
         count_of_dislikes = view.findViewById(R.id.count_of_dislikes);
         count_of_marks = view.findViewById(R.id.count_of_marks);
 
+        Shimmer shimmer = new Shimmer.AlphaHighlightBuilder().setDuration(1800).setBaseAlpha(0.7f).setHighlightAlpha(0.6f)
+                .setDirection(Shimmer.Direction.LEFT_TO_RIGHT).setAutoStart(true).build();
+        ShimmerDrawable shimmerDrawable = new ShimmerDrawable();
+        shimmerDrawable.setShimmer(shimmer);
+
+        avatarView.setImageDrawable(shimmerDrawable);
+        bigAvatarImage.setImageDrawable(shimmerDrawable);
+
         db.collection(Post.COLLECTION_NAME).whereEqualTo(Post.USER_NAME, firebaseAuth.getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -163,8 +173,8 @@ public class ProfileFragment extends Fragment {
                         public void onSuccess(Uri uri) {
                             if (isAdded()) {
                                 String imageURL = uri.toString();
-                                Glide.with(requireContext()).load(imageURL).into(avatarView);
-                                Glide.with(requireContext()).load(imageURL).into(bigAvatarImage);
+                                Glide.with(requireContext()).load(imageURL).placeholder(shimmerDrawable).into(avatarView);
+                                Glide.with(requireContext()).load(imageURL).placeholder(shimmerDrawable).into(bigAvatarImage);
                             }
                         }
                     });

@@ -13,6 +13,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.facebook.shimmer.Shimmer;
+import com.facebook.shimmer.ShimmerDrawable;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
@@ -86,6 +88,13 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<com.example.refood.Vi
         viewHolder.author.setText(posts.get(viewHolder.getAdapterPosition()).getAuthor_name());
         viewHolder.num_likes.setText(posts.get(viewHolder.getAdapterPosition()).getLike_count() + "");
         viewHolder.title.setText(posts.get(viewHolder.getAdapterPosition()).getTitle());
+
+        Shimmer shimmer = new Shimmer.AlphaHighlightBuilder().setDuration(1000).setBaseAlpha(0.7f).setHighlightAlpha(0.6f)
+                .setDirection(Shimmer.Direction.LEFT_TO_RIGHT).setAutoStart(true).build();
+        ShimmerDrawable shimmerDrawable = new ShimmerDrawable();
+        shimmerDrawable.setShimmer(shimmer);
+
+        viewHolder.getFoodImage().setImageDrawable(shimmerDrawable);
 
         if (post.getLikes_from_users().contains(auth.getCurrentUser().getUid())) {
             viewHolder.getLike_image().setImageResource(R.drawable.baseline_thumb_up_filled);

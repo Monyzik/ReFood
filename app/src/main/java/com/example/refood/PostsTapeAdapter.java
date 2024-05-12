@@ -17,6 +17,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.facebook.shimmer.Shimmer;
+import com.facebook.shimmer.ShimmerDrawable;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -123,6 +125,13 @@ public class PostsTapeAdapter extends RecyclerView.Adapter<PostsTapeAdapter.View
         storage = FirebaseStorage.getInstance();
         auth = FirebaseAuth.getInstance();
 
+        Shimmer shimmer = new Shimmer.AlphaHighlightBuilder().setDuration(1800).setBaseAlpha(0.7f).setHighlightAlpha(0.6f)
+                .setDirection(Shimmer.Direction.LEFT_TO_RIGHT).setAutoStart(true).build();
+        ShimmerDrawable shimmerDrawable = new ShimmerDrawable();
+        shimmerDrawable.setShimmer(shimmer);
+
+        viewHolder.getFoodImage().setImageDrawable(shimmerDrawable);
+
         viewHolder.getTitle().setText(posts.get(position).getTitle());
         viewHolder.getAuthor().setText(posts.get(position).getAuthor_name());
         Post post = posts.get(position);
@@ -143,7 +152,7 @@ public class PostsTapeAdapter extends RecyclerView.Adapter<PostsTapeAdapter.View
                     @Override
                     public void onSuccess(Uri uri) {
                         String imageURL = String.valueOf(uri);
-                        Glide.with(activity.getApplicationContext()).load(imageURL).into(viewHolder.getFoodImage());
+                        Glide.with(activity.getApplicationContext()).load(imageURL).placeholder(shimmerDrawable).into(viewHolder.getFoodImage());
                     }
                 });
             }

@@ -6,50 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".TapeFragment">
 
-<!--    <com.facebook.shimmer.ShimmerFrameLayout-->
-<!--        android:id="@+id/shimmerFrameLayout"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:layout_gravity="center"-->
-<!--        android:orientation="vertical">-->
-
-<!--        <LinearLayout-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:orientation="vertical">-->
-
-<!--            <include layout="@layout/item_post_for_recycler_view" />-->
-
-<!--            <include layout="@layout/item_post_for_recycler_view" />-->
-
-<!--            <include layout="@layout/item_post_for_recycler_view" />-->
-
-<!--            <include layout="@layout/item_post_for_recycler_view" />-->
-
-<!--            <include layout="@layout/item_post_for_recycler_view" />-->
-
-<!--            <include layout="@layout/item_post_for_recycler_view" />-->
-
-<!--            <include layout="@layout/item_post_for_recycler_view" />-->
-
-<!--            <include layout="@layout/item_post_for_recycler_view" />-->
-
-<!--            <include layout="@layout/item_post_for_recycler_view" />-->
-
-<!--            <include layout="@layout/item_post_for_recycler_view" />-->
-
-<!--            <include layout="@layout/item_post_for_recycler_view" />-->
-
-<!--            <include layout="@layout/item_post_for_recycler_view" />-->
-
-<!--            <include layout="@layout/item_post_for_recycler_view" />-->
-
-<!--            <include layout="@layout/item_post_for_recycler_view" />-->
-
-<!--            <include layout="@layout/item_post_for_recycler_view" />-->
-<!--        </LinearLayout>-->
-<!--    </com.facebook.shimmer.ShimmerFrameLayout>-->
-
     <TextView
         android:id="@+id/no_connection2"
         android:layout_width="match_parent"

@@ -5,6 +5,7 @@
     <color name="half_invisible_black">#80000000</color>
     <color name="three_fourth_invisible_black">#BF000000</color>
     <color name="gray">#595959</color>
+    <color name="colorGrey">#dddddd</color>
     <color name="light_gray">#d2d2d2</color>
     <color name="white_gray">#fefefe</color>
     <color name="light_blue">#2B8BFF</color>

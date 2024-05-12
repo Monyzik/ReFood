@@ -21,6 +21,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.facebook.shimmer.Shimmer;
+import com.facebook.shimmer.ShimmerDrawable;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -125,6 +127,13 @@ public class MyReceiptsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             db = FirebaseFirestore.getInstance();
             auth = FirebaseAuth.getInstance();
 
+            Shimmer shimmer = new Shimmer.AlphaHighlightBuilder().setDuration(1800).setBaseAlpha(0.7f).setHighlightAlpha(0.6f)
+                    .setDirection(Shimmer.Direction.LEFT_TO_RIGHT).setAutoStart(true).build();
+            ShimmerDrawable shimmerDrawable = new ShimmerDrawable();
+            shimmerDrawable.setShimmer(shimmer);
+
+            viewHolder.getFoodImage().setImageDrawable(shimmerDrawable);
+
             viewHolder.getTitle().setText(posts.get(position).getTitle());
             String path = posts.get(position).getImage();
             boolean isLocal = posts.get(position).getIsLocal();
@@ -142,7 +151,7 @@ public class MyReceiptsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         @Override
                         public void onSuccess(Uri uri) {
                             String imageURL = uri.toString();
-                            Glide.with(context).load(imageURL).into(viewHolder.getFoodImage());
+                            Glide.with(context).load(imageURL).placeholder(shimmerDrawable).into(viewHolder.getFoodImage());
                         }
                     });
                 }
