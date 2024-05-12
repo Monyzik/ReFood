@@ -197,7 +197,7 @@ public class ReadOtherRecipe extends AppCompatActivity {
                     mark_post.setImageResource(R.drawable.baseline_filled_star);
                 } else {
                     try {
-                        Post.deletePost(post, activity.getFilesDir() + "/OtherRecipes");
+                        Post.deletePost(post.getId(), activity.getFilesDir() + "/OtherRecipes");
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }

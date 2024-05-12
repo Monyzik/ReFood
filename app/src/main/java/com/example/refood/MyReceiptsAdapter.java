@@ -1,12 +1,11 @@
 package com.example.refood;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,9 +14,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -31,13 +29,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
-import org.checkerframework.checker.units.qual.C;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -134,9 +129,9 @@ public class MyReceiptsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
             viewHolder.getFoodImage().setImageDrawable(shimmerDrawable);
 
-            viewHolder.getTitle().setText(posts.get(position).getTitle());
-            String path = posts.get(position).getImage();
-            boolean isLocal = posts.get(position).getIsLocal();
+            viewHolder.getTitle().setText(posts.get(holder.getAdapterPosition()).getTitle());
+            String path = posts.get(holder.getAdapterPosition()).getImage();
+            boolean isLocal = posts.get(holder.getAdapterPosition()).getIsLocal();
             if (isLocal) {
                 viewHolder.getIsLocalImage().setImageResource(R.drawable.baseline_cloud_off_24);
             } else {
@@ -249,6 +244,7 @@ public class MyReceiptsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    System.out.println(posts.get(viewHolder.getAdapterPosition()).getId());
                     Intent i = new Intent(activity, ReadOtherRecipe.class);
                     GsonBuilder gsonBuilder = new GsonBuilder();
                     gsonBuilder.setPrettyPrinting();
@@ -258,14 +254,77 @@ public class MyReceiptsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     activity.startActivity(i);
                 }
             });
+
+            viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    String[] strings = {"Редактировать", "Удалить"};
+                    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(activity, R.style.MyThemeOverlay_MaterialComponents_MyRecipeDialog);
+                    builder.setItems(strings, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (which == 0) {
+                                EditProductDialog bottomSheet = new EditProductDialog(posts.get(viewHolder.getAdapterPosition()), new EditProductDialog.UpdateCall() {
+                                    @Override
+                                    public void update() {
+                                        try {
+                                            File dir = new File(activity.getFilesDir(), "Recipes");
+                                            posts.clear();
+                                            for (File file : Objects.requireNonNull(dir.listFiles())) {
+                                                Post readPost = Post.readSavedRecipe(file);
+                                                    posts.add(readPost);
+                                            }
+                                            System.out.println(posts.size());
+                                        } catch (Exception e) {
+                                            Log.e("e", e.getMessage());
+                                        }
+                                        notifyDataSetChanged();
+                                    }
+                                });
+                                bottomSheet.show(fragmentManager,"ModalBottomSheet");
+
+                            } else {
+                                String id_post = posts.get(viewHolder.getAdapterPosition()).getId();
+                                try {
+
+                                    Post.deletePost(posts.get(viewHolder.getAdapterPosition()).getId(), activity.getFilesDir() + "/Recipes");
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+                                posts.remove(viewHolder.getAdapterPosition());
+                                notifyItemRemoved(viewHolder.getAdapterPosition());
+                            }
+                        }
+                    });
+                    builder.show();
+                    return false;
+                }
+            });
         }
         else {
             ViewHolderAddButton viewHolder = (ViewHolderAddButton) holder;
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    AddProductDialog bottomSheet = new AddProductDialog();
+                    AddProductDialog bottomSheet = new AddProductDialog(new AddProductDialog.UpdateCall() {
+                        @Override
+                        public void update() {
+                            try {
+                                File dir = new File(activity.getFilesDir(), "Recipes");
+                                for (File file : Objects.requireNonNull(dir.listFiles())) {
+                                    Post readPost = Post.readSavedRecipe(file);
+                                    if (!posts.contains(readPost)) {
+                                        posts.add(readPost);
+                                    }
+                                }
+                            } catch (Exception e) {
+                                Log.e("e", e.getMessage());
+                            }
+                            notifyDataSetChanged();
+                        }
+                    });
                     bottomSheet.show(fragmentManager,"ModalBottomSheet");
+
                 }
             });
         }

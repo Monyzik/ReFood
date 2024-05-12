@@ -49,6 +49,8 @@ public class ReadStepAdapter extends RecyclerView.Adapter<ReadStepAdapter.ViewHo
             holder.cardView.setVisibility(View.VISIBLE);
             if (isLocal) {
                 holder.foodImage.setImageURI(Uri.parse(steps.get(holder.getAdapterPosition()).getImagePath()));
+                System.out.println(steps.get(holder.getAdapterPosition()).getImagePath());
+
             } else {
                 storage = FirebaseStorage.getInstance();
                 StorageReference stepImageReference = storage.getReference(steps.get(holder.getAdapterPosition()).getImagePath());

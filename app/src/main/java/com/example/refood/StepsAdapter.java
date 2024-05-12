@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.ViewHolder> {
     Context context;
@@ -97,7 +99,19 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.ViewHolder> 
         if (path != null) {
             viewHolder.icon_add_image.setVisibility(View.GONE);
             viewHolder.card_view_image.setVisibility(View.VISIBLE);
-            Glide.with(context).load(Uri.parse(path)).into(viewHolder.getFoodImage());
+            if (path.startsWith("https") || path.startsWith("http")) {
+                try {
+                    Glide.with(context).load(Uri.parse(path)).into(viewHolder.getFoodImage());
+                } catch (Exception e) {
+                    Log.e("E", e.getMessage());
+                }
+            } else {
+                try {
+                    viewHolder.foodImage.setImageURI(Uri.parse(path));
+                } catch (Exception e) {
+                    Log.e("E", e.getMessage());
+                }
+            }
         } else {
 //            viewHolder.foodImage.setImageResource(R.drawable.example_of_food_photo);
             viewHolder.icon_add_image.setVisibility(View.VISIBLE);
@@ -107,7 +121,7 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.ViewHolder> 
         steps.get(position).setNumber(position + 1);
 
         viewHolder.getNumber().setText(String.valueOf(steps.get(position).getNumber()));
-        viewHolder.getTime().setText(String.valueOf(steps.get(position).getTime()));
+        viewHolder.getTime().setText((steps.get(position).getTime()).toString());
         viewHolder.getInfo().setText(steps.get(position).getInfo());
 
         viewHolder.getInfo().addTextChangedListener(new TextWatcher() {

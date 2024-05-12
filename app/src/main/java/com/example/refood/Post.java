@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 
@@ -62,8 +63,11 @@ public class Post {
     String image;
     @Expose
     String category;
+    @Expose
+    public int position_category;
 
-    public Post(String author, String author_name, String title, String text, String image, Date date, Boolean isLocal, long like_count, long dislike_count, ArrayList <Step> steps, ArrayList <String> likes_from_users, ArrayList <String> dislikes_from_users, String category) {
+
+    public Post(String author, String author_name, String title, String text, String image, Date date, Boolean isLocal, long like_count, long dislike_count, ArrayList <Step> steps, ArrayList <String> likes_from_users, ArrayList <String> dislikes_from_users, String category, int position_category) {
         this.id = UUID.randomUUID().toString();
         Date now = new Date();
         this.date = now.getTime();
@@ -79,9 +83,46 @@ public class Post {
         this.likes_from_users = likes_from_users;
         this.dislikes_from_users = dislikes_from_users;
         this.category = category;
+        this.position_category = position_category;
+    }
+    public Post(String id, String author, String author_name, String title, String text, String image, Date date, Boolean isLocal, long like_count, long dislike_count, ArrayList <Step> steps, ArrayList <String> likes_from_users, ArrayList <String> dislikes_from_users, String category, int position_category) {
+        this.id = id;
+        Date now = new Date();
+        this.date = now.getTime();
+        this.author = author;
+        this.author_name = author_name;
+        this.title = title;
+        this.text = text;
+        this.image = image;
+        this.isLocal = isLocal;
+        this.like_count = like_count;
+        this.dislike_count = dislike_count;
+        this.steps = steps;
+        this.likes_from_users = likes_from_users;
+        this.dislikes_from_users = dislikes_from_users;
+        this.category = category;
+        this.position_category = position_category;
     }
 
     public Post() {}
+    public Post(Post post) {
+        this.id = UUID.randomUUID().toString();
+        Date now = new Date();
+        this.date = post.date;
+        this.author = post.author;
+        this.author_name = post.author_name;
+        this.title = post.title;
+        this.text = post.text;
+        this.image = post.image;
+        this.isLocal = post.isLocal;
+        this.like_count = post.like_count;
+        this.dislike_count = post.dislike_count;
+        this.steps = post.steps;
+        this.likes_from_users = post.likes_from_users;
+        this.dislikes_from_users = post.dislikes_from_users;
+        this.category = post.category;
+        this.position_category = post.position_category;
+    }
 
     public static final Comparator<Post> COUNT_OF_LIKES_COMPARATOR = new Comparator<Post>() {
         @Override
@@ -126,6 +167,13 @@ public class Post {
                 FileOutputStream outputStream = new FileOutputStream(main_image);
                 Bitmap bitmap_main_image = null;
                 try {
+                    File image = new File(post.image);
+                    BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+                    bitmap_main_image = BitmapFactory.decodeFile(image.getAbsolutePath(),bmOptions);
+                } catch (Exception e) {
+                    Log.e("сохранение изображения", e.getMessage());
+                }
+                try {
                     bitmap_main_image = MediaStore.Images.Media.getBitmap(contentResolver, Uri.fromFile(new File(post.getImage())));
                 } catch (Exception e) {
                     Log.e("сохранение изображения", e.getMessage());
@@ -135,8 +183,10 @@ public class Post {
                 } catch (Exception e) {
                     Log.e("сохранение изображения", e.getMessage());
                 }
+
                 bitmap_main_image.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
                 main_image.createNewFile();
+                post.setImage(main_image.getAbsolutePath());
                 outputStream.flush();
                 outputStream.close();
             } else {
@@ -169,6 +219,7 @@ public class Post {
                     }
                     bitmap_step_image.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
                     step_image.createNewFile();
+                    post.steps.get(i).setImagePath(step_image.getAbsolutePath());
                     outputStream.flush();
                     outputStream.close();
                 }
@@ -198,16 +249,18 @@ public class Post {
     }
 
 
-    public static void deletePost(Post post, String dir_path) throws IOException {
+    public static void deletePost(String post_id, String dir_path) throws IOException {
         File dir = new File(dir_path);
         for (File file: dir.listFiles()) {
-            if (file.getName().equals(post.id)) {
+            if (file.getName().equals(post_id)) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     FileUtils.deleteDirectory(file);
                 }
             }
         }
     }
+
+
 
     @Override
     public int hashCode() {

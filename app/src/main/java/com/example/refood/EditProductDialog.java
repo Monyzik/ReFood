@@ -1,6 +1,8 @@
 package com.example.refood;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
@@ -26,10 +28,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class AddProductDialog extends BottomSheetDialogFragment {
+public class EditProductDialog extends BottomSheetDialogFragment {
 
     private final int GALLERY_REQ_CODE = 1000;
     private final int GALLERY_REQ_CODE_MAIN_IMAGE = 1001;
@@ -45,10 +49,14 @@ public class AddProductDialog extends BottomSheetDialogFragment {
     FirebaseFirestore db;
     ImageView imageView;
     UpdateCall updateCall;
+    Post post_in;
+    Post post_mid;
 
-    public AddProductDialog(UpdateCall updateCall) {
+    public EditProductDialog(Post post_in, UpdateCall updateCall) {
+        this.post_in = post_in;
         this.updateCall = updateCall;
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -58,7 +66,8 @@ public class AddProductDialog extends BottomSheetDialogFragment {
         firebaseAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        steps = new ArrayList<>();
+
+
 
         Spinner spinner = v.findViewById(R.id.spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(), R.array.categories_food, R.layout.item_for_category_spinner);
@@ -71,6 +80,17 @@ public class AddProductDialog extends BottomSheetDialogFragment {
         ImageView imageView = v.findViewById(R.id.imageView);
         View add_step_button = v.findViewById(R.id.add_step_button);
         recyclerView = v.findViewById(R.id.recycler_steps);
+
+        post_mid = new Post(post_in);
+        Post.saveRecipe(post_mid, getActivity().getFilesDir() + "/Recipes", getActivity().getContentResolver(), getContext());
+
+        imageView.setImageURI(Uri.parse(post_mid.image));
+        title.setText(post_mid.getTitle());
+        info.setText(post_mid.getText());
+        spinner.setSelection((post_mid.position_category));
+        steps = post_mid.steps;
+        image_path = post_mid.image;
+
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         stepsAdapter = new StepsAdapter(steps, v.getContext(), new StepsAdapter.AdapterCallback() {
@@ -103,6 +123,8 @@ public class AddProductDialog extends BottomSheetDialogFragment {
         apply_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
                 if (!(title.getText().toString().equals("") || info.getText().toString().equals("") || image_path.equals(""))) {
                     db.collection(Post.COLLECTION_NAME).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
@@ -113,18 +135,35 @@ public class AddProductDialog extends BottomSheetDialogFragment {
                                     Step step = steps.get(i);
                                     step.setInfo(holder.getInfo().getText().toString());
                                     step.setTime(holder.getTime().getText().toString());
+                                    step.setTime(holder.getTime().getText().toString());
                                     step.setNumber(i + 1);
                                 }
-                                Post post = new Post("i'm", "me", title.getText().toString(), info.getText().toString(), image_path, new Date(), true, 0, 0, steps, new ArrayList<>(), new ArrayList<>(), spinner.getSelectedItem() + "", spinner.getSelectedItemPosition());
+
+
+                                Post post = new Post(post_in.getId(), "i'm", "me", title.getText().toString(), info.getText().toString(), image_path, new Date(), post_mid.getIsLocal(), post_mid.like_count, post_mid.dislike_count, steps, post_mid.likes_from_users, post_mid.dislikes_from_users, spinner.getSelectedItem() +"", spinner.getSelectedItemPosition());
+                                try {
+                                    Post.deletePost(post_in.getId(), getActivity().getFilesDir() + "/Recipes");
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+
                                 if (Post.saveRecipe(post, getContext().getFilesDir() + "/Recipes", getContext().getContentResolver(), getContext())) {
                                     System.out.println("успешно сохранено");
                                 } else {
                                     System.out.println("Ошибка!!!!!!!!!!!");
                                 }
+
+                                try {
+                                    Post.deletePost(post_mid.getId(), getActivity().getFilesDir() + "/Recipes");
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+
+                                //Загрузка нового поста в бд
                                 updateCall.update();
                                 dismiss();
                             } else {
-                                Toast.makeText(getContext(), R.string.fill, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(v.getContext(), R.string.fill, Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
@@ -146,6 +185,18 @@ public class AddProductDialog extends BottomSheetDialogFragment {
 
         return v;
     }
+
+    @Override
+    public void onCancel(@NonNull DialogInterface dialog) {
+        super.onCancel(dialog);
+        try {
+            Post.deletePost(post_mid.getId(), getActivity().getFilesDir() + "/Recipes");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        updateCall.update();
+
+    }
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -160,10 +211,11 @@ public class AddProductDialog extends BottomSheetDialogFragment {
             }
 
         }
-}
-public interface UpdateCall {
+    }
+    public interface UpdateCall {
         void update();
-}
+    }
+
 
 
 
