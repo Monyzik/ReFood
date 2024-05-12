@@ -212,16 +212,14 @@ public class ReadOtherRecipe extends AppCompatActivity {
                             }
                             mark_posts.add(post.getId());
                             clicked_mark = true;
-//                            mark_post.setImageResource(R.drawable.baseline_filled_star);
                         } else {
                             try {
-                                Post.deletePost(post, activity.getFilesDir() + "/OtherRecipes");
+                                Post.deletePost(post.getId(), activity.getFilesDir() + "/OtherRecipes");
                             } catch (IOException e) {
                                 throw new RuntimeException(e);
                             }
                             mark_posts.remove(post.getId());
                             clicked_mark = false;
-//                            mark_post.setImageResource(R.drawable.baseline_star_border_24);
                         }
                         db.collection(User.COLLECTION_NAME).document(auth.getCurrentUser().getUid()).update("mark_posts", mark_posts);
                     }

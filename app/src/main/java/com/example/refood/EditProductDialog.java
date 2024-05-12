@@ -159,7 +159,9 @@ public class EditProductDialog extends BottomSheetDialogFragment {
                                     throw new RuntimeException(e);
                                 }
 
-                                //Загрузка нового поста в бд
+                                if (!post.getIsLocal()) {
+                                    db.collection(Post.COLLECTION_NAME).document(post.getId()).set(post);
+                                }
                                 updateCall.update();
                                 dismiss();
                             } else {

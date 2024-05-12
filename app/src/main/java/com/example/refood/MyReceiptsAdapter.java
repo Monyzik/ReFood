@@ -28,6 +28,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -270,15 +272,32 @@ public class MyReceiptsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                         try {
                                             File dir = new File(activity.getFilesDir(), "Recipes");
                                             posts.clear();
-                                            for (File file : Objects.requireNonNull(dir.listFiles())) {
-                                                Post readPost = Post.readSavedRecipe(file);
-                                                    posts.add(readPost);
-                                            }
-                                            System.out.println(posts.size());
-                                        } catch (Exception e) {
+                                            db.collection(Post.COLLECTION_NAME).whereEqualTo(Post.USER_NAME, auth.getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                    if (task.isSuccessful()) {
+                                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                                            posts.add(document.toObject(Post.class));
+                                                        }
+                                                    }
+                                                    for (File file : Objects.requireNonNull(dir.listFiles())) {
+                                                        Post readPost = null;
+                                                        try {
+                                                            readPost = Post.readSavedRecipe(file);
+                                                        } catch (IOException e) {
+                                                            throw new RuntimeException(e);
+                                                        }
+                                                        if (!posts.contains(readPost)) {
+                                                            posts.add(readPost);
+                                                        }
+                                                    }
+                                                    System.out.println(posts.size());
+                                                    notifyDataSetChanged();
+                                                }
+                                            });
+                                        } catch(Exception e) {
                                             Log.e("e", e.getMessage());
                                         }
-                                        notifyDataSetChanged();
                                     }
                                 });
                                 bottomSheet.show(fragmentManager,"ModalBottomSheet");
@@ -286,11 +305,11 @@ public class MyReceiptsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                             } else {
                                 String id_post = posts.get(viewHolder.getAdapterPosition()).getId();
                                 try {
-
                                     Post.deletePost(posts.get(viewHolder.getAdapterPosition()).getId(), activity.getFilesDir() + "/Recipes");
                                 } catch (IOException e) {
                                     throw new RuntimeException(e);
                                 }
+                                db.collection(Post.COLLECTION_NAME).document(id_post).delete();
                                 posts.remove(viewHolder.getAdapterPosition());
                                 notifyItemRemoved(viewHolder.getAdapterPosition());
                             }
