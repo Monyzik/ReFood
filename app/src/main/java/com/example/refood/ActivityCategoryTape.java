@@ -55,12 +55,13 @@ public class ActivityCategoryTape extends AppCompatActivity {
             Activity activity = this;
 
 
-            db.collection(Post.COLLECTION_NAME).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            db.collection(Post.COLLECTION_NAME).whereEqualTo("category", category).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        Post post = document.toObject(Post.class);
-                        posts.add(post);
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document: task.getResult()) {
+                            posts.add(document.toObject(Post.class));
+                        }
                         recyclerView.setLayoutManager(new LinearLayoutManager(activity));
                         PostsTapeAdapter adapter = new PostsTapeAdapter(posts, activity);
                         recyclerView.setAdapter(adapter);

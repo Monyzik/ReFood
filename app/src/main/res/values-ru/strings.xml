@@ -56,4 +56,6 @@
     <string name="marked_recipes">Отмеченные</string>
     <string name="there_is_no_internet_connection">Нет подключения\n к интернету</string>
     <string name="add_a_recipe">Добавить \nрецепт</string>
+    <string name="withot_marked_posts">Вы не сохранили не одного рецепта :(</string>
+
 </resources>

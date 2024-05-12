@@ -25,6 +25,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.varunest.sparkbutton.SparkButton;
+import com.varunest.sparkbutton.SparkEventListener;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -39,6 +41,7 @@ public class ReadOtherRecipe extends AppCompatActivity {
     FirebaseAuth auth;
     FirebaseFirestore db;
     Activity activity;
+    SparkButton starSparkButton;
     boolean clicked_mark;
 
 
@@ -68,6 +71,7 @@ public class ReadOtherRecipe extends AppCompatActivity {
         dislikeCount = findViewById(R.id.dislike_count);
         likeImage = findViewById(R.id.likeImage);
         dislikeImage = findViewById(R.id.dislikeImage);
+        starSparkButton = findViewById(R.id.star_sparkButton);
         RecyclerView recyclerView = findViewById(R.id.recycler_view_read_steps);
 
         storage = FirebaseStorage.getInstance();
@@ -95,6 +99,16 @@ public class ReadOtherRecipe extends AppCompatActivity {
         } else {
             food_image.setImageResource(R.drawable.example_of_food_photo);
         }
+        db.collection(User.COLLECTION_NAME).document(auth.getCurrentUser().getUid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                User user = documentSnapshot.toObject(User.class);
+                clicked_mark = user.getMark_posts().contains(post.getId());
+                if (clicked_mark) {
+                    starSparkButton.setChecked(true);
+                }
+            }
+        });
         if (post.getLikes_from_users().contains(auth.getCurrentUser().getUid())) {
             likeImage.setImageResource(R.drawable.baseline_thumb_up_filled);
         } else if (post.getDislikes_from_users().contains(auth.getCurrentUser().getUid())) {
@@ -183,30 +197,45 @@ public class ReadOtherRecipe extends AppCompatActivity {
         ReadStepAdapter adapter = new ReadStepAdapter(post.steps, post.getIsLocal(), ReadOtherRecipe.this);
         recyclerView.setAdapter(adapter);
 
-
-        mark_post = findViewById(R.id.mark_post);
-        mark_post.setOnClickListener(new View.OnClickListener() {
+        starSparkButton.setEventListener(new SparkEventListener() {
             @Override
-            public void onClick(View v) {
-                if (!clicked_mark) {
-                    if (Post.saveRecipe(post, getFilesDir() + "/OtherRecipes", activity.getContentResolver(), activity)) {
-                        Toast.makeText(activity, "Сохранено", Toast.LENGTH_SHORT).show();
+            public void onEvent(ImageView button, boolean buttonState) {
+                db.collection(User.COLLECTION_NAME).document(auth.getCurrentUser().getUid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        User user = documentSnapshot.toObject(User.class);
+                        clicked_mark = user.getMark_posts().contains(post.getId());
+                        ArrayList <String> mark_posts = user.getMark_posts();
+                        if (buttonState) {
+                            if (Post.saveRecipe(post, getFilesDir() + "/OtherRecipes", activity.getContentResolver(), activity)) {
+                                Toast.makeText(activity, "Сохранено", Toast.LENGTH_SHORT).show();
+                            }
+                            mark_posts.add(post.getId());
+                            clicked_mark = true;
+//                            mark_post.setImageResource(R.drawable.baseline_filled_star);
+                        } else {
+                            try {
+                                Post.deletePost(post, activity.getFilesDir() + "/OtherRecipes");
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                            mark_posts.remove(post.getId());
+                            clicked_mark = false;
+//                            mark_post.setImageResource(R.drawable.baseline_star_border_24);
+                        }
+                        db.collection(User.COLLECTION_NAME).document(auth.getCurrentUser().getUid()).update("mark_posts", mark_posts);
                     }
-                    //Загрузка в бд
-                    clicked_mark = true;
-                    mark_post.setImageResource(R.drawable.baseline_filled_star);
-                } else {
-                    try {
-                        Post.deletePost(post, activity.getFilesDir() + "/OtherRecipes");
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    //Удаление из бд
-                    mark_post.setImageResource(R.drawable.baseline_star_border_24);
-                }
+                });
+            }
+
+            @Override
+            public void onEventAnimationEnd(ImageView button, boolean buttonState) {
+            }
+
+            @Override
+            public void onEventAnimationStart(ImageView button, boolean buttonState) {
             }
         });
-
 
         backImageView.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -55,9 +55,10 @@
     <string name="recipe_of_the_day">Recipe of the day</string>
     <string name="categories">Categories</string>
     <string name="dialog_load_message">Are you sure?</string>
-    <string name="title_activity_splash_screen">ReFood</string>
+    <string name="title_activity_splash_screen" translatable="false">ReFood</string>
     <string name="marked_recipes">Marked</string>
     <string name="there_is_no_internet_connection">There is no internet\n connection</string>
     <string name="add_a_recipe">Add \na recipe</string>
+    <string name="withot_marked_posts">You haven\'t saved anyone recipes</string>
 
 </resources>

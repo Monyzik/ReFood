@@ -50,7 +50,7 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/card_view_food_image_read"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="200dp"
         android:layout_below="@id/info_read"
         android:layout_marginStart="@dimen/simple_margin"
         android:layout_marginTop="@dimen/simple_margin"
