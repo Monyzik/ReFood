@@ -5,6 +5,16 @@
     android:layout_height="match_parent"
     tools:context=".MarkedRecipesFragment">
 
+    <TextView
+        android:id="@+id/marked_fragment_textView"
+        android:fontFamily="@font/yeseva_one"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:textSize="30sp"/>
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/marked_recipes_recycler_view"
         android:layout_width="match_parent"

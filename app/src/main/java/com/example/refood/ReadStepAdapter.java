@@ -18,6 +18,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class ReadStepAdapter extends RecyclerView.Adapter<ReadStepAdapter.ViewHolder> {
     ArrayList<Step> steps;
@@ -43,14 +44,16 @@ public class ReadStepAdapter extends RecyclerView.Adapter<ReadStepAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.num.setText(position + 1 + "");
-        holder.info.setText(steps.get(holder.getAdapterPosition()).getInfo());
+        holder.getNum().setText(String.valueOf(position + 1));
+        if (Objects.equals(steps.get(position).getInfo(), "") || steps.get(position).getInfo() == null) {
+            holder.getInfo().setVisibility(View.GONE);
+        } else {
+            holder.getInfo().setText(steps.get(holder.getAdapterPosition()).getInfo());
+        }
         if (steps.get(holder.getAdapterPosition()).getImagePath() != null) {
-            holder.cardView.setVisibility(View.VISIBLE);
+            holder.getCardView().setVisibility(View.VISIBLE);
             if (isLocal) {
-                holder.foodImage.setImageURI(Uri.parse(steps.get(holder.getAdapterPosition()).getImagePath()));
-                System.out.println(steps.get(holder.getAdapterPosition()).getImagePath());
-
+                holder.getFoodImage().setImageURI(Uri.parse(steps.get(holder.getAdapterPosition()).getImagePath()));
             } else {
                 storage = FirebaseStorage.getInstance();
                 StorageReference stepImageReference = storage.getReference(steps.get(holder.getAdapterPosition()).getImagePath());
@@ -63,7 +66,12 @@ public class ReadStepAdapter extends RecyclerView.Adapter<ReadStepAdapter.ViewHo
                 });
             }
         }
-        holder.time.setText(steps.get(holder.getAdapterPosition()).getTime());
+        if (Objects.equals(steps.get(position).getTime(), "") || steps.get(position).getTime() == null) {
+            holder.getTime().setVisibility(View.GONE);
+            holder.getTime_num().setVisibility(View.GONE);
+        } else {
+            holder.getTime().setText(steps.get(holder.getAdapterPosition()).getTime());
+        }
 
     }
 
@@ -78,6 +86,7 @@ public class ReadStepAdapter extends RecyclerView.Adapter<ReadStepAdapter.ViewHo
         private final ImageView foodImage;
         private final View cardView;
         private final TextView time;
+        private final TextView time_num;
 
         public ViewHolder(View view) {
             super(view);
@@ -85,7 +94,8 @@ public class ReadStepAdapter extends RecyclerView.Adapter<ReadStepAdapter.ViewHo
             info = view.findViewById(R.id.info_read);
             foodImage = view.findViewById(R.id.food_image_read);
             cardView = view.findViewById(R.id.card_view_food_image_read);
-            time = view.findViewById(R.id.time_num);
+            time = view.findViewById(R.id.time);
+            time_num = view.findViewById(R.id.time_num);
         }
 
         public ImageView getFoodImage() {
@@ -102,6 +112,10 @@ public class ReadStepAdapter extends RecyclerView.Adapter<ReadStepAdapter.ViewHo
 
         public TextView getTime() {
             return time;
+        }
+
+        public TextView getTime_num() {
+            return time_num;
         }
 
         public View getCardView() {

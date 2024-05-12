@@ -18,6 +18,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.yalantis.pulltomakesoup.PullToRefreshView;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -30,6 +31,8 @@ public class TapeFragment extends Fragment {
 
     public RecyclerView posts_recyclerView;
     public TextView no_connection;
+
+    PullToRefreshView tape_refresh_view;
 
     FirebaseFirestore db;
     private String mParam1;
@@ -74,6 +77,7 @@ public class TapeFragment extends Fragment {
         if (NetworkUtils.isNetworkConnected(getContext())) {
             no_connection = view.findViewById(R.id.no_connection2);
             posts_recyclerView = view.findViewById(R.id.tape_recycler_view);
+            tape_refresh_view = view.findViewById(R.id.tape_refresh_view);
             db = FirebaseFirestore.getInstance();
 
             no_connection.setVisibility(View.GONE);
@@ -89,6 +93,26 @@ public class TapeFragment extends Fragment {
                         PostsTapeAdapter adapter = new PostsTapeAdapter(posts, getActivity());
                         posts_recyclerView.setAdapter(adapter);
                     }
+                }
+            });
+
+            tape_refresh_view.setOnRefreshListener(new PullToRefreshView.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    posts.clear();
+                    db.collection(Post.COLLECTION_NAME).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Post post = document.toObject(Post.class);
+                                posts.add(post);
+                                posts_recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                                PostsTapeAdapter adapter = new PostsTapeAdapter(posts, getActivity());
+                                posts_recyclerView.setAdapter(adapter);
+                            }
+                            tape_refresh_view.setRefreshing(false);
+                        }
+                    });
                 }
             });
         }
