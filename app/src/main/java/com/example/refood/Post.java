@@ -257,6 +257,8 @@ public class Post {
         File dir = new File(activity.getFilesDir() + "/Recipes/" + old_post.id);
         Set<String> old_paths = new HashSet<>();
         Set<String> new_paths = new HashSet<>();
+        old_paths.add(old_post.getImage());
+        new_paths.add(new_post.getImage());
         for (int i = 0; i < old_post.steps.size(); i++) {
             old_paths.add(old_post.steps.get(i).getImagePath());
         }
@@ -267,6 +269,9 @@ public class Post {
         Set<String> similar = new HashSet<>(old_paths);
         delete_paths.removeAll(new_paths);
         similar.retainAll(new_paths);
+        Log.i("IIIIIIII", old_paths + "");
+        Log.i("IIIIIIII", new_paths + "");
+        Log.i("IIIIIIII", similar + "");
 
 
         for (File file: dir.listFiles()) {
@@ -282,6 +287,7 @@ public class Post {
             if (!Objects.equals(new_post.getImage(), "") && new_post.getImage() != null) {
                 if (!similar.contains(new_post.getImage())) {
                     System.out.println(new_post.getImage());
+                    System.out.println(similar);
                     FileOutputStream outputStream = new FileOutputStream(main_image);
                     Bitmap bitmap_main_image = null;
                     try {
