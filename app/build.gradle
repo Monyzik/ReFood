@@ -103,4 +103,5 @@ dependencies {
     debugImplementation 'androidx.compose.ui:ui-test-manifest'
     implementation 'com.github.Yalantis:pull-to-make-soup:1.0.2'
     implementation group: 'commons-io', name: 'commons-io', version: '2.6'
+    implementation 'com.github.varunest:sparkbutton:1.0.6'
 }

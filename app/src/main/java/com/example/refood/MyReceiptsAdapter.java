@@ -331,13 +331,15 @@ public class MyReceiptsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                             try {
                                 File dir = new File(activity.getFilesDir(), "Recipes");
                                 for (File file : Objects.requireNonNull(dir.listFiles())) {
+                                    System.out.println("до");
                                     Post readPost = Post.readSavedRecipe(file);
+                                    System.out.println("после");
                                     if (!posts.contains(readPost)) {
                                         posts.add(readPost);
                                     }
                                 }
                             } catch (Exception e) {
-                                Log.e("e", e.getMessage());
+                                Log.e("Ошибка", e.getMessage());
                             }
                             notifyDataSetChanged();
                         }

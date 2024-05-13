@@ -195,8 +195,8 @@ public class ProfileFragment extends Fragment {
             }
         });
         try {
-            File dir = new File(getContext().getFilesDir(), "Recipes");
-            for (File file : Objects.requireNonNull(dir.listFiles())) {
+            File dir = new File(getActivity().getFilesDir(), "Recipes");
+            for (File file : dir.listFiles()) {
                 Post readPost = Post.readSavedRecipe(file);
                 if (!posts.contains(readPost)) {
                     posts.add(readPost);

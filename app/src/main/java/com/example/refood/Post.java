@@ -35,9 +35,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Random;
+import java.util.Set;
 import java.util.UUID;
 
 
@@ -133,20 +136,10 @@ public class Post {
 
     public static Post readSavedRecipe(File recipeDir) throws IOException {
         Post post = null;
-        String mainImage = "";
         for (File file : Objects.requireNonNull(recipeDir.listFiles())) {
             if (file.getName().equals("main_file")) {
                 ObjectMapper objectMapper = new ObjectMapper();
                 post = objectMapper.readValue(file, Post.class);
-            } else if (file.getName().equals("main_image.jpg")) {
-                mainImage = file.getAbsolutePath();
-            }
-        }
-        post.setImage(mainImage);
-        for (File file : Objects.requireNonNull(recipeDir.listFiles())) {
-            String name = file.getName();
-            if (name.charAt(0) == 's') {
-                post.steps.get(Integer.parseInt(name.substring(5, name.length() - 4))).setImagePath(file.getAbsolutePath());
             }
         }
         return post;
@@ -157,8 +150,8 @@ public class Post {
 
     public static boolean saveRecipe(Post post, String dir_path, ContentResolver contentResolver, Context context) {
         File post_files = new File(dir_path, post.getId());
-        String path = post_files.getAbsolutePath();
         post_files.mkdirs();
+        String path = post_files.getAbsolutePath();
         File main = new File(path, "main_file");
         File main_image = new File(path, "main_image.jpg");
         try {
@@ -194,6 +187,7 @@ public class Post {
                 Bitmap bitmap_main_image = BitmapFactory.decodeResource(context.getResources(), R.drawable.main_dishes);
                 bitmap_main_image.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
                 main_image.createNewFile();
+                post.setImage(main_image.getAbsolutePath());
                 outputStream.flush();
                 outputStream.close();
             }
@@ -201,10 +195,9 @@ public class Post {
             Log.e("E", e.getMessage());
         }
         try {
-
             for (int i = 0; i < post.steps.size(); i++) {
                 if (post.steps.get(i).getImagePath() != null) {
-                    File step_image = new File(path, "step_" + i + ".jpg");
+                    File step_image = new File(path, UUID.randomUUID().toString() + ".jpg");
                     FileOutputStream  outputStream = new FileOutputStream(step_image);
                     Bitmap bitmap_step_image = null;
                     try {
@@ -226,9 +219,8 @@ public class Post {
 
             }
         } catch (Exception e) {
-            Log.e("e", e.getMessage());
+            Log.e("E", e.getMessage());
         }
-
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.setPrettyPrinting();
         Gson gson = gsonBuilder.create();
@@ -242,6 +234,7 @@ public class Post {
         }
         try {
             main.createNewFile();
+            System.out.println("создание mainfile");
         } catch (IOException e) {
             return false;
         }
@@ -258,6 +251,121 @@ public class Post {
                 }
             }
         }
+    }
+
+    public static void editPost(Post old_post, Post new_post, Activity activity) throws IOException {
+        File dir = new File(activity.getFilesDir() + "/Recipes/" + old_post.id);
+        Set<String> old_paths = new HashSet<>();
+        Set<String> new_paths = new HashSet<>();
+        for (int i = 0; i < old_post.steps.size(); i++) {
+            old_paths.add(old_post.steps.get(i).getImagePath());
+        }
+        for (int i = 0; i < new_post.steps.size(); i++) {
+            new_paths.add(new_post.steps.get(i).getImagePath());
+        }
+        Set<String> delete_paths = new HashSet<>(old_paths);
+        Set<String> similar = new HashSet<>(old_paths);
+        delete_paths.removeAll(new_paths);
+        similar.retainAll(new_paths);
+
+
+        for (File file: dir.listFiles()) {
+            if (file.getName().equals("main_file")) {
+                file.delete();
+            } else if (old_paths.contains(file.getAbsoluteFile())) {
+                file.delete();
+            }
+        }
+        File main = new File(dir.getAbsolutePath(), "main_file");
+        File main_image = new File(dir.getAbsolutePath(), "main_image.jpg");
+        try {
+            if (!Objects.equals(new_post.getImage(), "") && new_post.getImage() != null) {
+                if (!similar.contains(new_post.getImage())) {
+                    System.out.println(new_post.getImage());
+                    FileOutputStream outputStream = new FileOutputStream(main_image);
+                    Bitmap bitmap_main_image = null;
+                    try {
+                        File image = new File(new_post.image);
+                        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+                        bitmap_main_image = BitmapFactory.decodeFile(image.getAbsolutePath(), bmOptions);
+                    } catch (Exception e) {
+                        Log.e("сохранение изображения", e.getMessage());
+                    }
+                    try {
+                        bitmap_main_image = MediaStore.Images.Media.getBitmap(activity.getContentResolver(), Uri.fromFile(new File(new_post.getImage())));
+                    } catch (Exception e) {
+                        Log.e("сохранение изображения", e.getMessage());
+                    }
+                    try {
+                        bitmap_main_image = MediaStore.Images.Media.getBitmap(activity.getContentResolver(), Uri.parse(new_post.image));
+                    } catch (Exception e) {
+                        Log.e("сохранение изображения", e.getMessage());
+                    }
+
+                    bitmap_main_image.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                    main_image.createNewFile();
+                    new_post.setImage(main_image.getAbsolutePath());
+                    outputStream.flush();
+                    outputStream.close();
+                }
+            } else {
+                FileOutputStream outputStream = new FileOutputStream(main_image);
+                Bitmap bitmap_main_image = BitmapFactory.decodeResource(activity.getResources(), R.drawable.main_dishes);
+                bitmap_main_image.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                main_image.createNewFile();
+                new_post.setImage(main_image.getAbsolutePath());
+                outputStream.flush();
+                outputStream.close();
+            }
+        } catch (Exception e) {
+            Log.e("E", e.getMessage());
+        }
+        try {
+            for (int i = 0; i < new_post.steps.size(); i++) {
+                if (new_post.steps.get(i).getImagePath() != null) {
+                    if (!similar.contains(new_post.steps.get(i).getImagePath())) {
+                        File step_image = new File(dir.getAbsolutePath(), UUID.randomUUID().toString() + ".jpg");
+                        FileOutputStream outputStream = new FileOutputStream(step_image);
+                        Bitmap bitmap_step_image = null;
+                        try {
+                            bitmap_step_image = MediaStore.Images.Media.getBitmap(activity.getContentResolver(), Uri.fromFile(new File(new_post.steps.get(i).getImagePath())));
+                        } catch (Exception e) {
+                            Log.e("сохранение изображения", e.getMessage());
+                        }
+                        try {
+                            bitmap_step_image = MediaStore.Images.Media.getBitmap(activity.getContentResolver(), Uri.parse(new_post.steps.get(i).getImagePath()));
+                        } catch (Exception e) {
+                            Log.e("сохранение изображения", e.getMessage());
+                        }
+                        bitmap_step_image.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                        step_image.createNewFile();
+                        new_post.steps.get(i).setImagePath(step_image.getAbsolutePath());
+                        outputStream.flush();
+                        outputStream.close();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            Log.e("E", e.getMessage());
+        }
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.setPrettyPrinting();
+        Gson gson = gsonBuilder.create();
+        String json = gson.toJson(new_post);
+        try {
+            PrintWriter writer = new PrintWriter(new FileWriter(main));
+            writer.print(json);
+            writer.close();
+        } catch (IOException e) {
+            Log.e("e", e.getMessage());
+        }
+        try {
+            main.createNewFile();
+            System.out.println("создание mainfile");
+        } catch (IOException e) {
+            Log.e("e", e.getMessage());
+        }
+
     }
 
 

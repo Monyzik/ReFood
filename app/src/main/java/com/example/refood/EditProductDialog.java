@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +33,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
+import java.util.Set;
 
 public class EditProductDialog extends BottomSheetDialogFragment {
 
@@ -50,7 +53,6 @@ public class EditProductDialog extends BottomSheetDialogFragment {
     ImageView imageView;
     UpdateCall updateCall;
     Post post_in;
-    Post post_mid;
 
     public EditProductDialog(Post post_in, UpdateCall updateCall) {
         this.post_in = post_in;
@@ -66,9 +68,6 @@ public class EditProductDialog extends BottomSheetDialogFragment {
         firebaseAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-
-
-
         Spinner spinner = v.findViewById(R.id.spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(), R.array.categories_food, R.layout.item_for_category_spinner);
         spinner.setAdapter(adapter);
@@ -81,15 +80,13 @@ public class EditProductDialog extends BottomSheetDialogFragment {
         View add_step_button = v.findViewById(R.id.add_step_button);
         recyclerView = v.findViewById(R.id.recycler_steps);
 
-        post_mid = new Post(post_in);
-        Post.saveRecipe(post_mid, getActivity().getFilesDir() + "/Recipes", getActivity().getContentResolver(), getContext());
 
-        imageView.setImageURI(Uri.parse(post_mid.image));
-        title.setText(post_mid.getTitle());
-        info.setText(post_mid.getText());
-        spinner.setSelection((post_mid.position_category));
-        steps = post_mid.steps;
-        image_path = post_mid.image;
+        imageView.setImageURI(Uri.parse(post_in.image));
+        title.setText(post_in.getTitle());
+        info.setText(post_in.getText());
+        spinner.setSelection((post_in.position_category));
+        steps = post_in.steps;
+        image_path = post_in.image;
 
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -140,21 +137,15 @@ public class EditProductDialog extends BottomSheetDialogFragment {
                                 }
 
 
-                                Post post = new Post(post_in.getId(), "i'm", "me", title.getText().toString(), info.getText().toString(), image_path, new Date(), post_mid.getIsLocal(), post_mid.like_count, post_mid.dislike_count, steps, post_mid.likes_from_users, post_mid.dislikes_from_users, spinner.getSelectedItem() +"", spinner.getSelectedItemPosition());
+                                Post post = new Post(post_in.getId(), "i'm", "me", title.getText().toString(), info.getText().toString(), image_path, new Date(), post_in.getIsLocal(), post_in.like_count, post_in.dislike_count, steps, post_in.likes_from_users, post_in.dislikes_from_users, spinner.getSelectedItem() +"", spinner.getSelectedItemPosition());
+
                                 try {
-                                    Post.deletePost(post_in.getId(), getActivity().getFilesDir() + "/Recipes");
+                                    Post.editPost(post_in, post, getActivity());
                                 } catch (IOException e) {
-                                    throw new RuntimeException(e);
+                                    Log.e("e", e.getMessage());
                                 }
-
-                                if (Post.saveRecipe(post, getContext().getFilesDir() + "/Recipes", getContext().getContentResolver(), getContext())) {
-                                    System.out.println("успешно сохранено");
-                                } else {
-                                    System.out.println("Ошибка!!!!!!!!!!!");
-                                }
-
                                 try {
-                                    Post.deletePost(post_mid.getId(), getActivity().getFilesDir() + "/Recipes");
+                                    post = Post.readSavedRecipe(new File(getActivity().getFilesDir() + "/Recipes/" + post.getId()));
                                 } catch (IOException e) {
                                     throw new RuntimeException(e);
                                 }
@@ -163,6 +154,7 @@ public class EditProductDialog extends BottomSheetDialogFragment {
                                     db.collection(Post.COLLECTION_NAME).document(post.getId()).set(post);
                                 }
                                 updateCall.update();
+
                                 dismiss();
                             } else {
                                 Toast.makeText(v.getContext(), R.string.fill, Toast.LENGTH_SHORT).show();
@@ -191,11 +183,6 @@ public class EditProductDialog extends BottomSheetDialogFragment {
     @Override
     public void onCancel(@NonNull DialogInterface dialog) {
         super.onCancel(dialog);
-        try {
-            Post.deletePost(post_mid.getId(), getActivity().getFilesDir() + "/Recipes");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
         updateCall.update();
 
     }
