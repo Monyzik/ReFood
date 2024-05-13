@@ -121,7 +121,7 @@ public class AddProductDialog extends BottomSheetDialogFragment {
                                 } else {
                                     System.out.println("Ошибка!!!!!!!!!!!");
                                 }
-                                updateCall.update();
+                                updateCall.update(post);
                                 dismiss();
                             } else {
                                 Toast.makeText(getContext(), R.string.fill, Toast.LENGTH_SHORT).show();
@@ -162,7 +162,7 @@ public class AddProductDialog extends BottomSheetDialogFragment {
         }
 }
 public interface UpdateCall {
-        void update();
+        void update(Post post);
 }
 
 

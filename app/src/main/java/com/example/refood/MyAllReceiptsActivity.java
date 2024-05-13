@@ -50,16 +50,18 @@ public class MyAllReceiptsActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         myAllReceiptsRecyclerView = findViewById(R.id.myAllReceiptsRecyclerView);
         back = findViewById(R.id.back_from_all_my_receipts);
+        File dir = new File(getFilesDir(), "Recipes");
 
         db.collection(Post.COLLECTION_NAME).whereEqualTo(Post.USER_NAME, auth.getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document: task.getResult()) {
-                        posts.add(document.toObject(Post.class));
+                        if (!posts.contains(document.toObject(Post.class))) {
+                            posts.add(document.toObject(Post.class));
+                        }
                     }
                 }
-                File dir = new File(getFilesDir(), "Recipes");
                 try {
                     for (File file: Objects.requireNonNull(dir.listFiles())) {
                         Post readPost = Post.readSavedRecipe(file);
@@ -76,6 +78,7 @@ public class MyAllReceiptsActivity extends AppCompatActivity {
                 myAllReceiptsRecyclerView.setAdapter(myReceiptsAdapter);
             }
         });
+
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

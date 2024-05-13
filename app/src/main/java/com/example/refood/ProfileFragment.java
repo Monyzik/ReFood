@@ -192,23 +192,36 @@ public class ProfileFragment extends Fragment {
                         posts.add(document.toObject(Post.class));
                     }
                 }
+                try {
+                    File dir = new File(getActivity().getFilesDir(), "Recipes");
+                    for (File file : dir.listFiles()) {
+                        Post readPost = Post.readSavedRecipe(file);
+                        if (!posts.contains(readPost)) {
+                            posts.add(readPost);
+                        }
+                    }
+                } catch (Exception e) {
+                    Log.e("e", e.getMessage());
+                }
+                myReceiptsAdapter = new MyReceiptsAdapter(new ArrayList<>(posts), getContext(), getActivity(), getParentFragmentManager(), true);
+                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+                myRecieptsRecyclerView.setLayoutManager(linearLayoutManager);
+                myRecieptsRecyclerView.setAdapter(myReceiptsAdapter);
             }
         });
-        try {
-            File dir = new File(getActivity().getFilesDir(), "Recipes");
-            for (File file : dir.listFiles()) {
-                Post readPost = Post.readSavedRecipe(file);
-                if (!posts.contains(readPost)) {
-                    posts.add(readPost);
-                }
-            }
-        } catch (Exception e) {
-            Log.e("e", e.getMessage());
-        }
-        myReceiptsAdapter = new MyReceiptsAdapter(new ArrayList<>(posts), getContext(), getActivity(), getParentFragmentManager(), true);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        myRecieptsRecyclerView.setLayoutManager(linearLayoutManager);
-        myRecieptsRecyclerView.setAdapter(myReceiptsAdapter);
+//        try {
+//            File dir = new File(getActivity().getFilesDir(), "Recipes");
+//            for (File file : dir.listFiles()) {
+//                Post readPost = Post.readSavedRecipe(file);
+//                if (!posts.contains(readPost)) {
+//                    posts.add(readPost);
+//                }
+//            }
+//            myReceiptsAdapter.notifyDataSetChanged();
+//        } catch (Exception e) {
+//            Log.e("e", e.getMessage());
+//        }
+
 
         myReceiptsTextView.setOnClickListener(new View.OnClickListener() {
             @Override

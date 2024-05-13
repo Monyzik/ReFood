@@ -268,36 +268,20 @@ public class MyReceiptsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                             if (which == 0) {
                                 EditProductDialog bottomSheet = new EditProductDialog(posts.get(viewHolder.getAdapterPosition()), new EditProductDialog.UpdateCall() {
                                     @Override
-                                    public void update() {
-                                        try {
-                                            File dir = new File(activity.getFilesDir(), "Recipes");
-                                            posts.clear();
-                                            db.collection(Post.COLLECTION_NAME).whereEqualTo(Post.USER_NAME, auth.getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                    if (task.isSuccessful()) {
-                                                        for (QueryDocumentSnapshot document : task.getResult()) {
-                                                            posts.add(document.toObject(Post.class));
-                                                        }
+                                    public void update(Post post) {
+                                        posts.set(viewHolder.getAdapterPosition(), post);
+                                        notifyItemChanged(viewHolder.getAdapterPosition());
+                                        db.collection(Post.COLLECTION_NAME).whereEqualTo(Post.USER_NAME, auth.getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                if (task.isSuccessful()) {
+                                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                                        posts.add(document.toObject(Post.class));
                                                     }
-                                                    for (File file : Objects.requireNonNull(dir.listFiles())) {
-                                                        Post readPost = null;
-                                                        try {
-                                                            readPost = Post.readSavedRecipe(file);
-                                                        } catch (IOException e) {
-                                                            throw new RuntimeException(e);
-                                                        }
-                                                        if (!posts.contains(readPost)) {
-                                                            posts.add(readPost);
-                                                        }
-                                                    }
-                                                    System.out.println(posts.size());
-                                                    notifyDataSetChanged();
                                                 }
-                                            });
-                                        } catch(Exception e) {
-                                            Log.e("e", e.getMessage());
-                                        }
+                                                notifyDataSetChanged();
+                                            }
+                                        });
                                     }
                                 });
                                 bottomSheet.show(fragmentManager,"ModalBottomSheet");
@@ -327,22 +311,12 @@ public class MyReceiptsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 public void onClick(View v) {
                     AddProductDialog bottomSheet = new AddProductDialog(new AddProductDialog.UpdateCall() {
                         @Override
-                        public void update() {
-                            try {
-                                File dir = new File(activity.getFilesDir(), "Recipes");
-                                for (File file : Objects.requireNonNull(dir.listFiles())) {
-                                    System.out.println("до");
-                                    Post readPost = Post.readSavedRecipe(file);
-                                    System.out.println("после");
-                                    if (!posts.contains(readPost)) {
-                                        posts.add(readPost);
-                                    }
-                                }
-                            } catch (Exception e) {
-                                Log.e("Ошибка", e.getMessage());
-                            }
-                            notifyDataSetChanged();
+                        public void update(Post post) {
+                            posts.add(post);
+                            notifyItemInserted(posts.size() - 1);
+                            //загрузка в бд
                         }
+
                     });
                     bottomSheet.show(fragmentManager,"ModalBottomSheet");
 

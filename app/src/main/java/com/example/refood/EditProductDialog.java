@@ -21,20 +21,23 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.facebook.shimmer.Shimmer;
+import com.facebook.shimmer.ShimmerDrawable;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale;
-import java.util.Set;
 
 public class EditProductDialog extends BottomSheetDialogFragment {
 
@@ -69,8 +72,8 @@ public class EditProductDialog extends BottomSheetDialogFragment {
         db = FirebaseFirestore.getInstance();
 
         Spinner spinner = v.findViewById(R.id.spinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(), R.array.categories_food, R.layout.item_for_category_spinner);
-        spinner.setAdapter(adapter);
+        ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(getContext(), R.array.categories_food, R.layout.item_for_category_spinner);
+        spinner.setAdapter(spinnerAdapter);
 
         Button apply_button = v.findViewById(R.id.apply_button);
         imageView = v.findViewById(R.id.imageView);
@@ -81,7 +84,26 @@ public class EditProductDialog extends BottomSheetDialogFragment {
         recyclerView = v.findViewById(R.id.recycler_steps);
 
 
-        imageView.setImageURI(Uri.parse(post_in.image));
+        System.out.println("Ссылка " + post_in.image);
+        if (post_in.getIsLocal()) {
+            imageView.setImageURI(Uri.parse(post_in.image));
+        } else {
+            Shimmer shimmer = new Shimmer.AlphaHighlightBuilder().setDuration(1800).setBaseAlpha(0.7f).setHighlightAlpha(0.6f)
+                    .setDirection(Shimmer.Direction.LEFT_TO_RIGHT).setAutoStart(true).build();
+            ShimmerDrawable shimmerDrawable = new ShimmerDrawable();
+            shimmerDrawable.setShimmer(shimmer);
+            imageView.setImageDrawable(shimmerDrawable);
+            StorageReference mainImageReference = storage.getReference(post_in.getImage());
+            mainImageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(Uri uri) {
+                    String imageURL = String.valueOf(uri);
+                    Glide.with(getActivity().getApplicationContext()).load(imageURL).placeholder(shimmerDrawable).into(imageView);
+                }
+            });
+        }
+
+
         title.setText(post_in.getTitle());
         info.setText(post_in.getText());
         spinner.setSelection((post_in.position_category));
@@ -153,7 +175,7 @@ public class EditProductDialog extends BottomSheetDialogFragment {
                                 if (!post.getIsLocal()) {
                                     db.collection(Post.COLLECTION_NAME).document(post.getId()).set(post);
                                 }
-                                updateCall.update();
+                                updateCall.update(post);
 
                                 dismiss();
                             } else {
@@ -179,13 +201,7 @@ public class EditProductDialog extends BottomSheetDialogFragment {
 
         return v;
     }
-
-    @Override
-    public void onCancel(@NonNull DialogInterface dialog) {
-        super.onCancel(dialog);
-        updateCall.update();
-
-    }
+    
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -202,7 +218,7 @@ public class EditProductDialog extends BottomSheetDialogFragment {
         }
     }
     public interface UpdateCall {
-        void update();
+        void update(Post post);
     }
 
 
