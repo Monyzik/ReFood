@@ -1,9 +1,17 @@
 package com.example.refood;
 
+import static android.content.Context.RECEIVER_EXPORTED;
+
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,6 +21,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -30,11 +40,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link MarkedRecipesFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class MarkedRecipesFragment extends Fragment {
 
     private static final String ARG_PARAM1 = "param1";
@@ -43,10 +48,16 @@ public class MarkedRecipesFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    protected DataReceiver dataReceiver;
+
+    IntentFilter intentFilter;
+
     ArrayList<Post> posts = new ArrayList<>();
     RecyclerView recyclerView;
     FirebaseFirestore db;
     FirebaseAuth auth;
+
+    PostsTapeAdapter adapter;
 
 
     public MarkedRecipesFragment() {
@@ -61,14 +72,40 @@ public class MarkedRecipesFragment extends Fragment {
         return fragment;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        dataReceiver = new DataReceiver();
+        intentFilter = new IntentFilter("updatedPost");
+
+        getActivity().registerReceiver(dataReceiver, intentFilter, RECEIVER_EXPORTED);
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
+
+    private class DataReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int position = intent.getIntExtra("position", -1);
+            String json = intent.getStringExtra("post");
+            Post post;
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                post = objectMapper.readValue(json, Post.class);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+            posts.set(position, post);
+            adapter.notifyItemChanged(position);
+        }
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -101,7 +138,7 @@ public class MarkedRecipesFragment extends Fragment {
                                         posts.add(document.toObject(Post.class));
                                     }
                                 }
-                                PostsTapeAdapter adapter = new PostsTapeAdapter(posts, getActivity());
+                                adapter = new PostsTapeAdapter(posts, getActivity());
                                 recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                                 recyclerView.setAdapter(adapter);
                             }
@@ -109,7 +146,7 @@ public class MarkedRecipesFragment extends Fragment {
                     } else {
                         TextView marked_fragment_text = view.findViewById(R.id.marked_fragment_textView);
                         marked_fragment_text.setText(R.string.withot_marked_posts);
-                        PostsTapeAdapter adapter = new PostsTapeAdapter(posts, getActivity());
+                        adapter = new PostsTapeAdapter(posts, getActivity());
                         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                         recyclerView.setAdapter(adapter);
                     }
@@ -124,7 +161,7 @@ public class MarkedRecipesFragment extends Fragment {
                     throw new RuntimeException(e);
                 }
             }
-            PostsTapeAdapter adapter = new PostsTapeAdapter(posts, getActivity());
+            adapter = new PostsTapeAdapter(posts, getActivity());
             recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
             recyclerView.setAdapter(adapter);
         }

@@ -187,7 +187,8 @@ public class PostsTapeAdapter extends RecyclerView.Adapter<PostsTapeAdapter.View
                 String json = gson.toJson(posts.get(viewHolder.getAdapterPosition()));
                 i.putExtra("post", json);
                 i.putExtra("pos", viewHolder.getAdapterPosition());
-                activity.startActivityForResult(i, 10981);
+                i.putExtra("requestCode", 19736);
+                activity.startActivity(i);
             }
         });
 

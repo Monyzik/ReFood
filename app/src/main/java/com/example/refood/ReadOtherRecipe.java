@@ -261,14 +261,17 @@ public class ReadOtherRecipe extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Intent data = new Intent("updatedPost");
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.setPrettyPrinting();
-        Gson gson = gsonBuilder.create();
-        String json = gson.toJson(post);
-        data.putExtra("post", json);
-        data.putExtra("position", getIntent().getIntExtra("pos", -2));
-        sendBroadcast(data);
-        finish();
+        if (getIntent().getIntExtra("requestCode", -1) == 19736) {
+            Intent data = new Intent("updatedPost");
+            GsonBuilder gsonBuilder = new GsonBuilder();
+            gsonBuilder.setPrettyPrinting();
+            Gson gson = gsonBuilder.create();
+            String json = gson.toJson(post);
+            data.putExtra("post", json);
+            data.putExtra("position", getIntent().getIntExtra("pos", -2));
+            sendBroadcast(data);
+            finish();
+        }
+
     }
 }

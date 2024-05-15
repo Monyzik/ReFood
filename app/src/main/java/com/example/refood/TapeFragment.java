@@ -75,7 +75,6 @@ public class TapeFragment extends Fragment {
             int position = intent.getIntExtra("position", -1);
             String json = intent.getStringExtra("post");
             Post post;
-            System.out.println(json + "\n" + position);
             ObjectMapper objectMapper = new ObjectMapper();
             try {
                 post = objectMapper.readValue(json, Post.class);
