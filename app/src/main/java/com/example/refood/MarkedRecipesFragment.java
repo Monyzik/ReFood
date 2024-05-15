@@ -39,6 +39,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -52,10 +53,6 @@ public class MarkedRecipesFragment extends Fragment {
 
     private String mParam1;
     private String mParam2;
-
-    protected DataReceiver dataReceiver;
-
-    IntentFilter intentFilter;
 
     ArrayList<Post> posts = new ArrayList<>();
     RecyclerView recyclerView;
@@ -82,33 +79,15 @@ public class MarkedRecipesFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        dataReceiver = new DataReceiver();
-        intentFilter = new IntentFilter("updatedPost");
-
-        getActivity().registerReceiver(dataReceiver, intentFilter, RECEIVER_EXPORTED);
-
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
 
-    private class DataReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            int position = intent.getIntExtra("position", -1);
-            String json = intent.getStringExtra("post");
-            Post post;
-            ObjectMapper objectMapper = new ObjectMapper();
-            try {
-                post = objectMapper.readValue(json, Post.class);
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
-            posts.set(position, post);
-            adapter.notifyItemChanged(position);
-        }
+    @Override
+    public void onPause() {
+        super.onPause();
     }
 
 

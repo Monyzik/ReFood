@@ -269,6 +269,7 @@ public class MyReceiptsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                 EditProductDialog bottomSheet = new EditProductDialog(posts.get(viewHolder.getAdapterPosition()), new EditProductDialog.UpdateCall() {
                                     @Override
                                     public void update(Post post) {
+
                                         posts.set(viewHolder.getAdapterPosition(), post);
                                         notifyItemChanged(viewHolder.getAdapterPosition());
                                         db.collection(Post.COLLECTION_NAME).whereEqualTo(Post.USER_NAME, auth.getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -276,7 +277,9 @@ public class MyReceiptsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                                 if (task.isSuccessful()) {
                                                     for (QueryDocumentSnapshot document : task.getResult()) {
-                                                        posts.add(document.toObject(Post.class));
+                                                        if (!posts.contains(document.toObject(Post.class))) {
+                                                            posts.add(document.toObject(Post.class));
+                                                        }
                                                     }
                                                 }
                                                 notifyDataSetChanged();
@@ -326,7 +329,6 @@ public class MyReceiptsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         public void update(Post post) {
                             posts.add(post);
                             notifyItemInserted(posts.size() - 1);
-                            //загрузка в бд
                         }
 
                     });

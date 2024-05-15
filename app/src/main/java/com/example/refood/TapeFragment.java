@@ -34,6 +34,8 @@ import com.yalantis.pulltomakesoup.PullToRefreshView;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
+import java.util.Objects;
+
 public class TapeFragment extends Fragment {
 
     private static final String ARG_PARAM1 = "param1";
@@ -86,14 +88,25 @@ public class TapeFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         dataReceiver = new DataReceiver();
         intentFilter = new IntentFilter("updatedPost");
-
-        getActivity().registerReceiver(dataReceiver, intentFilter, RECEIVER_EXPORTED);
+        intentFilter.addAction(Intent.ACTION_SCREEN_ON);
+        intentFilter.addAction(Intent.ACTION_SCREEN_OFF);
+        requireActivity().registerReceiver(dataReceiver, intentFilter, RECEIVER_NOT_EXPORTED);
 
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
