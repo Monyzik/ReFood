@@ -1,5 +1,13 @@
 package com.example.refood;
 
+import static android.content.Context.RECEIVER_EXPORTED;
+import static android.content.Context.RECEIVER_NOT_EXPORTED;
+
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,10 +16,13 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -21,6 +32,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.yalantis.pulltomakesoup.PullToRefreshView;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Map;
 public class TapeFragment extends Fragment {
 
@@ -33,6 +45,12 @@ public class TapeFragment extends Fragment {
     public TextView no_connection;
 
     PullToRefreshView tape_refresh_view;
+
+    PostsTapeAdapter adapter;
+
+    protected DataReceiver dataReceiver;
+
+    IntentFilter intentFilter;
 
     FirebaseFirestore db;
     private String mParam1;
@@ -50,9 +68,34 @@ public class TapeFragment extends Fragment {
         return fragment;
     }
 
+    private class DataReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int position = intent.getIntExtra("position", -1);
+            String json = intent.getStringExtra("post");
+            Post post;
+            System.out.println(json + "\n" + position);
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                post = objectMapper.readValue(json, Post.class);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+            posts.set(position, post);
+            adapter.notifyItemChanged(position);
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        dataReceiver = new DataReceiver();
+        intentFilter = new IntentFilter("updatedPost");
+
+        getActivity().registerReceiver(dataReceiver, intentFilter, RECEIVER_EXPORTED);
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -90,7 +133,7 @@ public class TapeFragment extends Fragment {
                         Post post = document.toObject(Post.class);
                         posts.add(post);
                         posts_recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                        PostsTapeAdapter adapter = new PostsTapeAdapter(posts, getActivity());
+                        adapter = new PostsTapeAdapter(posts, getActivity());
                         posts_recyclerView.setAdapter(adapter);
                     }
                 }
@@ -107,7 +150,7 @@ public class TapeFragment extends Fragment {
                                 Post post = document.toObject(Post.class);
                                 posts.add(post);
                                 posts_recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                                PostsTapeAdapter adapter = new PostsTapeAdapter(posts, getActivity());
+                                adapter = new PostsTapeAdapter(posts, getActivity());
                                 posts_recyclerView.setAdapter(adapter);
                             }
                             tape_refresh_view.setRefreshing(false);
@@ -116,8 +159,5 @@ public class TapeFragment extends Fragment {
                 }
             });
         }
-
-
     }
-
 }

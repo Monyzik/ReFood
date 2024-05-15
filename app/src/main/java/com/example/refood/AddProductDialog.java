@@ -38,7 +38,7 @@ public class AddProductDialog extends BottomSheetDialogFragment {
 
     FirebaseAuth firebaseAuth;
     FirebaseStorage storage;
-    String image_path;
+    String image_path = "";
     RecyclerView recyclerView;
     StepsAdapter stepsAdapter;
     ArrayList <Step> steps;

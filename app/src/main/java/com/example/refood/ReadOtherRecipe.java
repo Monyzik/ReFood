@@ -1,6 +1,7 @@
 package com.example.refood;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -25,6 +26,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.varunest.sparkbutton.SparkButton;
 import com.varunest.sparkbutton.SparkEventListener;
 
@@ -43,7 +46,7 @@ public class ReadOtherRecipe extends AppCompatActivity {
     Activity activity;
     SparkButton starSparkButton;
     boolean clicked_mark;
-
+    Post post;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +55,6 @@ public class ReadOtherRecipe extends AppCompatActivity {
         activity = this;
         String json = getIntent().getStringExtra("post");
         ObjectMapper objectMapper = new ObjectMapper();
-        Post post;
         try {
             post = objectMapper.readValue(json, Post.class);
         } catch (JsonProcessingException e) {
@@ -144,6 +146,12 @@ public class ReadOtherRecipe extends AppCompatActivity {
                             likes_from_users.add(auth.getCurrentUser().getUid());
                             likeImage.setImageResource(R.drawable.baseline_thumb_up_filled);
                         }
+
+                        post.setDislikes_from_users(dislikes_from_users);
+                        post.setLikes_from_users(likes_from_users);
+                        post.setLike_count(likes_from_users.size());
+                        post.setDislike_count(dislikes_from_users.size());
+
                         db.collection(Post.COLLECTION_NAME).document(post.getId()).update("dislikes_from_users", dislikedPosts, "likes_from_users", likes_from_users,
                                 "like_count", likes_from_users.size(), "dislike_count", dislikes_from_users.size());
                         db.collection(User.COLLECTION_NAME).document(auth.getCurrentUser().getUid()).update("dislike_posts", dislikedPosts, "like_posts", likedPosts);
@@ -180,6 +188,12 @@ public class ReadOtherRecipe extends AppCompatActivity {
                             dislikes_from_users.add(auth.getCurrentUser().getUid());
                             dislikeImage.setImageResource(R.drawable.baseline_thumb_down_filled);
                         }
+
+                        post.setDislikes_from_users(dislikes_from_users);
+                        post.setLikes_from_users(likes_from_users);
+                        post.setLike_count(likes_from_users.size());
+                        post.setDislike_count(dislikes_from_users.size());
+
                         db.collection(Post.COLLECTION_NAME).document(post.getId()).update("dislikes_from_users", dislikedPosts, "likes_from_users", likes_from_users,
                                 "like_count", likes_from_users.size(), "dislike_count", dislikes_from_users.size());
                         db.collection(User.COLLECTION_NAME).document(auth.getCurrentUser().getUid()).update("dislike_posts", dislikedPosts, "like_posts", likedPosts);
@@ -242,5 +256,19 @@ public class ReadOtherRecipe extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Intent data = new Intent("updatedPost");
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.setPrettyPrinting();
+        Gson gson = gsonBuilder.create();
+        String json = gson.toJson(post);
+        data.putExtra("post", json);
+        data.putExtra("position", getIntent().getIntExtra("pos", -2));
+        sendBroadcast(data);
+        finish();
     }
 }
