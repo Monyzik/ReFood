@@ -293,9 +293,21 @@ public class MyReceiptsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                 } catch (IOException e) {
                                     throw new RuntimeException(e);
                                 }
-                                db.collection(Post.COLLECTION_NAME).document(id_post).delete();
-                                posts.remove(viewHolder.getAdapterPosition());
-                                notifyItemRemoved(viewHolder.getAdapterPosition());
+                                db.collection(Post.COLLECTION_NAME).document(id_post).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void unused) {
+                                        StorageReference mainImageReference = storage.getReference(posts.get(viewHolder.getAdapterPosition()).getImage());
+                                        mainImageReference.delete();
+                                        for (Step step : posts.get(viewHolder.getAdapterPosition()).getSteps()) {
+                                            if (step.getImagePath() != null && !Objects.equals(step.getImagePath(), "")) {
+                                                StorageReference stepImageReference = storage.getReference(step.getImagePath());
+                                                stepImageReference.delete();
+                                            }
+                                        }
+                                        posts.remove(viewHolder.getAdapterPosition());
+                                        notifyItemRemoved(viewHolder.getAdapterPosition());
+                                    }
+                                });
                             }
                         }
                     });
