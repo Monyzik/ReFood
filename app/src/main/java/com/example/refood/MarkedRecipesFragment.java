@@ -82,12 +82,10 @@ public class MarkedRecipesFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-
+        recyclerView = view.findViewById(R.id.marked_recipes_recycler_view);
         if (NetworkUtils.isNetworkConnected(getContext())) {
             auth = FirebaseAuth.getInstance();
             db = FirebaseFirestore.getInstance();
-
-            recyclerView = view.findViewById(R.id.marked_recipes_recycler_view);
             db.collection(User.COLLECTION_NAME).document(auth.getCurrentUser().getUid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -117,16 +115,24 @@ public class MarkedRecipesFragment extends Fragment {
             });
         } else {
             File dir = new File(getContext().getFilesDir() + "/OtherRecipes");
-            for (File post: dir.listFiles()) {
-                try {
-                    posts.add(Post.readSavedRecipe(post));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+            if(dir.listFiles().length != 0){
+                for (File post : dir.listFiles()) {
+                    try {
+                        posts.add(Post.readSavedRecipe(post));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
+                PostsTapeAdapter adapter = new PostsTapeAdapter(posts, getActivity());
+                recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                recyclerView.setAdapter(adapter);
+            } else {
+                TextView marked_fragment_text = view.findViewById(R.id.marked_fragment_textView);
+                marked_fragment_text.setText(R.string.withot_marked_posts);
+                PostsTapeAdapter adapter = new PostsTapeAdapter(posts, getActivity());
+                recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                recyclerView.setAdapter(adapter);
             }
-            PostsTapeAdapter adapter = new PostsTapeAdapter(posts, getActivity());
-            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-            recyclerView.setAdapter(adapter);
         }
 
 
