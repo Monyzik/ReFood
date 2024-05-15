@@ -153,7 +153,7 @@ public class Post {
         post_files.mkdirs();
         String path = post_files.getAbsolutePath();
         File main = new File(path, "main_file");
-        File main_image = new File(path, "main_image.jpg");
+        File main_image = new File(path, "main_image.jpeg");
         try {
             if (!Objects.equals(post.getImage(), "") && post.getImage() != null) {
                 System.out.println(post.getImage());
@@ -197,7 +197,7 @@ public class Post {
         try {
             for (int i = 0; i < post.steps.size(); i++) {
                 if (post.steps.get(i).getImagePath() != null) {
-                    File step_image = new File(path, UUID.randomUUID().toString() + ".jpg");
+                    File step_image = new File(path, UUID.randomUUID().toString() + ".jpeg");
                     FileOutputStream  outputStream = new FileOutputStream(step_image);
                     Bitmap bitmap_step_image = null;
                     try {

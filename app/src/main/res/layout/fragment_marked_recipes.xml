@@ -8,11 +8,12 @@
     <TextView
         android:id="@+id/marked_fragment_textView"
         android:fontFamily="@font/yeseva_one"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:layout_gravity="center"
-        android:textSize="30sp"/>
+        android:textSize="25sp"
+        android:layout_margin="@dimen/simple_margin"/>
 
 
     <androidx.recyclerview.widget.RecyclerView
