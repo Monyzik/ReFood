@@ -88,26 +88,27 @@ public class TapeFragment extends Fragment {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
     public void onResume() {
         super.onResume();
+        dataReceiver = new DataReceiver();
+        intentFilter = new IntentFilter("updatedPost");
+        intentFilter.addAction(Intent.ACTION_SCREEN_ON);
+        intentFilter.addAction(Intent.ACTION_SCREEN_OFF);
+        requireActivity().registerReceiver(dataReceiver, intentFilter, RECEIVER_EXPORTED);
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        requireActivity().unregisterReceiver(dataReceiver);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        dataReceiver = new DataReceiver();
-        intentFilter = new IntentFilter("updatedPost");
-        intentFilter.addAction(Intent.ACTION_SCREEN_ON);
-        intentFilter.addAction(Intent.ACTION_SCREEN_OFF);
-        requireActivity().registerReceiver(dataReceiver, intentFilter, RECEIVER_NOT_EXPORTED);
-
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);

@@ -152,7 +152,7 @@ public class ReadOtherRecipe extends AppCompatActivity {
                         post.setLike_count(likes_from_users.size());
                         post.setDislike_count(dislikes_from_users.size());
 
-                        db.collection(Post.COLLECTION_NAME).document(post.getId()).update("dislikes_from_users", dislikedPosts, "likes_from_users", likes_from_users,
+                        db.collection(Post.COLLECTION_NAME).document(post.getId()).update("dislikes_from_users", dislikes_from_users, "likes_from_users", likes_from_users,
                                 "like_count", likes_from_users.size(), "dislike_count", dislikes_from_users.size());
                         db.collection(User.COLLECTION_NAME).document(auth.getCurrentUser().getUid()).update("dislike_posts", dislikedPosts, "like_posts", likedPosts);
                         likeCount.setText(String.valueOf(likes_from_users.size()));
@@ -194,7 +194,7 @@ public class ReadOtherRecipe extends AppCompatActivity {
                         post.setLike_count(likes_from_users.size());
                         post.setDislike_count(dislikes_from_users.size());
 
-                        db.collection(Post.COLLECTION_NAME).document(post.getId()).update("dislikes_from_users", dislikedPosts, "likes_from_users", likes_from_users,
+                        db.collection(Post.COLLECTION_NAME).document(post.getId()).update("dislikes_from_users", dislikes_from_users, "likes_from_users", likes_from_users,
                                 "like_count", likes_from_users.size(), "dislike_count", dislikes_from_users.size());
                         db.collection(User.COLLECTION_NAME).document(auth.getCurrentUser().getUid()).update("dislike_posts", dislikedPosts, "like_posts", likedPosts);
                         likeCount.setText(String.valueOf(likes_from_users.size()));

@@ -59,6 +59,10 @@ public class MarkedRecipesFragment extends Fragment {
     FirebaseFirestore db;
     FirebaseAuth auth;
 
+    protected DataReceiver dataReceiver;
+
+    protected IntentFilter intentFilter;
+
     PostsTapeAdapter adapter;
 
 
@@ -76,6 +80,42 @@ public class MarkedRecipesFragment extends Fragment {
 
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
+    public void onResume() {
+        super.onResume();
+        dataReceiver = new DataReceiver();
+        intentFilter = new IntentFilter("updatedPost");
+        intentFilter.addAction(Intent.ACTION_SCREEN_ON);
+        intentFilter.addAction(Intent.ACTION_SCREEN_OFF);
+        requireActivity().registerReceiver(dataReceiver, intentFilter, RECEIVER_EXPORTED);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        requireActivity().unregisterReceiver(dataReceiver);
+    }
+
+
+    private class DataReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int position = intent.getIntExtra("position", -1);
+            String json = intent.getStringExtra("post");
+            Post post;
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                post = objectMapper.readValue(json, Post.class);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+            posts.set(position, post);
+            adapter.notifyItemChanged(position);
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -85,17 +125,10 @@ public class MarkedRecipesFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-
         return inflater.inflate(R.layout.fragment_marked_recipes, container, false);
     }
 

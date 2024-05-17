@@ -1,14 +1,18 @@
 package com.example.refood;
 
+import static android.content.Context.RECEIVER_EXPORTED;
 import static androidx.activity.result.ActivityResultCallerKt.registerForActivityResult;
 
 import androidx.activity.result.ActivityResult;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +26,7 @@ import androidx.activity.result.contract.ActivityResultContract;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -50,7 +55,6 @@ public class PostsTapeAdapter extends RecyclerView.Adapter<PostsTapeAdapter.View
     FirebaseStorage storage;
     FirebaseFirestore db;
     FirebaseAuth auth;
-
     private Activity activity;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -122,6 +126,8 @@ public class PostsTapeAdapter extends RecyclerView.Adapter<PostsTapeAdapter.View
         activity = newactivity;
     }
 
+
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
@@ -130,6 +136,7 @@ public class PostsTapeAdapter extends RecyclerView.Adapter<PostsTapeAdapter.View
 
         return new ViewHolder(view);
     }
+
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
@@ -225,7 +232,7 @@ public class PostsTapeAdapter extends RecyclerView.Adapter<PostsTapeAdapter.View
                         post.setLike_count(likes_from_users.size());
                         post.setDislike_count(dislikes_from_users.size());
 
-                        db.collection(Post.COLLECTION_NAME).document(post.getId()).update("dislikes_from_users", dislikedPosts, "likes_from_users", likes_from_users,
+                        db.collection(Post.COLLECTION_NAME).document(post.getId()).update("dislikes_from_users", dislikes_from_users, "likes_from_users", likes_from_users,
                                 "like_count", likes_from_users.size(), "dislike_count", dislikes_from_users.size());
                         db.collection(User.COLLECTION_NAME).document(auth.getCurrentUser().getUid()).update("dislike_posts", dislikedPosts, "like_posts", likedPosts);
                         viewHolder.getLike_count().setText(String.valueOf(likes_from_users.size()));
@@ -267,7 +274,7 @@ public class PostsTapeAdapter extends RecyclerView.Adapter<PostsTapeAdapter.View
                         post.setLike_count(likes_from_users.size());
                         post.setDislike_count(dislikes_from_users.size());
 
-                        db.collection(Post.COLLECTION_NAME).document(post.getId()).update("dislikes_from_users", dislikedPosts, "likes_from_users", likes_from_users,
+                        db.collection(Post.COLLECTION_NAME).document(post.getId()).update("dislikes_from_users", dislikes_from_users, "likes_from_users", likes_from_users,
                                 "like_count", likes_from_users.size(), "dislike_count", dislikes_from_users.size());
                         db.collection(User.COLLECTION_NAME).document(auth.getCurrentUser().getUid()).update("dislike_posts", dislikedPosts, "like_posts", likedPosts);
                         viewHolder.getLike_count().setText(String.valueOf(likes_from_users.size()));
