@@ -106,26 +106,23 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.ViewHolder> 
             viewHolder.icon_add_image.setVisibility(View.GONE);
             viewHolder.card_view_image.setVisibility(View.VISIBLE);
             System.out.println(path);
-            if (!isLocal) {
-                try {
-                    FirebaseStorage storage = FirebaseStorage.getInstance();
-                    StorageReference stepImageReference = storage.getReference(steps.get(viewHolder.getAdapterPosition()).getImagePath());
-                    stepImageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            String imageURL = String.valueOf(uri);
-                            Glide.with(context).load(imageURL).into(viewHolder.getFoodImage());
-                        }
-                    });
-                } catch (Exception e) {
-                    Log.e("E", e.getMessage());
-                }
-            } else {
-                try {
-                    viewHolder.foodImage.setImageURI(Uri.parse(path));
-                } catch (Exception e) {
-                    Log.e("E", e.getMessage());
-                }
+            try {
+                FirebaseStorage storage = FirebaseStorage.getInstance();
+                StorageReference stepImageReference = storage.getReference(steps.get(viewHolder.getAdapterPosition()).getImagePath());
+                stepImageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        String imageURL = String.valueOf(uri);
+                        Glide.with(context).load(imageURL).into(viewHolder.getFoodImage());
+                    }
+                });
+            } catch (Exception e) {
+                Log.e("E", e.getMessage());
+            }
+            try {
+                viewHolder.foodImage.setImageURI(Uri.parse(path));
+            } catch (Exception e) {
+                Log.e("E", e.getMessage());
             }
         } else {
 //            viewHolder.foodImage.setImageResource(R.drawable.example_of_food_photo);

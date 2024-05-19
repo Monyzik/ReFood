@@ -38,7 +38,11 @@ import com.google.firebase.storage.StorageReference;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 public class EditProductDialog extends BottomSheetDialogFragment {
 
@@ -52,7 +56,7 @@ public class EditProductDialog extends BottomSheetDialogFragment {
     String image_path;
     RecyclerView recyclerView;
     StepsAdapter stepsAdapter;
-    ArrayList <Step> steps;
+    ArrayList <Step> steps = new ArrayList<>();
     FirebaseFirestore db;
     ImageView imageView;
     UpdateCall updateCall;
@@ -83,9 +87,15 @@ public class EditProductDialog extends BottomSheetDialogFragment {
         ImageView imageView = v.findViewById(R.id.imageView);
         View add_step_button = v.findViewById(R.id.add_step_button);
         recyclerView = v.findViewById(R.id.recycler_steps);
+        Set<String> old_paths = new HashSet<>();
+        old_paths.add(post_in.getImage());
+        for (int i = 0; i < post_in.steps.size(); i++) {
+            old_paths.add(post_in.steps.get(i).getImagePath());
+        }
+        Log.i("PPPPPPPP", old_paths + "");
 
 
-        System.out.println("Ссылка " + post_in.image);
+
         if (post_in.getIsLocal()) {
             imageView.setImageURI(Uri.parse(post_in.image));
         } else {
@@ -108,8 +118,10 @@ public class EditProductDialog extends BottomSheetDialogFragment {
         title.setText(post_in.getTitle());
         info.setText(post_in.getText());
         spinner.setSelection((post_in.position_category));
-        steps = post_in.steps;
-        image_path = post_in.image;
+        for (int i = 0; i < post_in.getSteps().size(); i++) {
+            steps.add(new Step(post_in.getSteps().get(i)));
+        }
+        image_path = new String(post_in.image);
 
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -144,6 +156,7 @@ public class EditProductDialog extends BottomSheetDialogFragment {
             @Override
             public void onClick(View v) {
 
+
                 if (!(title.getText().toString().equals("") || info.getText().toString().equals("") || image_path.equals(""))) {
 
                     db.collection(Post.COLLECTION_NAME).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -160,6 +173,7 @@ public class EditProductDialog extends BottomSheetDialogFragment {
 
 
                                 Post post = new Post(post_in.getId(), "i'm", "me", title.getText().toString(), info.getText().toString(), image_path, new Date(), post_in.getIsLocal(), post_in.like_count, post_in.dislike_count, steps, post_in.likes_from_users, post_in.dislikes_from_users, spinner.getSelectedItem() +"", spinner.getSelectedItemPosition());
+
 
                                 try {
                                     Post.editPost(post_in, post, getActivity());
@@ -209,12 +223,17 @@ public class EditProductDialog extends BottomSheetDialogFragment {
             if (requestCode == GALLERY_REQ_CODE && data != null) {
                 int pos = mMyFragmentBundle.getInt("pos");
                 steps.get(pos).setImagePath(data.getData().toString());
-                System.out.println(data.getData().toString());
                 stepsAdapter.notifyItemChanged(pos);
             } else if (requestCode == GALLERY_REQ_CODE_MAIN_IMAGE && data != null) {
                 image_path = data.getData().toString();
                 imageView.setImageURI(Uri.parse(image_path));
             }
+            Set<String> old_paths = new HashSet<>();
+            old_paths.add(post_in.getImage());
+            for (int i = 0; i < post_in.steps.size(); i++) {
+                old_paths.add(post_in.steps.get(i).getImagePath());
+            }
+            Log.i("PPPPPPPP", old_paths + "");
         }
     }
     public interface UpdateCall {

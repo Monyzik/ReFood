@@ -24,6 +24,13 @@ public class Step {
 
     public Step() {}
 
+    public Step(Step step) {
+        this.number = step.getNumber();
+        this.info = step.getInfo();
+        this.time = step.getTime();
+        this.imagePath = step.getImagePath();
+    }
+
     public String getTime() {
         return time;
     }

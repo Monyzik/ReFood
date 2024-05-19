@@ -268,22 +268,24 @@ public class Post {
         }
         Set<String> delete_paths = new HashSet<>(old_paths);
         Set<String> similar = new HashSet<>(old_paths);
+//        Set<String> add_paths = new HashSet<>(new_paths);
+//        add_paths.retainAll(old_paths);
         delete_paths.removeAll(new_paths);
         similar.retainAll(new_paths);
         Log.i("IIIIIIII", old_paths + "");
         Log.i("IIIIIIII", new_paths + "");
-        Log.i("IIIIIIII", similar + "");
+        Log.i("IIIIIIII", delete_paths + "");
 
 
         for (File file: dir.listFiles()) {
             if (file.getName().equals("main_file")) {
                 file.delete();
-            } else if (old_paths.contains(file.getAbsoluteFile())) {
+            } else if (delete_paths.contains(file.getAbsolutePath())) {
                 file.delete();
             }
         }
         File main = new File(dir.getAbsolutePath(), "main_file");
-        File main_image = new File(dir.getAbsolutePath(), "main_image.jpg");
+        File main_image = new File(dir.getAbsolutePath(), "main_image.jpeg");
         try {
             if (!Objects.equals(new_post.getImage(), "") && new_post.getImage() != null) {
                 if (!similar.contains(new_post.getImage())) {
@@ -312,6 +314,7 @@ public class Post {
                     bitmap_main_image.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
                     main_image.createNewFile();
                     new_post.setImage(main_image.getAbsolutePath());
+                    System.out.println(main_image.getAbsolutePath());
                     outputStream.flush();
                     outputStream.close();
                 }
@@ -331,7 +334,7 @@ public class Post {
         for (int i = 0; i < new_post.steps.size(); i++) {
             if (new_post.steps.get(i).getImagePath() != null) {
                 if (!similar.contains(new_post.steps.get(i).getImagePath())) {
-                    File step_image = new File(dir.getAbsolutePath(), UUID.randomUUID().toString() + ".jpg");
+                    File step_image = new File(dir.getAbsolutePath(), UUID.randomUUID().toString() + ".jpeg");
                     FileOutputStream outputStream = new FileOutputStream(step_image);
                     Bitmap bitmap_step_image = null;
                     try {
@@ -366,7 +369,6 @@ public class Post {
         }
         try {
             main.createNewFile();
-            System.out.println("создание mainfile");
         } catch (IOException e) {
             Log.e("e", e.getMessage());
         }
