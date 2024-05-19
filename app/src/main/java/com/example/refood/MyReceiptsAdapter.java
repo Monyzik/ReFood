@@ -188,7 +188,7 @@ public class MyReceiptsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                             post.setImage(mainImageStorage.getPath());
                                             for (Step step : post.getSteps()) {
                                                 if (!Objects.equals(step.getImagePath(), " ") && step.getImagePath() != null) {
-                                                    StorageReference stepStorage = postStorage.child(post.image.substring(post.image.lastIndexOf("/"), post.image.length()));
+                                                    StorageReference stepStorage = postStorage.child(step.getImagePath().substring(step.getImagePath().lastIndexOf("/"), step.getImagePath().length()));
                                                     try {
                                                         stream = new FileInputStream(step.getImagePath());
                                                     } catch (FileNotFoundException e) {
