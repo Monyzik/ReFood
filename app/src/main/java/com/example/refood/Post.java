@@ -221,6 +221,7 @@ public class Post {
         } catch (Exception e) {
             Log.e("E", e.getMessage());
         }
+        post.setIsLocal(true);
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.setPrettyPrinting();
         Gson gson = gsonBuilder.create();
@@ -326,34 +327,32 @@ public class Post {
         } catch (Exception e) {
             Log.e("E", e.getMessage());
         }
-        try {
-            for (int i = 0; i < new_post.steps.size(); i++) {
-                if (new_post.steps.get(i).getImagePath() != null) {
-                    if (!similar.contains(new_post.steps.get(i).getImagePath())) {
-                        File step_image = new File(dir.getAbsolutePath(), UUID.randomUUID().toString() + ".jpg");
-                        FileOutputStream outputStream = new FileOutputStream(step_image);
-                        Bitmap bitmap_step_image = null;
-                        try {
-                            bitmap_step_image = MediaStore.Images.Media.getBitmap(activity.getContentResolver(), Uri.fromFile(new File(new_post.steps.get(i).getImagePath())));
-                        } catch (Exception e) {
-                            Log.e("сохранение изображения", e.getMessage());
-                        }
-                        try {
-                            bitmap_step_image = MediaStore.Images.Media.getBitmap(activity.getContentResolver(), Uri.parse(new_post.steps.get(i).getImagePath()));
-                        } catch (Exception e) {
-                            Log.e("сохранение изображения", e.getMessage());
-                        }
-                        bitmap_step_image.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
-                        step_image.createNewFile();
-                        new_post.steps.get(i).setImagePath(step_image.getAbsolutePath());
-                        outputStream.flush();
-                        outputStream.close();
+
+        for (int i = 0; i < new_post.steps.size(); i++) {
+            if (new_post.steps.get(i).getImagePath() != null) {
+                if (!similar.contains(new_post.steps.get(i).getImagePath())) {
+                    File step_image = new File(dir.getAbsolutePath(), UUID.randomUUID().toString() + ".jpg");
+                    FileOutputStream outputStream = new FileOutputStream(step_image);
+                    Bitmap bitmap_step_image = null;
+                    try {
+                        bitmap_step_image = MediaStore.Images.Media.getBitmap(activity.getContentResolver(), Uri.fromFile(new File(new_post.steps.get(i).getImagePath())));
+                    } catch (Exception e) {
+                        Log.e("сохранение изображения", e.getMessage());
                     }
+                    try {
+                        bitmap_step_image = MediaStore.Images.Media.getBitmap(activity.getContentResolver(), Uri.parse(new_post.steps.get(i).getImagePath()));
+                    } catch (Exception e) {
+                        Log.e("сохранение изображения", e.getMessage());
+                    }
+                    bitmap_step_image.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                    step_image.createNewFile();
+                    new_post.steps.get(i).setImagePath(step_image.getAbsolutePath());
+                    outputStream.flush();
+                    outputStream.close();
                 }
             }
-        } catch (Exception e) {
-            Log.e("E", e.getMessage());
         }
+
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.setPrettyPrinting();
         Gson gson = gsonBuilder.create();

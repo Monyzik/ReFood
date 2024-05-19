@@ -73,7 +73,7 @@ public class AddProductDialog extends BottomSheetDialogFragment {
         recyclerView = v.findViewById(R.id.recycler_steps);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        stepsAdapter = new StepsAdapter(steps, v.getContext(), new StepsAdapter.AdapterCallback() {
+        stepsAdapter = new StepsAdapter(steps, v.getContext(), true, new StepsAdapter.AdapterCallback() {
             @Override
             public void onMethodCallback(String data, int position) {
                 Intent iGallery = new Intent(Intent.ACTION_PICK);
@@ -153,6 +153,7 @@ public class AddProductDialog extends BottomSheetDialogFragment {
             if (requestCode == GALLERY_REQ_CODE && data != null) {
                 int pos = mMyFragmentBundle.getInt("pos");
                 steps.get(pos).setImagePath(data.getData().toString());
+                System.out.println(data.getData().toString());
                 stepsAdapter.notifyItemChanged(pos);
             } else if (requestCode == GALLERY_REQ_CODE_MAIN_IMAGE && data != null) {
                 image_path = data.getData().toString();

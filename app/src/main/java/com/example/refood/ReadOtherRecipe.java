@@ -31,6 +31,7 @@ import com.google.gson.GsonBuilder;
 import com.varunest.sparkbutton.SparkButton;
 import com.varunest.sparkbutton.SparkEventListener;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -88,6 +89,7 @@ public class ReadOtherRecipe extends AppCompatActivity {
         if (post.getImage() != null && !post.getImage().equals("")) {
             if (post.getIsLocal()) {
                 food_image.setImageURI(Uri.parse(post.getImage()));
+                food_image.setImageURI(Uri.fromFile(new File(post.getImage())));
             } else {
                 StorageReference mainImageReference = storage.getReference(post.getImage());
                 mainImageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {

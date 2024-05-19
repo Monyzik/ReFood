@@ -458,4 +458,5 @@
         android:gravity="center"
         android:text="@string/there_is_no_internet_connection"
         android:textSize="20sp" />
+
 </FrameLayout>

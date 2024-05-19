@@ -184,31 +184,49 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        db.collection(Post.COLLECTION_NAME).whereEqualTo(Post.USER_NAME, firebaseAuth.getCurrentUser().getUid()).limit(5).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        posts.add(document.toObject(Post.class));
-                    }
-                }
-                try {
-                    File dir = new File(getActivity().getFilesDir(), "Recipes");
-                    for (File file : dir.listFiles()) {
-                        Post readPost = Post.readSavedRecipe(file);
-                        if (!posts.contains(readPost)) {
-                            posts.add(readPost);
+        if (NetworkUtils.isNetworkConnected(getActivity())){
+            db.collection(Post.COLLECTION_NAME).whereEqualTo(Post.USER_NAME, firebaseAuth.getCurrentUser().getUid()).limit(5).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            posts.add(document.toObject(Post.class));
                         }
                     }
-                } catch (Exception e) {
-                    Log.e("e", e.getMessage());
+                    try {
+                        File dir = new File(getActivity().getFilesDir(), "Recipes");
+                        for (File file : dir.listFiles()) {
+                            Post readPost = Post.readSavedRecipe(file);
+                            if (!posts.contains(readPost)) {
+                                posts.add(readPost);
+                            }
+                        }
+                    } catch (Exception e) {
+                        Log.e("e", e.getMessage());
+                    }
+                    myReceiptsAdapter = new MyReceiptsAdapter(new ArrayList<>(posts), getContext(), getActivity(), getParentFragmentManager(), true);
+                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+                    myRecieptsRecyclerView.setLayoutManager(linearLayoutManager);
+                    myRecieptsRecyclerView.setAdapter(myReceiptsAdapter);
                 }
-                myReceiptsAdapter = new MyReceiptsAdapter(new ArrayList<>(posts), getContext(), getActivity(), getParentFragmentManager(), true);
-                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-                myRecieptsRecyclerView.setLayoutManager(linearLayoutManager);
-                myRecieptsRecyclerView.setAdapter(myReceiptsAdapter);
+            });
+        } else {
+            try {
+                File dir = new File(getActivity().getFilesDir(), "Recipes");
+                for (File file : dir.listFiles()) {
+                    Post readPost = Post.readSavedRecipe(file);
+                    if (!posts.contains(readPost)) {
+                        posts.add(readPost);
+                    }
+                }
+            } catch (Exception e) {
+                Log.e("e", e.getMessage());
             }
-        });
+            myReceiptsAdapter = new MyReceiptsAdapter(new ArrayList<>(posts), getContext(), getActivity(), getParentFragmentManager(), true);
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+            myRecieptsRecyclerView.setLayoutManager(linearLayoutManager);
+            myRecieptsRecyclerView.setAdapter(myReceiptsAdapter);
+        }
 //        try {
 //            File dir = new File(getActivity().getFilesDir(), "Recipes");
 //            for (File file : dir.listFiles()) {

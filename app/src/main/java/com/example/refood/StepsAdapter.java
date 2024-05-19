@@ -17,6 +17,9 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -29,6 +32,7 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.ViewHolder> 
 
     AdapterDeleteItemCallback deleteItemCallback;
     private final ArrayList<Step> steps;
+    private final boolean isLocal;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final EditText time;
@@ -38,6 +42,7 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.ViewHolder> 
         private final TextView number;
         private final ImageView icon_add_image;
         private final View card_view_image;
+
 
 
         public ViewHolder (View view) {
@@ -75,11 +80,12 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.ViewHolder> 
 
     }
 
-    public StepsAdapter(ArrayList <Step> newSteps, Context context, AdapterCallback callback, AdapterDeleteItemCallback deleteItemCallback) {
+    public StepsAdapter(ArrayList <Step> newSteps, Context context, boolean isLocal, AdapterCallback callback, AdapterDeleteItemCallback deleteItemCallback) {
         steps = newSteps;
         this.context = context;
         this.callback = callback;
         this.deleteItemCallback = deleteItemCallback;
+        this.isLocal = isLocal;
     }
 
     @NonNull
@@ -99,9 +105,18 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.ViewHolder> 
         if (path != null) {
             viewHolder.icon_add_image.setVisibility(View.GONE);
             viewHolder.card_view_image.setVisibility(View.VISIBLE);
-            if (path.startsWith("https") || path.startsWith("http")) {
+            System.out.println(path);
+            if (!isLocal) {
                 try {
-                    Glide.with(context).load(Uri.parse(path)).into(viewHolder.getFoodImage());
+                    FirebaseStorage storage = FirebaseStorage.getInstance();
+                    StorageReference stepImageReference = storage.getReference(steps.get(viewHolder.getAdapterPosition()).getImagePath());
+                    stepImageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            String imageURL = String.valueOf(uri);
+                            Glide.with(context).load(imageURL).into(viewHolder.getFoodImage());
+                        }
+                    });
                 } catch (Exception e) {
                     Log.e("E", e.getMessage());
                 }

@@ -17,6 +17,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -68,7 +69,7 @@ public class ReadStepAdapter extends RecyclerView.Adapter<ReadStepAdapter.ViewHo
         }
         if (Objects.equals(steps.get(position).getTime(), "") || steps.get(position).getTime() == null) {
             holder.getTime().setVisibility(View.GONE);
-            holder.getTime_num().setVisibility(View.GONE);
+            holder.time_title.setVisibility(View.GONE);
         } else {
             holder.getTime().setText(steps.get(holder.getAdapterPosition()).getTime());
         }
@@ -85,8 +86,8 @@ public class ReadStepAdapter extends RecyclerView.Adapter<ReadStepAdapter.ViewHo
         private final TextView info;
         private final ImageView foodImage;
         private final View cardView;
-        private final TextView time;
         private final TextView time_num;
+        private final TextView time_title;
 
         public ViewHolder(View view) {
             super(view);
@@ -94,8 +95,8 @@ public class ReadStepAdapter extends RecyclerView.Adapter<ReadStepAdapter.ViewHo
             info = view.findViewById(R.id.info_read);
             foodImage = view.findViewById(R.id.food_image_read);
             cardView = view.findViewById(R.id.card_view_food_image_read);
-            time = view.findViewById(R.id.time);
             time_num = view.findViewById(R.id.time_num);
+            time_title = view.findViewById(R.id.time);
         }
 
         public ImageView getFoodImage() {
@@ -111,10 +112,6 @@ public class ReadStepAdapter extends RecyclerView.Adapter<ReadStepAdapter.ViewHo
         }
 
         public TextView getTime() {
-            return time;
-        }
-
-        public TextView getTime_num() {
             return time_num;
         }
 

@@ -2,6 +2,7 @@ package com.example.refood;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -112,7 +113,7 @@ public class EditProductDialog extends BottomSheetDialogFragment {
 
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        stepsAdapter = new StepsAdapter(steps, v.getContext(), new StepsAdapter.AdapterCallback() {
+        stepsAdapter = new StepsAdapter(steps, v.getContext(), post_in.getIsLocal(), new StepsAdapter.AdapterCallback() {
             @Override
             public void onMethodCallback(String data, int position) {
                 Intent iGallery = new Intent(Intent.ACTION_PICK);
@@ -143,8 +144,8 @@ public class EditProductDialog extends BottomSheetDialogFragment {
             @Override
             public void onClick(View v) {
 
-
                 if (!(title.getText().toString().equals("") || info.getText().toString().equals("") || image_path.equals(""))) {
+
                     db.collection(Post.COLLECTION_NAME).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -153,7 +154,6 @@ public class EditProductDialog extends BottomSheetDialogFragment {
                                     StepsAdapter.ViewHolder holder = (StepsAdapter.ViewHolder) recyclerView.getChildViewHolder(recyclerView.getChildAt(i));
                                     Step step = steps.get(i);
                                     step.setInfo(holder.getInfo().getText().toString());
-                                    step.setTime(holder.getTime().getText().toString());
                                     step.setTime(holder.getTime().getText().toString());
                                     step.setNumber(i + 1);
                                 }
@@ -209,12 +209,12 @@ public class EditProductDialog extends BottomSheetDialogFragment {
             if (requestCode == GALLERY_REQ_CODE && data != null) {
                 int pos = mMyFragmentBundle.getInt("pos");
                 steps.get(pos).setImagePath(data.getData().toString());
+                System.out.println(data.getData().toString());
                 stepsAdapter.notifyItemChanged(pos);
             } else if (requestCode == GALLERY_REQ_CODE_MAIN_IMAGE && data != null) {
                 image_path = data.getData().toString();
-                imageView.setImageURI(data.getData());
+                imageView.setImageURI(Uri.parse(image_path));
             }
-
         }
     }
     public interface UpdateCall {
