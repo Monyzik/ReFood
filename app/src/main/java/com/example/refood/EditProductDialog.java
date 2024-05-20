@@ -92,8 +92,6 @@ public class EditProductDialog extends BottomSheetDialogFragment {
         for (int i = 0; i < post_in.steps.size(); i++) {
             old_paths.add(post_in.steps.get(i).getImagePath());
         }
-        Log.i("PPPPPPPP", old_paths + "");
-
 
 
         if (post_in.getIsLocal()) {
@@ -172,7 +170,7 @@ public class EditProductDialog extends BottomSheetDialogFragment {
                                 }
 
 
-                                Post post = new Post(post_in.getId(), "i'm", "me", title.getText().toString(), info.getText().toString(), image_path, new Date(), post_in.getIsLocal(), post_in.like_count, post_in.dislike_count, steps, post_in.likes_from_users, post_in.dislikes_from_users, spinner.getSelectedItem() +"", spinner.getSelectedItemPosition());
+                                Post post = new Post(post_in.getId(), "i'm", "me", title.getText().toString(), info.getText().toString(), image_path, new Date(), post_in.getIsLocal(), post_in.like_count, post_in.dislike_count, steps, post_in.likes_from_users, post_in.dislikes_from_users, spinner.getSelectedItem() + "", spinner.getSelectedItemPosition());
 
 
                                 try {
@@ -215,7 +213,7 @@ public class EditProductDialog extends BottomSheetDialogFragment {
 
         return v;
     }
-    
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

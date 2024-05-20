@@ -60,5 +60,7 @@
     <string name="there_is_no_internet_connection">There is no internet\n connection</string>
     <string name="add_a_recipe">Add \na recipe</string>
     <string name="withot_marked_posts">You haven\'t saved anyone recipes</string>
+    <string name="this_post_is_not_local">This post is not local</string>
+
 
 </resources>

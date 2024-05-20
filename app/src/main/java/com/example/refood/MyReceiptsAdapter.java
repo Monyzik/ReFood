@@ -143,7 +143,6 @@ public class MyReceiptsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 if (isLocal) {
                     viewHolder.getFoodImage().setImageURI(Uri.parse(path));
 //                    viewHolder.getFoodImage().setImageURI(Uri.fromFile(new File(path)));
-                    System.out.println("подгрузка изображения");
                 } else {
                     StorageReference postImagePhoto = storage.getReference(path);
                     postImagePhoto.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -268,28 +267,40 @@ public class MyReceiptsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             if (which == 0) {
-                                EditProductDialog bottomSheet = new EditProductDialog(posts.get(viewHolder.getAdapterPosition()), new EditProductDialog.UpdateCall() {
-                                    @Override
-                                    public void update(Post post) {
+                                boolean flag_local = false;
+                                for (File file: activity.getFilesDir().listFiles()) {
+                                    if (posts.get(viewHolder.getAdapterPosition()).getId().equals(file.getName())) {
+                                        flag_local = true;
+                                    }
+                                }
 
-                                        posts.set(viewHolder.getAdapterPosition(), post);
-                                        notifyItemChanged(viewHolder.getAdapterPosition());
-                                        db.collection(Post.COLLECTION_NAME).whereEqualTo(Post.USER_NAME, auth.getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                if (task.isSuccessful()) {
-                                                    for (QueryDocumentSnapshot document : task.getResult()) {
-                                                        if (!posts.contains(document.toObject(Post.class))) {
-                                                            posts.add(document.toObject(Post.class));
+                                if (flag_local) {
+
+                                    EditProductDialog bottomSheet = new EditProductDialog(posts.get(viewHolder.getAdapterPosition()), new EditProductDialog.UpdateCall() {
+                                        @Override
+                                        public void update(Post post) {
+
+                                            posts.set(viewHolder.getAdapterPosition(), post);
+                                            notifyItemChanged(viewHolder.getAdapterPosition());
+                                            db.collection(Post.COLLECTION_NAME).whereEqualTo(Post.USER_NAME, auth.getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                    if (task.isSuccessful()) {
+                                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                                            if (!posts.contains(document.toObject(Post.class))) {
+                                                                posts.add(document.toObject(Post.class));
+                                                            }
                                                         }
                                                     }
+                                                    notifyDataSetChanged();
                                                 }
-                                                notifyDataSetChanged();
-                                            }
-                                        });
-                                    }
-                                });
-                                bottomSheet.show(fragmentManager,"ModalBottomSheet");
+                                            });
+                                        }
+                                    });
+                                    bottomSheet.show(fragmentManager, "ModalBottomSheet");
+                                } else {
+                                    Toast.makeText(context, activity.getString(R.string.this_post_is_not_local), Toast.LENGTH_SHORT).show();
+                                }
 
                             } else {
                                 String id_post = posts.get(viewHolder.getAdapterPosition()).getId();
