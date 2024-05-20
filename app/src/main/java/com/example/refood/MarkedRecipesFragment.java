@@ -153,6 +153,19 @@ public class MarkedRecipesFragment extends Fragment {
                                         posts.add(document.toObject(Post.class));
                                     }
                                 }
+                                File dir = new File(getContext().getFilesDir() + "/OtherRecipes");
+                                if(dir.listFiles().length != 0) {
+                                    for (File post : dir.listFiles()) {
+                                        try {
+                                            Post post1 = Post.readSavedRecipe(post);
+                                            if (!posts.contains(post1)) {
+                                                posts.add(post1);
+                                            }
+                                        } catch (IOException e) {
+                                            throw new RuntimeException(e);
+                                        }
+                                    }
+                                }
                                 adapter = new PostsTapeAdapter(posts, getActivity());
                                 recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                                 recyclerView.setAdapter(adapter);

@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.compose.animation.core.SuspendAnimationKt;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -34,15 +35,20 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Objects;
 
 public class EditProductDialog extends BottomSheetDialogFragment {
 
@@ -60,10 +66,13 @@ public class EditProductDialog extends BottomSheetDialogFragment {
     FirebaseFirestore db;
     ImageView imageView;
     UpdateCall updateCall;
-    Post post_in;
+    protected Post post_in;
+
+    protected boolean isLocalGlobal;
 
     public EditProductDialog(Post post_in, UpdateCall updateCall) {
         this.post_in = post_in;
+        this.isLocalGlobal = post_in.getIsLocal();
         this.updateCall = updateCall;
     }
 
@@ -89,13 +98,20 @@ public class EditProductDialog extends BottomSheetDialogFragment {
         recyclerView = v.findViewById(R.id.recycler_steps);
         Set<String> old_paths = new HashSet<>();
         old_paths.add(post_in.getImage());
-        for (int i = 0; i < post_in.steps.size(); i++) {
-            old_paths.add(post_in.steps.get(i).getImagePath());
+
+        try {
+            post_in = Post.readSavedRecipe(new File(requireContext().getFilesDir().getAbsoluteFile() + "/Recipes/" + post_in.getId()));
+        } catch (IOException e) {
+            System.out.println("Котики всё поломали");
+            throw new RuntimeException(e);
         }
 
+        for (int i = 0; i < post_in.getSteps().size(); i++) {
+            old_paths.add(post_in.getSteps().get(i).getImagePath());
+        }
 
         if (post_in.getIsLocal()) {
-            imageView.setImageURI(Uri.parse(post_in.image));
+            imageView.setImageURI(Uri.parse(post_in.getImage()));
         } else {
             Shimmer shimmer = new Shimmer.AlphaHighlightBuilder().setDuration(1800).setBaseAlpha(0.7f).setHighlightAlpha(0.6f)
                     .setDirection(Shimmer.Direction.LEFT_TO_RIGHT).setAutoStart(true).build();
@@ -119,7 +135,7 @@ public class EditProductDialog extends BottomSheetDialogFragment {
         for (int i = 0; i < post_in.getSteps().size(); i++) {
             steps.add(new Step(post_in.getSteps().get(i)));
         }
-        image_path = new String(post_in.image);
+        image_path = new String(post_in.getImage());
 
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -170,25 +186,66 @@ public class EditProductDialog extends BottomSheetDialogFragment {
                                 }
 
 
-                                Post post = new Post(post_in.getId(), "i'm", "me", title.getText().toString(), info.getText().toString(), image_path, new Date(), post_in.getIsLocal(), post_in.like_count, post_in.dislike_count, steps, post_in.likes_from_users, post_in.dislikes_from_users, spinner.getSelectedItem() + "", spinner.getSelectedItemPosition());
+                                Post post = new Post(post_in.getId(), "i'm", "me", title.getText().toString(), info.getText().toString(), image_path, new Date(), post_in.getIsLocal(), post_in.like_count, post_in.dislike_count, steps, post_in.likes_from_users, post_in.dislikes_from_users, spinner.getSelectedItem() +"", spinner.getSelectedItemPosition());
+                                Post newpost = null;
+                                for (File file: (new File(getActivity().getFilesDir().getAbsolutePath() + "/Recipes")).listFiles()) {
+                                    if (post_in.getId().equals(file.getName())) {
+                                        try {
+                                            newpost = Post.readSavedRecipe(new File(getActivity().getFilesDir().getAbsoluteFile() + "/Recipes/" + file.getName()));
+                                        } catch (IOException e) {
+                                            throw new RuntimeException(e);
+                                        }
+                                    }
+                                }
 
 
                                 try {
-                                    Post.editPost(post_in, post, getActivity());
+                                    Post.editPost(newpost, post, requireActivity());
                                 } catch (IOException e) {
                                     Log.e("e", e.getMessage());
                                 }
                                 try {
-                                    post = Post.readSavedRecipe(new File(getActivity().getFilesDir() + "/Recipes/" + post.getId()));
+                                    post = Post.readSavedRecipe(new File(requireActivity().getFilesDir() + "/Recipes/" + post.getId()));
                                 } catch (IOException e) {
                                     throw new RuntimeException(e);
                                 }
 
-                                if (!post.getIsLocal()) {
+                                if (!isLocalGlobal) {
+                                    StorageReference storageReference = storage.getReference().child("images").child("posts_images");
+                                    StorageReference postStorage = storageReference.child(post.getId());
+                                    StorageReference mainImageStorage = postStorage.child("main_image.jpeg");
+                                    InputStream stream;
+                                    try {
+                                        stream = new FileInputStream(post.getImage());
+                                    } catch (FileNotFoundException e) {
+                                          throw new RuntimeException(e);
+                                    }
+                                    UploadTask uploadTask = mainImageStorage.putStream(stream);
+                                    post.setImage(mainImageStorage.getPath());
+                                    for (Step step : post.getSteps()) {
+                                        if (!Objects.equals(step.getImagePath(), " ") && step.getImagePath() != null) {
+                                            StorageReference stepStorage = postStorage.child(step.getImagePath().substring(step.getImagePath().lastIndexOf("/"), step.getImagePath().length()));
+                                            try {
+                                                stream = new FileInputStream(step.getImagePath());
+                                            } catch (FileNotFoundException e) {
+                                                throw new RuntimeException(e);
+                                            }
+                                            uploadTask = stepStorage.putStream(stream);
+                                            step.setImagePath(stepStorage.getPath());
+                                        }
+                                    }
+                                    post.setIsLocal(isLocalGlobal);
                                     db.collection(Post.COLLECTION_NAME).document(post.getId()).set(post);
+                                    Post finalPost = post;
+                                    uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                                            updateCall.update(finalPost);
+                                        }
+                                    });
+                                } else {
+                                    updateCall.update(post);
                                 }
-                                updateCall.update(post);
-
                                 dismiss();
                             } else {
                                 Toast.makeText(v.getContext(), R.string.fill, Toast.LENGTH_SHORT).show();
@@ -213,7 +270,7 @@ public class EditProductDialog extends BottomSheetDialogFragment {
 
         return v;
     }
-
+    
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -228,10 +285,9 @@ public class EditProductDialog extends BottomSheetDialogFragment {
             }
             Set<String> old_paths = new HashSet<>();
             old_paths.add(post_in.getImage());
-            for (int i = 0; i < post_in.steps.size(); i++) {
-                old_paths.add(post_in.steps.get(i).getImagePath());
+            for (int i = 0; i < post_in.getSteps().size(); i++) {
+                old_paths.add(post_in.getSteps().get(i).getImagePath());
             }
-            Log.i("PPPPPPPP", old_paths + "");
         }
     }
     public interface UpdateCall {

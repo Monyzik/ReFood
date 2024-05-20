@@ -271,12 +271,6 @@ public class MyReceiptsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                 for (File file: (new File(activity.getFilesDir().getAbsolutePath() + "/Recipes")).listFiles()) {
                                     if (posts.get(viewHolder.getAdapterPosition()).getId().equals(file.getName())) {
                                         flag_local = true;
-                                        try {
-                                            posts.set(viewHolder.getAdapterPosition(), Post.readSavedRecipe(new File(context.getFilesDir().getAbsoluteFile() + "/Recipes/" + file.getName())));
-                                        } catch (IOException e) {
-                                            throw new RuntimeException(e);
-                                        }
-                                        Log.i("PPP", posts.get(viewHolder.getAdapterPosition()).getIsLocal() + "");
                                     }
                                 }
 
@@ -285,7 +279,6 @@ public class MyReceiptsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                     EditProductDialog bottomSheet = new EditProductDialog(posts.get(viewHolder.getAdapterPosition()), new EditProductDialog.UpdateCall() {
                                         @Override
                                         public void update(Post post) {
-
                                             posts.set(viewHolder.getAdapterPosition(), post);
                                             notifyItemChanged(viewHolder.getAdapterPosition());
                                             db.collection(Post.COLLECTION_NAME).whereEqualTo(Post.USER_NAME, auth.getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {

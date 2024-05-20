@@ -235,7 +235,6 @@ public class Post {
         }
         try {
             main.createNewFile();
-            System.out.println("создание mainfile");
         } catch (IOException e) {
             return false;
         }
@@ -272,9 +271,6 @@ public class Post {
 //        add_paths.retainAll(old_paths);
         delete_paths.removeAll(new_paths);
         similar.retainAll(new_paths);
-        Log.i("IIIIIIII", old_paths + "");
-        Log.i("IIIIIIII", new_paths + "");
-        Log.i("IIIIIIII", delete_paths + "");
 
 
         for (File file: dir.listFiles()) {
